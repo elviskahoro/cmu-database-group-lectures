@@ -91,3 +91,9 @@ wheels/
 *.zip
 uv.lock
 .claude/settings.local.json
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+.beads-credential-key
+.beads/proxieddb/
+*.gate.lock*

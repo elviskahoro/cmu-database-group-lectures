@@ -1,0 +1,6 @@
+{
+  "backend": "dolt",
+  "database": "dolt",
+  "dolt_database": "cdgl",
+  "dolt_mode": "server"
+}
