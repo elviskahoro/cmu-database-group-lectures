@@ -1,0 +1,22 @@
+"""Reflex app entrypoint."""
+
+from __future__ import annotations
+
+import reflex as rx
+
+from web.pages.index import page
+
+app = rx.App()
+app.add_page(  # pyright: ignore[reportUnknownMemberType]  # reflex typing is partially Unknown
+    component=page,
+    route="/",
+    title="Title",
+    description="Description",
+    image="favicon",
+    on_load=None,
+    meta=[
+        {
+            "author": "elvis kahoro",
+        },
+    ],
+)

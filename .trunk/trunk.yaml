@@ -1,0 +1,392 @@
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli
+# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+version: 0.1
+cli:
+  version: 1.25.0
+
+# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.11.0
+      uri: https://github.com/trunk-io/plugins
+
+    - id: oss-linter-trunk
+      ref: v0.2026.04.14.00.00
+      uri: https://github.com/elviskahoro/oss-linter-trunk-config
+
+    - id: add-trailing-comma-plugin
+      ref: v0.1.0
+      uri: https://github.com/elviskahoro/oss-linter-trunk-add-trailing-comma
+
+    - id: pyrefly-plugin
+      ref: v0.2.0
+      uri: https://github.com/elviskahoro/oss-linter-trunk-pyrefly
+
+    - id: tach-plugin
+      ref: v0.1.0
+      uri: https://github.com/elviskahoro/oss-linter-trunk-tach
+
+# actionlint switched from upstream rhysd/actionlint to the actively maintained
+# fork kjanat/actionlint (forked from upstream v1.7.12, independent releases from
+# v1.8.0, CLI-compatible). Trunk's plugin catalog still pins the rhysd download
+# URL, so override it here until the catalog carries the fork. Asset naming and
+# the -format JSON output the plugin's `lint` command relies on are unchanged.
+downloads:
+  - name: actionlint
+    downloads:
+      - os:
+          linux: linux
+          macos: darwin
+        cpu:
+          x86_64: amd64
+          arm_64: arm64
+        url: https://github.com/kjanat/actionlint/releases/download/v${version}/actionlint_${version}_${os}_${cpu}.tar.gz
+      - os: windows
+        cpu:
+          x86_64: amd64
+          arm_64: arm64
+        url: https://github.com/kjanat/actionlint/releases/download/v${version}/actionlint_${version}_windows_${cpu}.zip
+
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+lint:
+  definitions:
+    - name: ruff
+      commands:
+        - name: format
+          enabled: true
+        - name: lint
+          enabled: true
+
+    # trunk runs linters from a sandboxed tmp dir with `env -i`, so pyright
+    # cannot find the project deps; point it at the workspace venv explicitly.
+    - name: pyright
+      commands:
+        - name: lint
+          run: pyright --pythonpath ${workspace}/.venv/bin/python --project ${workspace}/pyrightconfig.json --outputjson ${target}
+      direct_configs:
+        - pyrightconfig.json
+        - configs/pyrightconfig.json
+      affects_cache:
+        - pyrightconfig.json
+        - configs/pyrightconfig.json
+        - pyproject.toml
+        - setup.cfg
+
+    # Tach also reports graph-wide failures without a file/line location.
+    # Use its exit status so cycles, stale dependencies, and config errors fail.
+    - name: tach
+      files: [python, tach-config]
+      environment:
+        # Trunk runs linters in a temp dir without the rest of the
+        # project tree; whole-graph linters like tach cannot resolve
+        # imports there. CI invocations of this linter run from the
+        # project root (no temp dir) via `trunk-io/trunk-action`, which
+        # is why CI does not hit the local-only failure mode below.
+        # Local `trunk check` reports `Unused Dependencies` for every
+        # edge in this directory -- this is a known limitation of
+        # trunk's batch-mode temp dir, see trunk-io/toolbox#83. Use
+        # `uv run tach check` directly locally if you need a green
+        # signal without invoking `trunk-io/trunk-action`.
+        - name: PATH
+          list: ["${linter}", "${env.PATH}"]
+      commands:
+        - name: lint
+          run: uv run --frozen --directory ${workspace} tach check
+          success_codes: [0, 1]
+          read_output_from: stderr
+          batch: true
+          cache_results: false
+        - name: external
+          run: uv run --frozen --directory ${workspace} tach check-external
+          output: regex
+          parse_regex: "\\[FAIL\\] (?P<path>[^:]+):(?P<line>\\d+): (?P<message>.*)"
+          success_codes: [0]
+          read_output_from: stderr
+          batch: true
+          cache_results: false
+
+    # Vale is scoped exclusively to docs/**. Match the full relative path so
+    # markdown outside docs/ (e.g. README.md) is not included.
+    - name: vale
+      files: [docs-markdown]
+
+  files:
+    - name: tach-config
+      regexes:
+        - ^(tach\.toml|pyproject\.toml|uv\.lock)$
+
+    - name: docs-markdown
+      regexes:
+        - ^docs/.+\.(md|mdx)$
+
+  enabled:
+    - actionlint@1.17.0
+    - add-trailing-comma@4.0.0
+    - bandit@1.9.4
+    - buildifier@8.2.1
+    - checkov@3.3.19
+    - markdown-link-check@3.15.0
+    - markdownlint-cli2@0.23.3
+    - osv-scanner@2.6.0
+    - oxipng@10.1.1
+    - pinact@4.0.0
+    # `pyrefly` and `pyright` are disabled at the trunk level because
+    # trunk's bundled Python distributions do not ship `reflex`, and
+    # pyrefly/pyright emit high-severity `missing-import` findings on
+    # every file that imports reflex. Run them locally via
+    # `uv run pyrefly web/` or `uv run pyright web/` (the project's
+    # venv resolves them); this template's CI gate deliberately does
+    # not block on type-only linters.
+    # - pyrefly@1.3.1
+    # - pyright@1.1.414
+    - ruff@0.16.8
+    - semgrep@1.177.0
+    - shellcheck@0.11.0
+    - shfmt@3.13.1
+    - squawk@2.65.0
+    - svgo@4.1.0
+    - tach@0.35.3
+    - taplo@0.10.0
+    - trivy@0.70.0
+    - trufflehog@3.95.3
+    - ty@0.0.35
+    - vale@3.14.1
+    - yamlfmt@0.21.0
+    - yamllint@1.38.0
+
+  disabled:
+    - ansible-lint
+    - autopep8
+    - biome
+    - black
+    - brakeman
+    - buf-breaking
+    - buf-format
+    - buf-lint
+    - cfnlint
+    - circleci
+    - clang-format
+    - clang-tidy
+    - clippy
+    - cmake-format
+    - codespell
+    - cspell
+    - cue-fmt
+    - dart
+    - deno
+    - detekt
+    - detekt-explicit
+    - detekt-gradle
+    - djlint
+    - dotenv-linter
+    - dotnet-format
+    - dustilock
+    - eslint
+    - flake8
+    - git-diff-check
+    - gitleaks
+    - gofmt
+    - gofumpt
+    - goimports
+    - gokart
+    - golangci-lint
+    - golangci-lint2
+    - golines
+    - google-java-format
+    - graphql-schema-linter
+    - hadolint
+    - haml-lint
+    - include-what-you-use
+    - isort
+    - ktlint
+    - kube-linter
+    - ls-lint
+    - markdown-table-prettify
+    - markdownlint
+    - mypy
+    - nancy
+    - nbstripout
+    - nixpkgs-fmt
+    - opa
+    - perlcritic
+    - perltidy
+    - php-cs-fixer
+    - phpstan
+    - pmd
+    - pragma-once
+    - pre-commit-hooks
+    - prettier
+    - prisma
+    - psscriptanalyzer
+    - pylint
+    - regal
+    - remark-lint
+    - renovate
+    - rome
+    - rubocop
+    - ruff-nbqa
+    - rufo
+    - rumdl
+    - rustfmt
+    - scalafmt
+    - snyk
+    - sort-package-json
+    - sourcery
+    - sql-formatter
+    - sqlfluff
+    - sqlfmt
+    - standardrb
+    - stringslint
+    - stylelint
+    - stylua
+    - swiftformat
+    - swiftlint
+    - terraform
+    - terragrunt
+    - terrascan
+    - tflint
+    - tfsec
+    - tofu
+    - trufflehog-git
+    - trunk-toolbox
+    - txtpbfmt
+    - yapf
+
+  ignore:
+    - linters: [ALL]
+      paths:
+        - data/**
+        - tmp/**
+        - worktrees/**
+        - "**/*.openapi.json"
+        - "**/*.openapi.yaml"
+        - "**/*.openapi.yml"
+
+    - linters: [ruff]
+      paths:
+        - "*.ipynb"
+
+    # Documentation MDX mixes JSX components with fenced code blocks, which
+    # markdownlint misreads as inconsistent code-block styles (MD046).
+    - linters: [markdownlint, markdownlint-cli2]
+      paths:
+        - docs/**/*.mdx
+
+    # checkov and semgrep are IaC-focused here; skip them on source and
+    # binary files so they only weigh in on Dockerfiles, YAML, TOML, etc.
+    - linters: [checkov, semgrep]
+      paths:
+        - "**/*.py"
+        - "**/*.sh"
+        - "**/*.md"
+        - "**/*.parquet"
+        - "**/*.png"
+        - "**/*.jpg"
+        - "**/*.jpeg"
+        - "**/*.gif"
+        - "**/*.ico"
+        - "**/*.svg"
+        - "**/*.webp"
+        - "**/*.zip"
+        - "**/*.tar"
+        - "**/*.gz"
+        - "**/*.bz2"
+        - "**/*.7z"
+        - "**/*.csv"
+        - "**/*.xml"
+        - "**/*.proto"
+
+    - linters: [trivy]
+      paths:
+        - .trunk/**
+
+    # reflex.lock/bun.lock is the frontend lockfile shipped by Reflex; vite is
+    # pinned by Reflex itself, so these advisories can only clear on a Reflex
+    # release that bumps it.
+    - linters: [osv-scanner]
+      paths:
+        - reflex.lock/bun.lock
+
+    # yamlfmt rewrites pinact's `sha # vX` comments to one space, which
+    # yamllint's comments rule rejects; the two cannot both pass here.
+    - linters: [yamllint]
+      paths:
+        - .github/workflows/pullfrog.yml
+
+    - linters: [trufflehog]
+      paths:
+        - "**/*.parquet"
+
+  exported_configs:
+    - plugin_id: oss-linter-trunk
+      configs:
+        - configs/.bandit
+        - configs/.clang-format
+        - configs/.clang-tidy
+        - configs/.clangd
+        - configs/.editorconfig
+        - configs/.flake8
+        - configs/.gitattributes
+        - configs/.gitignore
+        - configs/.hadolint.yaml
+        - configs/.isort.cfg
+        - configs/.markdownlint.yaml
+        - configs/.mypy.ini
+        - configs/.pr-labels.yaml
+        - configs/.prettierrc.yaml
+        - configs/.pylintrc
+        - configs/.remarkrc.yaml
+        - configs/.shellcheckrc
+        - configs/.sqlfluff
+        - configs/.stylelintrc.js
+        - configs/.stylelintrc.yaml
+        - configs/.yamlfmt
+        - configs/.yamllint.yaml
+        - configs/pyrightconfig.json
+        - configs/ruff.toml
+        - configs/rustfmt.toml
+        - configs/svgo.config.js
+
+actions:
+  enabled:
+    - trunk-cache-prune
+    - trunk-upgrade-available
+
+  disabled:
+    # git-hook-triggered actions disabled so trunk releases core.hooksPath to
+    # Entire (checkpoints). trunk-check-pre-push is redundant with the required
+    # CI check; git-lfs is unused.
+    - trunk-fmt-pre-commit
+    - git-lfs
+    - trunk-announce
+    - trunk-check-pre-push
+
+merge:
+  # Required statuses for the Trunk merge queue. Entries must be the exact
+  # status-check names GitHub sees, including RWX's "RWX: " prefix. The names
+  # below are backed by the custom per-trigger status-checks blocks in the
+  # .rwx/ pipelines: each posts the same name from both the pull_request and
+  # push triggers, so PR heads and trunk-merge/** batch refs report identical
+  # contexts (RWX's default per-run status renames itself after the trigger
+  # and so cannot be required). Re-verify after any pipeline or trigger
+  # rename by reading the contexts posted on a commit:
+  # api.github.com/repos/<owner>/<repo>/commits/<sha>/status.
+  #
+  # Per Trunk's docs, this list is one of three ways to define what the queue
+  # waits on while a queued PR is testing; the others are GitHub branch
+  # protection required-checks and a Trunk UI override. It does NOT control
+  # which PRs are admitted to the queue.
+  #
+  # The entries below correspond to RWX pipeline tasks in .rwx/:
+  # - trunk-check (trunk-check-pr on pull requests, trunk-check-push on
+  #   pushes) and tach-external from .rwx/trunk-check.yml
+  # - pytest from .rwx/tests.yml
+  # - reflex-export from .rwx/reflex-build.yml
+  # - frontend-deps from .rwx/frontend.yml
+  required_statuses:
+    - "RWX: trunk-check"
+    - "RWX: tach-external"
+    - "RWX: pytest"
+    - "RWX: reflex-export"
+    - "RWX: frontend-deps"
