@@ -101,3 +101,11 @@ uv.lock
 # Gas City
 .beads/*
 !.beads/identity.toml
+
+# Gas City / agent tooling
+.agents/skills/.gc-skill-ownership.json
+.agents/skills/core.gc-*
+.agents/skills/gascity.*
+.beads/identity.toml
+.env.local
+.opencode/skills/
