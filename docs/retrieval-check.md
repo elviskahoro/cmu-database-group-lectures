@@ -21,7 +21,7 @@ out of the top 10 in any mode.
   `9NdAOHyBq44` clips).
 - `top_k = 10` per query, per mode.
 - Modes: **vector-only** (cosine on the Nomic embedding) and **hybrid**
-  (vector + FTS over `text`, `LinearCombinationReranker` — the same reranker
+  (vector + FTS over `text`, `MRRReranker(weight_vector=1-w, weight_fts=w)` — the same reranker
   as `notebooks/search.py`) at `fts_weight` ∈ {0.2, 0.5, 0.8}.
 - Run date: 2026-11-02, on commit `4146b0a` (main) + this branch's script.
 

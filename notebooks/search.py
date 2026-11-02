@@ -167,7 +167,7 @@ def _(mo):
 def _(embed_query, mo, table):
     from typing import Any
 
-    from lancedb.rerankers import LinearCombinationReranker
+    from lancedb.rerankers import MRRReranker
 
     def run_search(query: str, top_k: int, fts_weight: float) -> list[dict[str, Any]]:
         query_vector = embed_query(query)
@@ -175,7 +175,7 @@ def _(embed_query, mo, table):
             table.search(query_type="hybrid")
             .vector(query_vector)
             .text(query)
-            .rerank(LinearCombinationReranker(weight=fts_weight))
+            .rerank(MRRReranker(weight_vector=1.0 - fts_weight, weight_fts=fts_weight))
             .limit(top_k)
             .to_list()
         )

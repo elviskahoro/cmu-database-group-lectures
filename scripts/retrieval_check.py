@@ -3,7 +3,7 @@
 # Runs the sample-appropriate subset of the 10 retrieval queries from the
 # bead notes (queries 1, 2, 3, 6, 8, 9, 10 map to loaded lectures; 4, 5, 7
 # are deferred to the full corpus). For each query: vector-only top-10 and
-# hybrid top-10 via LinearCombinationReranker (same reranker as
+# hybrid top-10 via MRRReranker (same reranker as
 # notebooks/search.py) at fts_weight in {0.2, 0.5, 0.8}. Records whether the
 # expected lecture (video_id) appears in the top 10 for every mode.
 #
@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import lancedb
-from lancedb.rerankers import LinearCombinationReranker
+from lancedb.rerankers import MRRReranker
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))  # lecture_search is not an installed package
@@ -112,7 +112,7 @@ def run_query(table: Any, query: RetrievalQuery) -> dict[str, Any]:
             table.search(query_type="hybrid")
             .vector(query_vector)
             .text(query.text)
-            .rerank(LinearCombinationReranker(weight=fts_weight))
+            .rerank(MRRReranker(weight_vector=1.0 - fts_weight, weight_fts=fts_weight))
             .limit(TOP_K)
             .to_list()
         )
@@ -164,7 +164,7 @@ def main() -> int:
         "rows": row_count,
         "top_k": TOP_K,
         "fts_weights": FTS_WEIGHTS,
-        "reranker": "LinearCombinationReranker",
+        "reranker": "MRRReranker",
         "deferred_queries": [
             {"number": query.number, "query": query.text} for query in deferred
         ],

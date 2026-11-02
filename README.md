@@ -291,7 +291,7 @@ If any step fails, stop and report the failing step number, the command, and the
 search over the `lectures_sample` LanceDB Cloud table (CMU Database Group
 lecture transcripts, Nomic v1.5 embeddings). It provides a query form with a
 top-k slider and a hybrid vector↔full-text weight slider
-(`LinearCombinationReranker`), and renders results with title/date, a
+(`MRRReranker`), and renders results with title/date, a
 timestamped YouTube deep link, a text snippet, and the relevance score.
 
 Requires `LANCEDB_API_KEY` (environment or `.env.local`); `LANCEDB_URI` and
@@ -331,7 +331,7 @@ lectures**.
    on `text`: `uv run python -m scripts.load_sample`
    (see `docs/lectures-sample.md`).
 5. **Search** with `notebooks/search.py` (hybrid vector + FTS,
-   `LinearCombinationReranker`, adjustable weight).
+   `MRRReranker`, adjustable weight).
 6. **Verify retrieval** with `uv run python -m scripts.retrieval_check` —
    runs the sample-appropriate queries vector-only vs hybrid
    (fts_weight 0.2/0.5/0.8), asserts the expected lecture lands in the top
