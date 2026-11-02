@@ -302,3 +302,72 @@ uv run marimo run notebooks/search.py   # interactive
 uv run notebooks/search.py              # headless: runs sample queries
 uvx marimo check notebooks/search.py    # lint
 ```
+
+---
+
+## Lecture search pipeline runbook
+
+End-to-end pipeline for searching CMU Database Group lecture transcripts.
+The **sample run** (6 videos, 275 chunks, table `lectures_sample`) is
+complete and verified; see below for what changes to scale to all **595
+lectures**.
+
+### Pipeline (sample, as built)
+
+1. **Transcribe** lecture audio with Whisper `large-v3` on Modal (in the
+   `epic-sermons` repo). Output per video: a Whisper JSON transcript
+   (`dict` with `segments[{start, end, text}]`), named
+   `YYYY-MM-DD·video_id·transcription.json`; titles come from the matching
+   `.kson` assets when present (`data/sample/titles.json` for the sample).
+2. **Chunk** transcripts with `lecture_search.chunking`
+   (`process_sample_transcripts`) into timestamped `ChunkRecord`s with
+   YouTube deep links.
+3. **Embed** locally on CPU with Nomic `nomic-ai/nomic-embed-text-v1.5`
+   (768d). Prefixes are prepended client-side, exactly once:
+   `search_document: ` for chunks, `search_query: ` for queries
+   (`lecture_search/embed.py`; guarded by `tests/test_embed_prefix.py`).
+4. **Load** into LanceDB Cloud (`db://cmu-database-group-eqdwgi`,
+   `us-east-1`) with an idempotent `merge_insert` upsert, plus an FTS index
+   on `text`: `uv run python -m scripts.load_sample`
+   (see `docs/lectures-sample.md`).
+5. **Search** with `notebooks/search.py` (hybrid vector + FTS,
+   `LinearCombinationReranker`, adjustable weight).
+6. **Verify retrieval** with `uv run python -m scripts.retrieval_check` —
+   runs the sample-appropriate queries vector-only vs hybrid
+   (fts_weight 0.2/0.5/0.8), asserts the expected lecture lands in the top
+   10, and writes `data/retrieval_check.json` (results:
+   `docs/retrieval-check.md`; currently PASS, rank 1 everywhere).
+
+Secrets: `LANCEDB_API_KEY` (and `FIREWORKS_API_KEY` for the parity gate)
+live in `.env.local`; load via the environment, never echo or commit them.
+
+### Scaling to all 595 lectures
+
+- **Transcribe all 595 on Modal — requires explicit user cost approval
+  first (estimated $37–149).** Use `MODAL_PROFILE=marcella` (authenticated
+  2026-11-02). Known-good config: **A10G GPU** with `WHISPER_BATCH_SIZE=16`
+  (4 full lectures transcribed in 71–83 min each, ~180 wpm). **Avoid L4 —
+  it hung.** Two caveats: the `whisper-model-cache` volume only exists in
+  the `elviskahoro` workspace, so marcella's first run re-downloads
+  `large-v3`; and billing on marcella is unconfirmed — confirm before
+  spend. The GPU/batch env vars currently live **uncommitted** on the
+  `epic-sermons` branch `perf/whisper-batching`; commit or port them before
+  the full run.
+- **Re-run the Fireworks parity gate before the full load**
+  (`uv run python -m scripts.parity_gate`, see `docs/parity-gate.md`) if
+  switching to hosted embeddings; it needs `FIREWORKS_API_KEY` in
+  `.env.local`. The sample passed (mean cosine ~0.99998); Fireworks embeds
+  input verbatim, so keep the client-side prefixes. No Fireworks/Modal
+  spend without user approval.
+- **Loader is already idempotent** (`merge_insert` on chunk id), so the
+  full load is the same `scripts/load_sample.py` pointed at the full
+  transcript directory, into a full-corpus table.
+- **Add an IVF_PQ vector index** at full-corpus scale — the sample's
+  exact sequential scan stops being acceptable well before 595 lectures'
+  worth of chunks (`docs/lectures-sample.md`).
+- **Re-run the retrieval check on the full corpus**, including the three
+  deferred queries (B+ tree vs skip list, Raft leader election, columnar
+  storage/vectorized execution) — `docs/retrieval-check.md`.
+- **New-video ingest**: when a new lecture is published, transcribe it on
+  Modal, drop the JSON next to the others, and re-run the loader — the
+  upsert makes re-runs safe and only new chunks are embedded.

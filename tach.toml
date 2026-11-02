@@ -188,7 +188,7 @@ exclusive = true
 [[interfaces]]
 from = ['lecture_search\.embed']
 expose = ["LectureChunk", "create_lectures_table", "embed_documents", "embed_query"]
-visibility = ["scripts.load_sample", "scripts.verify_hybrid"]
+visibility = ["scripts.load_sample", "scripts.verify_hybrid", "scripts.retrieval_check"]
 exclusive = true
 
 # Smoke tests are layer-peer entrypoints. They can reach
@@ -229,7 +229,7 @@ path = "lecture_search.embed"
 layer = "entrypoints"
 depends_on = []
 depends_on_external = ["lancedb"]
-visibility = ["scripts.load_sample", "scripts.verify_hybrid"]
+visibility = ["scripts.load_sample", "scripts.verify_hybrid", "scripts.retrieval_check"]
 
 # Loads chunked sample transcripts into LanceDB Cloud lectures_sample.
 [[modules]]
@@ -242,6 +242,15 @@ visibility = []
 # Read-only FTS/hybrid verification against the real lectures_sample table.
 [[modules]]
 path = "scripts.verify_hybrid"
+layer = "entrypoints"
+depends_on = ["lecture_search.embed"]
+depends_on_external = ["lancedb"]
+visibility = []
+
+# Read-only retrieval smoke check (vector-only vs hybrid top-10) against
+# the real lectures_sample table; writes data/retrieval_check.json.
+[[modules]]
+path = "scripts.retrieval_check"
 layer = "entrypoints"
 depends_on = ["lecture_search.embed"]
 depends_on_external = ["lancedb"]
