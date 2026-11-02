@@ -3,7 +3,7 @@
   "checkpoint_id": "01M6ETYVPYMMZJ75RYM1E0ZSPQ",
   "strategy": "manual-commit",
   "branch": "feat/lancedb-cloud-probe",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "pyproject.toml",
     "scripts/lancedb_probe.py",
@@ -16,22 +16,29 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 64,
-    "cache_creation_tokens": 3292,
-    "cache_read_tokens": 482766,
-    "output_tokens": 2505,
-    "api_call_count": 8
+    "input_tokens": 465,
+    "cache_creation_tokens": 51236,
+    "cache_read_tokens": 3331189,
+    "output_tokens": 17920,
+    "api_call_count": 58
   },
   "redaction": {
-    "replacements": 0,
+    "replacements": 30,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
-      "credential_value": 0,
+      "credential_value": 30,
       "credentialed_uri": 0,
       "entropy": 0,
       "key_context": 0,
