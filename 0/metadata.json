@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6EZBRBFF739N64CC45M54ZC",
+  "session_id": "01a19deb-ec09-764a-b6b8-add3534aeabc",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-02T20:31:39.716714Z",
+  "branch": "fireworks-nomic-parity-gate",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "notebooks/search.py"
+  ],
+  "agent": "Pi",
+  "model": "accounts/fireworks/models/kimi-k3",
+  "turn_id": "883668c95893",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 52444,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1744896,
+    "output_tokens": 18312,
+    "api_call_count": 50
+  },
+  "redaction": {
+    "replacements": 6,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 6,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
