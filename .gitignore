@@ -109,3 +109,5 @@ uv.lock
 .beads/identity.toml
 .env.local
 .opencode/skills/
+
+.gc/

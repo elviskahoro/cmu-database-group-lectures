@@ -191,3 +191,10 @@ layer = "entrypoints"
 depends_on = ["web.pages.index", "web.components.status_card", "web.web"]
 depends_on_external = ["reflex"]
 visibility = []
+
+[[modules]]
+path = "lecture_search"
+layer = "entrypoints"
+depends_on = []
+depends_on_external = []
+visibility = []
