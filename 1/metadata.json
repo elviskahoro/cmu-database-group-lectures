@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6F4AD6PXF3D7GTJXDSN02KG",
+  "session_id": "8ef563f2-782b-4510-943a-213e3fadf3e8",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-02T21:58:19.558161Z",
+  "branch": "fix/notebook-mrr-reranker",
+  "checkpoints_count": 14,
+  "save_step_count": 2,
+  "files_touched": [],
+  "agent": "Claude Code",
+  "model": "claude-sonnet-5-5",
+  "turn_id": "6a2874b1dc0c",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 154,
+    "cache_creation_tokens": 80370,
+    "cache_read_tokens": 9206210,
+    "output_tokens": 35609,
+    "api_call_count": 61
+  },
+  "redaction": {
+    "replacements": 20,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 20,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 24
+  }
+}

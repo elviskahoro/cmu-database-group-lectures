@@ -1,0 +1,141 @@
+send a broadcast to the agents so that they know we added lancedb skills files
+
+---
+
+what are they working on?
+
+---
+
+what models are they using btw?
+
+---
+
+what is the mayor using?
+
+---
+
+update me on what's been done so far!
+
+---
+
+let's keep going!
+
+---
+
+update me on the stsate now!
+
+---
+
+anything you need from me?
+make sure to pull the marimo skills from github as well
+
+---
+
+i added fireworks api key
+come up with your own realistic queries.
+we're droping devx profile create a linear ticket to do this in the project
+we're going to add a new modal profile help me do that after
+we can skip PRs and merge them directly!
+
+---
+
+i authed modal with "marcella"
+let's proceed with dropping devx and closign the issue of adding the new profile
+
+---
+
+i added:
+molab-example.py
+
+which has a notebok that had lancedb. use it as inspiration. also change it so that we use marcella as the modal profile
+
+---
+
+sounds good!
+
+---
+
+yes let's do small transcription test
+
+---
+
+<task-notification>
+<task-id>b743uzoft</task-id>
+<tool-use-id>toolu_01MpR2eGsXmpuHfjsnAxtD8m</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/b743uzoft.output</output-file>
+<status>completed</status>
+<summary>Background command "Run Whisper transcription on 4 lectures via Modal marcella" completed (exit code 0)</summary>
+</task-notification>
+
+---
+
+do we want to use A10G, is this the right GPU?
+
+---
+
+i'm fine with yu experimenting
+
+---
+
+use the smallest lecture not 72 minutes wtf
+
+---
+
+yeah this seems way too long
+
+---
+
+<task-notification>
+<task-id>bylwo8eqx</task-id>
+<tool-use-id>toolu_01BXE2BnH4mKKpv3D2rdLLgq</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/bylwo8eqx.output</output-file>
+<status>completed</status>
+<summary>Background command "Benchmark three configs on shortest lecture" completed (exit code 1: No matches found)</summary>
+</task-notification>
+
+---
+
+yes lets' do it!
+
+---
+
+approved
+
+---
+
+<task-notification>
+<task-id>bqs4qewlk</task-id>
+<tool-use-id>toolu_01BAQ2q2gptT4ehvfS6MTz8h</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/bqs4qewlk.output</output-file>
+<status>completed</status>
+<summary>Background command "Transcribe 4 lectures on A10G batch 16" completed (exit code 1: No matches found)</summary>
+</task-notification>
+
+---
+
+update me! how did it go?
+
+---
+
+update me
+
+---
+
+let's proceed with it!
+
+---
+
+do ths first:
+
+
+<pasted_content id="0d6c">
+
+  Smaller loose ends I can handle without waiting on you:
+  1. Switch the notebook to MRRReranker.
+  2. Commit the batching change in epic-sermons.
+  3. Update the Linear tickets (AI-702 through AI-706) to match reality.
+  4. Triage the untracked files.
+</pasted_content id="0d6c">
+
+
+and then do the run
