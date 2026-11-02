@@ -1,0 +1,52 @@
+is gas city instsalled here?
+
+---
+
+let's update it!
+
+---
+
+can we run gas city on this cmu repo?
+
+---
+
+do it!
+
+---
+
+let's start working on this:
+https://github.com/elviskahoro/epic-sermons/issues/3
+
+---
+
+i thikn we transcribed a few of them
+
+---
+
+let's copy those two issues into linear and then close them from epic sermons!
+
+---
+
+<task-notification>
+<task-id>buit5bg2e</task-id>
+<tool-use-id>toolu_01Em1r8sWj8AGaXt3kiuszRM</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/59c5644a-7d89-49c0-a7f3-e6dbe618fcec/tasks/buit5bg2e.output</output-file>
+<status>completed</status>
+<summary>Background command "cd /Users/elvis/Documents/hq/repos/epic-sermons &amp;&amp; MODAL_PROFILE=elviskahoro modal volume list 2&gt;&amp;1 | head; npx wrangler r2 object get --help &gt;/dev/null 2&gt;&amp;1; find / -name '*transcription.json' -not -path '*/pilot2_*' 2&gt;/dev/null | head" completed (exit code 0)</summary>
+</task-notification>
+
+---
+
+give me a new link authorization link
+
+---
+
+done
+
+---
+
+create all the issues and then close the github ones
+
+---
+
+give me the link to the linear project!
