@@ -5,17 +5,16 @@ from pathlib import Path
 
 import lancedb
 
-from lecture_search import ChunkRecord, process_sample_transcripts
-from lecture_search.embed import create_lectures_table, embed_documents
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))  # lecture_search is not an installed package
 
-PILOT_TRANSCRIPTS = Path(
-    "/Users/elvis/Documents/hq/repos/epic-sermons"
-    "/out/pilot2_noprompt/transcription"
-)
+from lecture_search import ChunkRecord, process_sample_transcripts  # noqa: E402
+from lecture_search.embed import create_lectures_table, embed_documents  # noqa: E402
+
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
 LANCEDB_REGION = "us-east-1"
 TABLE_NAME = "lectures_sample"
-ROOT_DIR = Path(__file__).resolve().parent.parent
+SAMPLE_DIR = ROOT_DIR / "data" / "sample"
 EMBED_BATCH_SIZE = 16
 
 
@@ -59,14 +58,14 @@ def embed_chunks(chunks: list[ChunkRecord]) -> list[dict]:
 
 
 def main() -> int:
-    if not PILOT_TRANSCRIPTS.exists():
-        print(f"Sample transcripts not found at {PILOT_TRANSCRIPTS}", file=sys.stderr)
+    if not SAMPLE_DIR.exists():
+        print(f"Sample transcripts not found at {SAMPLE_DIR}", file=sys.stderr)
         return 1
 
     api_key = load_api_key()
 
     print("Chunking sample transcripts...")
-    per_video = process_sample_transcripts(PILOT_TRANSCRIPTS)
+    per_video = process_sample_transcripts(SAMPLE_DIR)
     chunks = [chunk for video_chunks in per_video.values() for chunk in video_chunks]
     if not chunks:
         print("No chunks produced from sample transcripts", file=sys.stderr)
@@ -79,9 +78,19 @@ def main() -> int:
     print("Connecting to LanceDB Cloud...")
     db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=api_key)
 
-    print(f"Creating table {TABLE_NAME}...")
-    table = create_lectures_table(db, TABLE_NAME)
-    table.add(rows)
+    if TABLE_NAME in db.table_names():
+        print(f"Upserting into existing table {TABLE_NAME} (merge_insert on id)...")
+        table = db.open_table(TABLE_NAME)
+        (
+            table.merge_insert("id")
+            .when_matched_update_all()
+            .when_not_matched_insert_all()
+            .execute(rows)
+        )
+    else:
+        print(f"Creating table {TABLE_NAME}...")
+        table = create_lectures_table(db, TABLE_NAME)
+        table.add(rows)
 
     print("Creating FTS index on text...")
     table.create_fts_index("text", replace=True)

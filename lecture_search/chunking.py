@@ -96,26 +96,27 @@ def load_transcript(transcript_path: Path) -> dict[str, Any]:
         return json.load(f)
 
 
+def load_titles(sample_dir: Path) -> dict[str, dict[str, Any]]:
+    """Load video_id -> {date, title, duration} metadata from titles.json."""
+    titles_path = sample_dir / "titles.json"
+    if not titles_path.exists():
+        return {}
+    return json.loads(titles_path.read_text())
+
+
 def process_sample_transcripts(
     sample_dir: Path,
 ) -> dict[str, list[ChunkRecord]]:
     results = {}
+    titles = load_titles(sample_dir)
 
-    for transcript_file in sorted(sample_dir.glob("*.json")):
+    for transcript_file in sorted(sample_dir.glob("*·transcription.json")):
         filename = transcript_file.name
         date, video_id, _ = filename.split("·", 2)
 
         data = load_transcript(transcript_file)
 
-        title = ""
-        asset_path = (
-            Path("/Users/elvis/Documents/hq/repos/epic-sermons/out/CMUDatabaseGroup/assets")
-            / f"{date}·{video_id}.kson"
-        )
-        if asset_path.exists():
-            with open(asset_path, "r") as f:
-                asset_data = json.load(f)
-                title = asset_data.get("title", "")
+        title = titles.get(video_id, {}).get("title", "")
 
         segments = [
             Segment(start=seg["start"], end=seg["end"], text=seg["text"])
@@ -235,6 +236,34 @@ def test_deep_link():
         assert "?t=" in chunk.deep_link
 
 
+def test_process_sample_transcripts_reads_titles_json(tmp_path):
+    transcript = {
+        "segments": [
+            {"start": float(i * 10), "end": float((i + 1) * 10), "text": f"segment_{i}"}
+            for i in range(10)
+        ]
+    }
+    (tmp_path / "2026-01-01·vid123·transcription.json").write_text(json.dumps(transcript))
+    (tmp_path / "titles.json").write_text(
+        json.dumps({"vid123": {"date": "2026-01-01", "title": "My Lecture", "duration": 100}})
+    )
+
+    results = process_sample_transcripts(tmp_path)
+
+    assert set(results) == {"vid123"}, "titles.json must not be treated as a transcript"
+    assert all(chunk.title == "My Lecture" for chunk in results["vid123"])
+
+
+def test_process_sample_transcripts_missing_titles_json(tmp_path):
+    transcript = {"segments": [{"start": 0.0, "end": 10.0, "text": "only"}]}
+    (tmp_path / "2026-01-01·vid999·transcription.json").write_text(json.dumps(transcript))
+
+    results = process_sample_transcripts(tmp_path)
+
+    assert set(results) == {"vid999"}
+    assert all(chunk.title == "" for chunk in results["vid999"])
+
+
 if __name__ == "__main__":
     test_window_bounds()
     test_overlap()
@@ -244,6 +273,7 @@ if __name__ == "__main__":
 
     sample_dir = Path(__file__).parent.parent / "data" / "sample"
     results = process_sample_transcripts(sample_dir)
+    assert "titles" not in results, "titles.json must not be parsed as a transcript"
     for video_id, chunks in results.items():
         print(f"\n{video_id}: {len(chunks)} chunks")
         for chunk in chunks[:2]:
