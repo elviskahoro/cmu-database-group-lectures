@@ -3,7 +3,7 @@
   "checkpoint_id": "01M6ETS04KV8WRR99WFBYCBV88",
   "strategy": "manual-commit",
   "branch": "feat/lancedb-cloud-probe",
-  "checkpoints_count": 13,
+  "checkpoints_count": 15,
   "files_touched": [
     ".gitignore",
     "lecture_search/__init__.py",
@@ -38,14 +38,21 @@
       "compact_transcript": "/3/transcript.jsonl",
       "content_hash": "/3/content_hash.txt",
       "prompt": "/3/prompt.txt"
+    },
+    {
+      "metadata": "/4/metadata.json",
+      "transcript": "/4/full.jsonl",
+      "compact_transcript": "/4/transcript.jsonl",
+      "content_hash": "/4/content_hash.txt",
+      "prompt": "/4/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 303,
-    "cache_creation_tokens": 267215,
-    "cache_read_tokens": 3540917,
-    "output_tokens": 33888,
-    "api_call_count": 68
+    "input_tokens": 313,
+    "cache_creation_tokens": 288485,
+    "cache_read_tokens": 3692538,
+    "output_tokens": 34632,
+    "api_call_count": 72
   },
   "redaction": {
     "replacements": 23,
