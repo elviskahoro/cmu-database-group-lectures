@@ -1,0 +1,21 @@
+send a broadcast to the agents so that they know we added lancedb skills files
+
+---
+
+what are they working on?
+
+---
+
+what models are they using btw?
+
+---
+
+what is the mayor using?
+
+---
+
+update me on what's been done so far!
+
+---
+
+let's keep going!
