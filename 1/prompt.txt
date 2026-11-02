@@ -1,0 +1,15 @@
+Prefix: Fireworks doesn't add the search_document:  prefix. Our code already adds it on the client side,
+
+tell me more about this
+
+---
+
+why do we do this?
+
+---
+
+oh that's cool!
+
+---
+
+yeah add a small test
