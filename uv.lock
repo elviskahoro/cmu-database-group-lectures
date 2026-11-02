@@ -2230,6 +2230,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "einops" },
+    { name = "httpx" },
     { name = "hypothesis" },
     { name = "lancedb" },
     { name = "nomic" },
@@ -2247,6 +2248,7 @@ requires-dist = [{ name = "reflex", specifier = "==0.10.0" }]
 [package.metadata.requires-dev]
 dev = [
     { name = "einops", specifier = ">=0.8" },
+    { name = "httpx", specifier = ">=0.28" },
     { name = "hypothesis", specifier = ">=6.140.0" },
     { name = "lancedb", specifier = ">=0.1.0" },
     { name = "nomic", specifier = ">=1.0.0" },

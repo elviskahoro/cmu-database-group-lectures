@@ -62,7 +62,13 @@ file_dependencies = [
 # (probe / embed / load scripts), so they are excluded here for the same
 # reason rather than promoted to production dependencies.
 [external]
-exclude = ["pytest", "hypothesis", "lancedb", "nomic", "sentence-transformers"]
+# Exclusions match import names literally: sentence-transformers is imported
+# as sentence_transformers, so both spellings are listed.
+# modal, fastapi and huggingface_hub are deploy-only: baked into the Modal
+# image built in lecture_search.search_api, deliberately absent from the dev
+# venv (guarded import), so they are excluded here rather than added to
+# pyproject.
+exclude = ["pytest", "hypothesis", "httpx", "lancedb", "marimo", "nomic", "numpy", "sentence-transformers", "sentence_transformers", "modal", "fastapi", "huggingface_hub"]
 
 # Default-deny new packages instead of folding their imports into a parent module.
 # Single-level globs keep each page's implementation inside its package boundary.
@@ -181,14 +187,16 @@ exclusive = true
 
 [[interfaces]]
 from = ['lecture_search']
-expose = ["ChunkRecord", "Segment", "chunk_transcript", "process_sample_transcripts"]
-visibility = ["scripts.load_sample"]
+expose = ["ChunkRecord", "Segment", "chunk_transcript", "load_titles_all", "process_corpus_transcripts", "process_sample_transcripts"]
+visibility = ["scripts.load_sample", "scripts.load_corpus", "scripts.parity_gate", "tests"]
 exclusive = true
 
 [[interfaces]]
+# DOCUMENT_PREFIX / EMBEDDING_DIMS / QUERY_PREFIX are imported by the prefix
+# guards in tests/ and by scripts.load_corpus (dimension assertion).
 from = ['lecture_search\.embed']
-expose = ["LectureChunk", "create_lectures_table", "embed_documents", "embed_query"]
-visibility = ["scripts.load_sample", "scripts.verify_hybrid", "scripts.retrieval_check"]
+expose = ["DOCUMENT_PREFIX", "EMBEDDING_DIMS", "LectureChunk", "QUERY_PREFIX", "create_lectures_table", "embed_documents", "embed_query"]
+visibility = ["scripts.load_sample", "scripts.verify_hybrid", "scripts.retrieval_check", "scripts.load_corpus", "lecture_search.search_api", "tests"]
 exclusive = true
 
 # Smoke tests are layer-peer entrypoints. They can reach
@@ -203,8 +211,8 @@ exclusive = true
 [[modules]]
 path = "tests"
 layer = "entrypoints"
-depends_on = ["web.pages.index", "web.components.status_card", "web.web"]
-depends_on_external = ["reflex"]
+depends_on = ["web.pages.index", "web.components.status_card", "web.web", "lecture_search", "lecture_search.embed", "lecture_search.fireworks", "lecture_search.search_api"]
+depends_on_external = ["reflex", "httpx"]
 visibility = []
 
 # Standalone probe scripts are independent from the web application.
@@ -220,7 +228,7 @@ path = "lecture_search"
 layer = "entrypoints"
 depends_on = []
 depends_on_external = []
-visibility = ["scripts.load_sample"]
+visibility = ["scripts.load_sample", "scripts.load_corpus", "scripts.parity_gate", "tests"]
 
 # Nomic v1.5 embedder: registry function held at module top, prefixes
 # prepended manually, heavy deps kept out of lecture_search/__init__.py.
@@ -229,7 +237,46 @@ path = "lecture_search.embed"
 layer = "entrypoints"
 depends_on = []
 depends_on_external = ["lancedb"]
-visibility = ["scripts.load_sample", "scripts.verify_hybrid", "scripts.retrieval_check"]
+visibility = ["scripts.load_sample", "scripts.verify_hybrid", "scripts.retrieval_check", "scripts.load_corpus", "lecture_search.search_api", "tests"]
+
+# Fireworks hosted embeddings: batched, retried, disk-cached. Prefixes stay
+# in lecture_search.embed; this module only talks to the API verbatim.
+[[modules]]
+path = "lecture_search.fireworks"
+layer = "entrypoints"
+depends_on = []
+depends_on_external = ["httpx"]
+visibility = ["scripts.load_corpus", "tests"]
+
+# Modal search API (cdgl-bcy): holds the LanceDB key server-side, serves
+# read-only hybrid search. modal/fastapi are image-only deps (see [external]).
+[[modules]]
+path = "lecture_search.search_api"
+layer = "entrypoints"
+depends_on = ["lecture_search.embed"]
+depends_on_external = ["lancedb", "modal", "fastapi"]
+visibility = ["tests"]
+
+[[interfaces]]
+from = ['lecture_search\.search_api']
+expose = ["MAX_QUERY_CHARS", "MAX_TOP_K", "MAX_VIDEO_IDS", "RequestValidationError", "SearchParams", "build_where", "embed_query_once", "parse_search_request", "run_hybrid_search", "serialize_row", "summarize_lectures"]
+visibility = ["tests"]
+exclusive = true
+
+[[interfaces]]
+from = ['lecture_search\.fireworks']
+expose = ["COST_PER_MILLION_TOKENS_USD", "EmbeddingCache", "FireworksEmbedder", "cache_key", "load_fireworks_api_key"]
+visibility = ["scripts.load_corpus", "tests"]
+exclusive = true
+
+# Full-corpus loader: Fireworks embeddings -> LanceDB table (default
+# 'lectures'), resumable via the on-disk embedding cache.
+[[modules]]
+path = "scripts.load_corpus"
+layer = "entrypoints"
+depends_on = ["lecture_search", "lecture_search.embed", "lecture_search.fireworks"]
+depends_on_external = ["lancedb"]
+visibility = []
 
 # Loads chunked sample transcripts into LanceDB Cloud lectures_sample.
 [[modules]]
@@ -245,6 +292,15 @@ path = "scripts.verify_hybrid"
 layer = "entrypoints"
 depends_on = ["lecture_search.embed"]
 depends_on_external = ["lancedb"]
+visibility = []
+
+# Fireworks-vs-local embedding parity gate (docs/parity-gate.md). numpy and
+# sentence-transformers are dev-group-only, covered by [external].exclude.
+[[modules]]
+path = "scripts.parity_gate"
+layer = "entrypoints"
+depends_on = ["lecture_search"]
+depends_on_external = ["numpy", "sentence-transformers"]
 visibility = []
 
 # Read-only retrieval smoke check (vector-only vs hybrid top-10) against

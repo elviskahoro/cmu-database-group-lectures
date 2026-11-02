@@ -104,6 +104,53 @@ def load_titles(sample_dir: Path) -> dict[str, dict[str, Any]]:
     return json.loads(titles_path.read_text())
 
 
+def load_titles_all(metadata_path: Path) -> dict[str, dict[str, Any]]:
+    """Load video_id -> {date, title, duration} for the full 595-lecture corpus."""
+    return json.loads(Path(metadata_path).read_text())
+
+
+def process_corpus_transcripts(
+    transcripts_dir: Path,
+    titles: dict[str, dict[str, Any]],
+    limit: int | None = None,
+) -> dict[str, list[ChunkRecord]]:
+    """Chunk a directory of full-corpus transcripts.
+
+    Like process_sample_transcripts, but titles/dates come from the
+    metadata/titles_all.json mapping (passed in) instead of a per-directory
+    titles.json. Filename date is the fallback when a video_id is missing
+    from the metadata. `limit` caps the number of transcripts processed
+    (sorted order) for partial runs.
+    """
+    results: dict[str, list[ChunkRecord]] = {}
+    transcript_files = sorted(transcripts_dir.glob("*·transcription.json"))
+    if limit is not None:
+        transcript_files = transcript_files[:limit]
+
+    for transcript_file in transcript_files:
+        date_from_name, video_id, _ = transcript_file.name.split("·", 2)
+        data = load_transcript(transcript_file)
+
+        meta = titles.get(video_id, {})
+        title = meta.get("title", "")
+        date = meta.get("date", date_from_name)
+
+        segments = [
+            Segment(start=seg["start"], end=seg["end"], text=seg["text"])
+            for seg in data.get("segments", [])
+        ]
+
+        chunks = chunk_transcript(
+            segments=segments,
+            video_id=video_id,
+            date=date,
+            title=title,
+        )
+        results[video_id] = chunks
+
+    return results
+
+
 def process_sample_transcripts(
     sample_dir: Path,
 ) -> dict[str, list[ChunkRecord]]:
@@ -262,6 +309,39 @@ def test_process_sample_transcripts_missing_titles_json(tmp_path):
 
     assert set(results) == {"vid999"}
     assert all(chunk.title == "" for chunk in results["vid999"])
+
+
+def test_process_corpus_transcripts_reads_titles_all(tmp_path):
+    transcript = {
+        "segments": [
+            {"start": float(i * 10), "end": float((i + 1) * 10), "text": f"segment_{i}"}
+            for i in range(10)
+        ]
+    }
+    (tmp_path / "2016-05-16·vid123·transcription.json").write_text(json.dumps(transcript))
+    (tmp_path / "2016-05-17·vid456·transcription.json").write_text(json.dumps(transcript))
+    titles = {"vid123": {"date": "2016-05-16", "title": "Full Corpus Lecture", "duration": 100}}
+
+    results = process_corpus_transcripts(tmp_path, titles)
+
+    assert set(results) == {"vid123", "vid456"}
+    assert all(chunk.title == "Full Corpus Lecture" for chunk in results["vid123"])
+    assert all(chunk.date == "2016-05-16" for chunk in results["vid123"])
+    # Missing from metadata: empty title, filename date as fallback.
+    assert all(chunk.title == "" for chunk in results["vid456"])
+    assert all(chunk.date == "2016-05-17" for chunk in results["vid456"])
+
+
+def test_process_corpus_transcripts_limit(tmp_path):
+    transcript = {"segments": [{"start": 0.0, "end": 10.0, "text": "only"}]}
+    for i in range(3):
+        (tmp_path / f"2026-01-0{i + 1}·vid{i}·transcription.json").write_text(
+            json.dumps(transcript)
+        )
+
+    results = process_corpus_transcripts(tmp_path, {}, limit=2)
+
+    assert set(results) == {"vid0", "vid1"}
 
 
 if __name__ == "__main__":

@@ -16,6 +16,8 @@ dependencies = ["reflex==0.10.0"]
 # einops is required by Nomic v1.5's trust_remote_code modeling file.
 dev = [
   "einops>=0.8",
+  # Fireworks embeddings client (lecture_search.fireworks) for load_corpus.py.
+  "httpx>=0.28",
   "hypothesis>=6.140.0",
   "lancedb>=0.1.0",
   "nomic>=1.0.0",
