@@ -1,0 +1,30 @@
+send a broadcast to the agents so that they know we added lancedb skills files
+
+---
+
+what are they working on?
+
+---
+
+what models are they using btw?
+
+---
+
+what is the mayor using?
+
+---
+
+update me on what's been done so far!
+
+---
+
+let's keep going!
+
+---
+
+update me on the stsate now!
+
+---
+
+anything you need from me?
+make sure to pull the marimo skills from github as well

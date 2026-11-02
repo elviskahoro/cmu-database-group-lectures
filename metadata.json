@@ -3,7 +3,7 @@
   "checkpoint_id": "01M6EXQ02VM93T2F5VQ0H0JDHD",
   "strategy": "manual-commit",
   "branch": "feat/sample-embed-load",
-  "checkpoints_count": 1,
+  "checkpoints_count": 3,
   "files_touched": [
     "docs/lancedb-findings.md",
     "scripts/verify_hybrid.py",
@@ -16,22 +16,29 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 73706,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 4021737,
-    "output_tokens": 25274,
-    "api_call_count": 96
+    "input_tokens": 73726,
+    "cache_creation_tokens": 7341,
+    "cache_read_tokens": 4792383,
+    "output_tokens": 28799,
+    "api_call_count": 104
   },
   "redaction": {
-    "replacements": 12,
+    "replacements": 17,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
-      "credential_value": 12,
+      "credential_value": 17,
       "credentialed_uri": 0,
       "entropy": 0,
       "key_context": 0,
