@@ -280,3 +280,25 @@ Run these in order from a fresh clone. Each must succeed before the next.
 12. `curl -f https://<domain>/ping` → prints `pong`
 
 If any step fails, stop and report the failing step number, the command, and the full error output. Do not attempt destructive recovery (do not run `railway down`, `git reset --hard`, or delete the Railway project) without explicit user confirmation.
+
+---
+
+## Lecture search notebook (marimo)
+
+[![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/elviskahoro/cmu-database-group-lectures/blob/main/notebooks/search.py)
+
+`notebooks/search.py` is a self-contained (PEP 723) marimo notebook for hybrid
+search over the `lectures_sample` LanceDB Cloud table (CMU Database Group
+lecture transcripts, Nomic v1.5 embeddings). It provides a query form with a
+top-k slider and a hybrid vector↔full-text weight slider
+(`LinearCombinationReranker`), and renders results with title/date, a
+timestamped YouTube deep link, a text snippet, and the relevance score.
+
+Requires `LANCEDB_API_KEY` (environment or `.env.local`); `LANCEDB_URI` and
+`LANCEDB_REGION` default to the project's cloud table. Never commit secrets.
+
+```bash
+uv run marimo run notebooks/search.py   # interactive
+uv run notebooks/search.py              # headless: runs sample queries
+uvx marimo check notebooks/search.py    # lint
+```
