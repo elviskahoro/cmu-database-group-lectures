@@ -1,0 +1,21 @@
+I want to use Gas City to make as much progress on this project as possible
+https://linear.app/me319/project/cmu-database-group-search-over-lecture-transcripts-d54d62f4cb38
+
+
+<pasted_content id="0d6c">
+import lancedb
+
+db = lancedb.connect(
+  uri="db://cmu-database-group-eqdwgi",
+  api_key="sk_...",
+  region="us-east-1"
+)
+</pasted_content id="0d6c">
+
+
+we are loading a subset of lectures (the transcription) into lancedb so we can build a RAG App in Marimo Notebook. I want use to use lancedb Cloud I have an api key in .env.local. We need to use a small sample to build out the flow end to end and then we'll eventually go back through once evrything works and pull in all the other new videos and their transriptions!
+
+---
+
+copy over this skill:
+/Users/elvis/Documents/ai/skills/sdk-lancedb
