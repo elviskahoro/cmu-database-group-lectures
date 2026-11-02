@@ -111,3 +111,8 @@ uv.lock
 .opencode/skills/
 
 .gc/
+
+# Gas City / marimo generated
+.pi/extensions/gc-hooks.js
+/repos/
+notebooks/__marimo__/
