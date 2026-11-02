@@ -1,0 +1,1 @@
+send a broadcast to the agents so that they know we added lancedb skills files
