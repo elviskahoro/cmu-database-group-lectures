@@ -3,7 +3,7 @@
   "checkpoint_id": "01M6FB6YABWSSXW7WFZ5FS547Q",
   "strategy": "manual-commit",
   "branch": "feat/load-corpus",
-  "checkpoints_count": 2,
+  "checkpoints_count": 8,
   "files_touched": [
     "lecture_search/__init__.py",
     "lecture_search/chunking.py",
@@ -11,7 +11,8 @@
     "pyproject.toml",
     "scripts/load_corpus.py",
     "tach.toml",
-    "tests/test_load_corpus.py"
+    "tests/test_load_corpus.py",
+    "uv.lock"
   ],
   "sessions": [
     {
@@ -27,24 +28,31 @@
       "compact_transcript": "/1/transcript.jsonl",
       "content_hash": "/1/content_hash.txt",
       "prompt": "/1/prompt.txt"
+    },
+    {
+      "metadata": "/2/metadata.json",
+      "transcript": "/2/full.jsonl",
+      "compact_transcript": "/2/transcript.jsonl",
+      "content_hash": "/2/content_hash.txt",
+      "prompt": "/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 117955,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 5177766,
-    "output_tokens": 57283,
-    "api_call_count": 126
+    "input_tokens": 117993,
+    "cache_creation_tokens": 18143,
+    "cache_read_tokens": 8680435,
+    "output_tokens": 72851,
+    "api_call_count": 140
   },
   "redaction": {
-    "replacements": 49,
+    "replacements": 118,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
-      "credential_value": 48,
+      "credential_value": 111,
       "credentialed_uri": 0,
-      "entropy": 1,
+      "entropy": 7,
       "key_context": 0,
       "provider_token": 0,
       "shell_stdin": 0
