@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6FD04HVMB15KCVFSV7AKR60",
+  "session_id": "01a19ead-5ecd-75a9-b530-cad1b35320e6",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-03T00:29:59.074335Z",
+  "branch": "feat/search-api",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "lecture_search/search_api.py",
+    "tests/test_search_api.py"
+  ],
+  "agent": "Pi",
+  "model": "accounts/fireworks/models/kimi-k3",
+  "turn_id": "230ddf482936",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 139151,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4278275,
+    "output_tokens": 36778,
+    "api_call_count": 66
+  },
+  "redaction": {
+    "replacements": 13,
+    "layers": {
+      "betterleaks": 1,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 10,
+      "credentialed_uri": 0,
+      "entropy": 5,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
