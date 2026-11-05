@@ -172,6 +172,16 @@ def upsert_rows(
     else:
         table = db.create_table(table_name, schema=LectureChunk)
 
+    # LanceDB Cloud rejects merge_insert when >10k rows are un-indexed, so a
+    # fresh/empty table is bulk-loaded with add(); merge_insert is only for
+    # re-runs against an already-populated table.
+    if table.count_rows() == 0:
+        for start in range(0, len(rows), batch_size):
+            table.add(rows[start : start + batch_size])
+            print(f"Added {min(start + batch_size, len(rows))}/{len(rows)} rows")
+        table.create_scalar_index("id", replace=True)
+        return table
+
     for start in range(0, len(rows), batch_size):
         batch = rows[start : start + batch_size]
         (
