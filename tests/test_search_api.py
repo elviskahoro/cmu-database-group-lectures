@@ -1,28 +1,31 @@
 """Guards for the Modal search API's pure logic (lecture_search/search_api.py).
 
 The endpoint is public and unauthenticated, so the tests that matter most
-are the rejection cases: oversized or wrongly typed inputs, SQL-injection
-shaped video IDs, and proof that nothing user-controlled is ever
-interpolated into a WHERE clause, and no vectors/keys leave in a response.
-Runs fully offline with fake table/embedder doubles — no Modal, no network.
+are the rejection cases: oversized or wrongly typed inputs, malformed query
+vectors (wrong length, NaN/inf, non-numbers), oversized request bodies,
+SQL-injection shaped video IDs, and proof that nothing user-controlled is
+ever interpolated into a WHERE clause, and no vectors/keys leave in a
+response. Runs fully offline with fake table doubles — no Modal, no network.
 """
 
 from __future__ import annotations
 
+import json
 from datetime import date
 
 import pytest
 from lancedb.rerankers import MRRReranker
 
-from lecture_search.embed import EMBEDDING_DIMS, QUERY_PREFIX
 from lecture_search.search_api import (
+    MAX_BODY_BYTES,
     MAX_QUERY_CHARS,
     MAX_TOP_K,
     MAX_VIDEO_IDS,
+    VECTOR_DIMS,
     RequestValidationError,
     SearchParams,
     build_where,
-    embed_query_once,
+    check_body_size,
     parse_search_request,
     run_hybrid_search,
     serialize_row,
@@ -30,13 +33,17 @@ from lecture_search.search_api import (
 )
 
 VALID_VIDEO_ID = "QnGBxn_XP5U"
-WRONG_DIMS = 8
 CUSTOM_TOP_K = 7
+
+
+def _vector() -> list[float]:
+    return [0.0] * VECTOR_DIMS
 
 
 def _params(**overrides: object) -> SearchParams:
     base: dict[str, object] = {
         "query": "what is a B-tree",
+        "vector": tuple(_vector()),
         "top_k": 5,
         "fts_weight": 0.5,
         "date_from": None,
@@ -51,9 +58,11 @@ def _params(**overrides: object) -> SearchParams:
 
 
 def test_valid_payload_parses_with_defaults() -> None:
-    params = parse_search_request({"query": "mvcc"})
+    params = parse_search_request({"query": "mvcc", "vector": _vector()})
 
     assert params.query == "mvcc"
+    assert len(params.vector) == VECTOR_DIMS
+    assert all(isinstance(component, float) for component in params.vector)
     assert 1 <= params.top_k <= MAX_TOP_K
     assert 0.0 <= params.fts_weight <= 1.0
     assert params.date_from is None
@@ -65,6 +74,7 @@ def test_valid_payload_with_all_filters() -> None:
     params = parse_search_request(
         {
             "query": "write-ahead log",
+            "vector": _vector(),
             "top_k": 20,
             "fts_weight": 0.8,
             "date_from": "2024-01-01",
@@ -76,6 +86,16 @@ def test_valid_payload_with_all_filters() -> None:
     assert params.date_from == date(2024, 1, 1)
     assert params.date_to == date(2024, 12, 31)
     assert params.video_ids == (VALID_VIDEO_ID,)
+
+
+def test_vector_int_components_coerced_to_float() -> None:
+    vector = [0] * VECTOR_DIMS
+    vector[0] = 1
+
+    params = parse_search_request({"query": "q", "vector": vector})
+
+    assert params.vector[0] == 1.0
+    assert isinstance(params.vector[0], float)
 
 
 @pytest.mark.parametrize(
@@ -115,16 +135,89 @@ def test_valid_payload_with_all_filters() -> None:
     ids=repr,
 )
 def test_invalid_payloads_rejected(payload: object) -> None:
+    # All of these are missing a valid vector too, but each must be rejected
+    # regardless of which rule fires first.
     with pytest.raises(RequestValidationError):
         parse_search_request(payload)
+
+
+# --- query vector validation (client-side embedding design) --------------
+
+
+@pytest.mark.parametrize(
+    "vector",
+    [
+        None,
+        "not-a-list",
+        _vector()[: VECTOR_DIMS - 1],  # too short
+        [*_vector(), 0.0],  # too long
+        [],  # empty
+        [float("nan")] * VECTOR_DIMS,
+        [float("inf")] * VECTOR_DIMS,
+        [float("-inf")] * VECTOR_DIMS,
+        ["0.0"] * VECTOR_DIMS,  # vector of strings
+        [True] * VECTOR_DIMS,  # bools are ints in Python; still rejected
+        [None] * VECTOR_DIMS,
+        [[0.0]] * VECTOR_DIMS,  # nested lists
+    ],
+    ids=repr,
+)
+def test_invalid_vectors_rejected(vector: object) -> None:
+    with pytest.raises(RequestValidationError):
+        parse_search_request({"query": "q", "vector": vector})
+
+
+def test_vector_wrong_length_message_mentions_dims() -> None:
+    with pytest.raises(RequestValidationError) as excinfo:
+        parse_search_request({"query": "q", "vector": [0.0] * 8})
+
+    assert str(VECTOR_DIMS) in str(excinfo.value)
+
+
+def test_vector_nan_message_mentions_finite() -> None:
+    vector = _vector()
+    vector[100] = float("nan")
+
+    with pytest.raises(RequestValidationError, match="finite"):
+        parse_search_request({"query": "q", "vector": vector})
 
 
 def test_validation_messages_do_not_echo_input() -> None:
     malicious = "'; DROP TABLE lectures; --"
     with pytest.raises(RequestValidationError) as excinfo:
-        parse_search_request({"query": "q", "video_ids": [malicious]})
+        parse_search_request(
+            {"query": "q", "vector": _vector(), "video_ids": [malicious]},
+        )
 
     assert malicious not in str(excinfo.value)
+
+
+# --- request body size cap ----------------------------------------------
+
+
+def test_check_body_size_accepts_legitimate_payload() -> None:
+    body = json.dumps({"query": "q", "vector": _vector()}).encode()
+
+    assert len(body) <= MAX_BODY_BYTES
+    check_body_size(body)  # must not raise
+
+
+def test_check_body_size_accepts_boundary() -> None:
+    check_body_size(b"x" * MAX_BODY_BYTES)  # exactly at the cap is fine
+
+
+def test_check_body_size_rejects_oversized_body() -> None:
+    with pytest.raises(RequestValidationError, match="at most"):
+        check_body_size(b"x" * (MAX_BODY_BYTES + 1))
+
+
+def test_check_body_size_rejects_vector_padded_payload() -> None:
+    payload = {"query": "q", "vector": [0.0] * (VECTOR_DIMS * 10)}
+    body = json.dumps(payload).encode()
+
+    assert len(body) > MAX_BODY_BYTES
+    with pytest.raises(RequestValidationError):
+        check_body_size(body)
 
 
 # --- WHERE clause construction ------------------------------------------
@@ -147,38 +240,6 @@ def test_build_where_combines_dates_and_video_ids() -> None:
     )
 
 
-# --- query embedding ----------------------------------------------------
-
-
-class _RecordingEmbedder:
-    """Records inputs; returns fixed-dim zero vectors."""
-
-    def __init__(self) -> None:
-        self.sent: list[str] = []
-
-    def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-        self.sent.extend(texts)
-        return [[0.0] * EMBEDDING_DIMS for _ in texts]
-
-
-def test_query_prefix_applied_exactly_once() -> None:
-    embedder = _RecordingEmbedder()
-    vector = embed_query_once(embedder, "what is a b-tree")
-
-    assert embedder.sent == [QUERY_PREFIX + "what is a b-tree"]
-    assert embedder.sent[0].count(QUERY_PREFIX) == 1
-    assert len(vector) == EMBEDDING_DIMS
-
-
-def test_embedding_dimension_mismatch_raises() -> None:
-    class _WrongDims:
-        def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-            return [[0.0] * WRONG_DIMS for _ in texts]
-
-    with pytest.raises(RuntimeError, match="dimension"):
-        embed_query_once(_WrongDims(), "q")
-
-
 # --- hybrid search plumbing ---------------------------------------------
 
 
@@ -193,7 +254,7 @@ def _chunk_row() -> dict[str, object]:
         "end_seconds": 48.5,
         "text": "dbt builds tables in the warehouse",
         "deep_link": "https://youtu.be/QnGBxn_XP5U?t=12",
-        "vector": [0.0] * EMBEDDING_DIMS,
+        "vector": [0.0] * VECTOR_DIMS,
         "_relevance_score": 0.42,
     }
 
@@ -248,20 +309,22 @@ class _FakeTable:
 def test_run_hybrid_search_wires_vector_text_rerank_limit_where() -> None:
     builder = _FakeBuilder([_chunk_row()])
     table = _FakeTable(builder)
-    embedder = _RecordingEmbedder()
+    vector = _vector()
+    vector[0] = 0.25
     params = _params(
         query="warehouse transformations",
+        vector=tuple(vector),
         top_k=CUSTOM_TOP_K,
         fts_weight=0.25,
         video_ids=(VALID_VIDEO_ID,),
     )
 
-    results = run_hybrid_search(table, embedder, params)
+    results = run_hybrid_search(table, params)
 
     assert table.query_type == "hybrid"
-    assert embedder.sent == [QUERY_PREFIX + "warehouse transformations"]
-    assert builder.vector_value is not None
-    assert len(builder.vector_value) == EMBEDDING_DIMS
+    # The client-supplied vector is passed through verbatim (as a list).
+    assert builder.vector_value == vector
+    assert len(builder.vector_value or []) == VECTOR_DIMS
     assert builder.text_value == "warehouse transformations"
     assert isinstance(builder.reranker, MRRReranker)
     assert builder.reranker.weight_vector == pytest.approx(0.75)
@@ -273,7 +336,7 @@ def test_run_hybrid_search_wires_vector_text_rerank_limit_where() -> None:
 
 def test_run_hybrid_search_skips_where_without_filters() -> None:
     builder = _FakeBuilder([_chunk_row()])
-    run_hybrid_search(_FakeTable(builder), _RecordingEmbedder(), _params())
+    run_hybrid_search(_FakeTable(builder), _params())
 
     assert builder.where_clause is None
 

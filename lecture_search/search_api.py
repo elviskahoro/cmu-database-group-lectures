@@ -1,14 +1,24 @@
-"""Modal search API for the CMU Database Group lecture corpus (cdgl-bcy).
+"""Modal search API for the CMU Database Group lecture corpus (cdgl-99e).
 
 The public notebook never touches LanceDB: LanceDB Cloud has no read-only
 API keys (docs/lancedb-findings.md), so this Modal app ('cmu-lecture-search')
 holds the key as a Modal secret and answers read-only search requests.
 
+**Embedding is client-side by design:** the caller (the molab notebook)
+embeds the query itself — Nomic v1.5 with the ``search_query: `` prefix, on
+a molab GPU if available else CPU, via ``lecture_search.embed.embed_query``
+— and sends the vector in the request. The Modal image therefore carries
+only ``lancedb`` + ``fastapi``: no sentence-transformers/transformers/
+einops/torch and no baked model weights, so the image is small, cold starts
+are fast, and no CPU time is billed for embedding.
+
 Endpoints (FastAPI, served via ``modal.asgi_app``):
 
 - ``POST /search`` — hybrid search (vector + FTS, MRR reranker, same
   construction as ``notebooks/search.py``). Body:
-  ``{query, top_k, fts_weight, date_from?, date_to?, video_ids?}``.
+  ``{query, vector, top_k, fts_weight, date_from?, date_to?, video_ids?}``
+  where ``query`` is the raw text (used for the FTS half) and ``vector`` is
+  the client-embedded query (exactly 768 finite floats).
   Returns ``{"results": [...]}`` with rows containing only
   ``video_id, title, date, start_seconds, end_seconds, deep_link, text,
   score`` — never vectors, keys, URIs or stack traces.
@@ -18,9 +28,8 @@ Endpoints (FastAPI, served via ``modal.asgi_app``):
 Security posture: the endpoint is public and unauthenticated, so every
 input is validated hard (see ``parse_search_request``) and WHERE clauses are
 only ever built from values that survived that validation
-(``build_where``). Query embedding applies the Nomic ``search_query: ``
-prefix exactly once (``embed_query_once``), matching how the corpus was
-embedded (tests/test_embed_prefix.py).
+(``build_where``). The request body is size-capped (``check_body_size``)
+before it is parsed.
 
 Deploy (never prints secrets)::
 
@@ -32,18 +41,17 @@ LANCEDB_API_KEY, LANCEDB_REGION, LANCEDB_TABLE); see docs/search-api.md.
 
 from __future__ import annotations
 
+import json
+import math
 import os
 import re
 import time
 from dataclasses import dataclass
 from datetime import date
-from typing import Annotated, Protocol
+from typing import Protocol
 
 import lancedb
-from lancedb.embeddings import get_registry
 from lancedb.rerankers import MRRReranker, Reranker
-
-from lecture_search.embed import EMBEDDING_DIMS, QUERY_PREFIX
 
 # Deploy-only dependencies: baked into the Modal image below, intentionally
 # absent from the dev venv, so the pure request/response logic stays
@@ -56,18 +64,26 @@ except ImportError:  # pragma: no cover - local dev has no modal installed
     modal = None  # type: ignore[assignment]
 
 try:
-    from fastapi import Body, FastAPI
+    from fastapi import FastAPI, Request
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
 except ImportError:  # pragma: no cover - only the Modal image has fastapi
-    Body = FastAPI = CORSMiddleware = JSONResponse = None  # type: ignore[assignment]
+    FastAPI = Request = CORSMiddleware = JSONResponse = None  # type: ignore[assignment]
 
-MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 APP_NAME = "cmu-lecture-search"
 DEFAULT_TABLE = "lectures_sample"
 DEFAULT_REGION = "us-east-1"
 
+# Nomic v1.5 embedding dimension. Duplicated from lecture_search.embed on
+# purpose: importing lecture_search.embed here would pull sentence-
+# transformers into the container, defeating the client-side-embedding
+# design (the image must stay lancedb + fastapi only).
+VECTOR_DIMS = 768
+
 # Hard request limits (public, unauthenticated, read-only endpoint).
+# A legitimate body is dominated by the 768-float vector (~15 KB as JSON),
+# so 20 KB caps it with headroom and rejects vector-padded payloads.
+MAX_BODY_BYTES = 20 * 1024
 MAX_QUERY_CHARS = 300
 MAX_TOP_K = 50
 DEFAULT_TOP_K = 10
@@ -124,14 +140,6 @@ class SearchTable(Protocol):
         ...
 
 
-class Embedder(Protocol):
-    """Sentence-transformers registry embedder (prefixes applied by caller)."""
-
-    def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-        """Embed texts verbatim (prefixes are the caller's job)."""
-        ...
-
-
 class RequestValidationError(ValueError):
     """A /search payload failed validation; maps to HTTP 422.
 
@@ -145,11 +153,36 @@ class SearchParams:
     """Validated, safe-to-use /search parameters."""
 
     query: str
+    vector: tuple[float, ...]
     top_k: int
     fts_weight: float
     date_from: date | None
     date_to: date | None
     video_ids: tuple[str, ...]
+
+
+def check_body_size(body: bytes) -> None:
+    """Reject oversized request bodies before parsing (see MAX_BODY_BYTES)."""
+    if len(body) > MAX_BODY_BYTES:
+        msg = f"request body must be at most {MAX_BODY_BYTES} bytes"
+        raise RequestValidationError(msg)
+
+
+def _parse_vector(value: object) -> tuple[float, ...]:
+    if not isinstance(value, list) or len(value) != VECTOR_DIMS:
+        msg = f"vector must be a list of exactly {VECTOR_DIMS} numbers"
+        raise RequestValidationError(msg)
+    components: list[float] = []
+    for component in value:
+        if isinstance(component, bool) or not isinstance(component, (int, float)):
+            msg = "vector components must be numbers"
+            raise RequestValidationError(msg)
+        number = float(component)
+        if not math.isfinite(number):
+            msg = "vector components must be finite (no NaN or infinity)"
+            raise RequestValidationError(msg)
+        components.append(number)
+    return tuple(components)
 
 
 def _parse_optional_date(value: object, field: str) -> date | None:
@@ -207,7 +240,8 @@ def parse_search_request(payload: object) -> SearchParams:
     Every field that can end up in a WHERE clause or a LanceDB call is
     constrained here: dates become ``datetime.date`` (only ever rendered via
     ``isoformat()``) and video_ids must match a strict regex, so nothing a
-    user sends can be interpreted as SQL.
+    user sends can be interpreted as SQL. The query vector is validated for
+    shape and finiteness but is never interpreted as text.
     """
     if not isinstance(payload, dict):
         msg = "request body must be a JSON object"
@@ -229,6 +263,7 @@ def parse_search_request(payload: object) -> SearchParams:
 
     return SearchParams(
         query=query,
+        vector=_parse_vector(payload.get("vector")),
         top_k=_parse_top_k(payload.get("top_k", DEFAULT_TOP_K)),
         fts_weight=_parse_fts_weight(payload.get("fts_weight", DEFAULT_FTS_WEIGHT)),
         date_from=date_from,
@@ -256,16 +291,6 @@ def build_where(params: SearchParams) -> str | None:
     return " AND ".join(clauses) if clauses else None
 
 
-def embed_query_once(embedder: Embedder, query: str) -> list[float]:
-    """Embed a query with the Nomic ``search_query: `` prefix applied once."""
-    vectors = embedder.generate_embeddings([QUERY_PREFIX + query])
-    vector = [float(value) for value in vectors[0]]
-    if len(vector) != EMBEDDING_DIMS:
-        msg = "embedding dimension mismatch"
-        raise RuntimeError(msg)
-    return vector
-
-
 def serialize_row(row: dict[str, object]) -> dict[str, object]:
     """Whitelist one result row: no vector, no internal columns, no keys."""
     score = row.get("_relevance_score")
@@ -283,14 +308,16 @@ def serialize_row(row: dict[str, object]) -> dict[str, object]:
 
 def run_hybrid_search(
     table: SearchTable,
-    embedder: Embedder,
     params: SearchParams,
 ) -> list[dict[str, object]]:
-    """Run the same hybrid search as notebooks/search.py, then serialize."""
-    query_vector = embed_query_once(embedder, params.query)
+    """Run the same hybrid search as notebooks/search.py, then serialize.
+
+    The query vector arrives pre-embedded by the caller; this service never
+    runs an embedding model.
+    """
     builder = (
         table.search(query_type="hybrid")
-        .vector(query_vector)
+        .vector(list(params.vector))
         .text(params.query)
         .rerank(
             MRRReranker(
@@ -327,24 +354,14 @@ def summarize_lectures(rows: list[dict[str, object]]) -> list[dict[str, str]]:
 if modal is not None:
     app = modal.App(APP_NAME)
 
-    # Pins mirror the notebook header in notebooks/search.py (transformers
-    # must stay on 4.x: Nomic v1.5's trust_remote_code modeling file uses
-    # APIs removed in 5.x). fastapi serves the ASGI app. Model weights are
-    # baked in via run_commands (not run_function) so the image build never
-    # has to import this module — add_local_python_source only lands after.
+    # Slim image: no embedding model, no torch, no baked weights — the
+    # caller embeds. lancedb + fastapi only, so builds and cold starts are
+    # fast and cheap.
     image = (
         modal.Image.debian_slim(python_version="3.12")
         .pip_install(
             "lancedb==0.40.0",
-            "sentence-transformers==5.7.0",
-            "transformers==4.57.6",
-            "einops==0.8.2",
             "fastapi>=0.115,<1",
-        )
-        .env({"HF_HOME": "/hf-cache"})
-        .run_commands(
-            "python -c 'from huggingface_hub import snapshot_download; "
-            f'snapshot_download("{MODEL_NAME}")\'',
         )
         .add_local_python_source("lecture_search")
     )
@@ -353,33 +370,23 @@ if modal is not None:
         image=image,
         secrets=[modal.Secret.from_name("lancedb-search")],
         cpu=1.0,
-        memory=2048,
+        memory=1024,
         max_containers=MAX_CONTAINERS,
         scaledown_window=SCALEDOWN_WINDOW_SECONDS,
     )
     @modal.concurrent(max_inputs=MAX_CONCURRENT_INPUTS)
     class SearchService:
-        """CPU container: Nomic embedder + LanceDB connection, loaded once."""
+        """CPU container: LanceDB connection, opened once (no model)."""
 
-        embedder: Embedder
         table: SearchTable
         _lectures_cache: tuple[float, list[dict[str, str]]] | None
 
         @modal.enter()
         def load(self) -> None:
-            """Load the model and connect to LanceDB once per container.
+            """Connect to LanceDB once per container.
 
             Config arrives via the ``lancedb-search`` Modal secret.
             """
-            self.embedder = (
-                get_registry()
-                .get("sentence-transformers")
-                .create(
-                    name=MODEL_NAME,
-                    device="cpu",
-                    trust_remote_code=True,
-                )
-            )
             db = lancedb.connect(
                 os.environ["LANCEDB_URI"],
                 region=os.environ.get("LANCEDB_REGION", DEFAULT_REGION),
@@ -425,19 +432,33 @@ if modal is not None:
             )
 
             @api.post("/search", response_model=None)
-            def search(
-                payload: Annotated[dict[str, object], Body()],
+            async def search(
+                request: Request,
             ) -> JSONResponse | dict[str, list[dict[str, object]]]:
+                # Read the raw body first so the size cap applies before any
+                # JSON parsing work happens.
+                body = await request.body()
+                try:
+                    check_body_size(body)
+                except RequestValidationError as exc:
+                    return JSONResponse(status_code=422, content={"error": str(exc)})
+                try:
+                    payload: object = json.loads(body)
+                except json.JSONDecodeError:
+                    return JSONResponse(
+                        status_code=422,
+                        content={"error": "request body must be valid JSON"},
+                    )
                 try:
                     params = parse_search_request(payload)
                 except RequestValidationError as exc:
                     return JSONResponse(status_code=422, content={"error": str(exc)})
-                # Broad-but-enumerated catch: embedding, LanceDB and I/O
-                # failures all map to a generic 500. Anything else propagates
-                # to FastAPI's ServerErrorMiddleware, which returns a bare
-                # "Internal Server Error" — still no stack trace or internals.
+                # Broad-but-enumerated catch: LanceDB and I/O failures all
+                # map to a generic 500. Anything else propagates to FastAPI's
+                # ServerErrorMiddleware, which returns a bare "Internal
+                # Server Error" — still no stack trace or internals.
                 try:
-                    rows = run_hybrid_search(self.table, self.embedder, params)
+                    rows = run_hybrid_search(self.table, params)
                 except (ValueError, RuntimeError, OSError, KeyError, TypeError):
                     return JSONResponse(
                         status_code=500,
