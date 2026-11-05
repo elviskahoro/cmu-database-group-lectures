@@ -1,0 +1,266 @@
+send a broadcast to the agents so that they know we added lancedb skills files
+
+---
+
+what are they working on?
+
+---
+
+what models are they using btw?
+
+---
+
+what is the mayor using?
+
+---
+
+update me on what's been done so far!
+
+---
+
+let's keep going!
+
+---
+
+update me on the stsate now!
+
+---
+
+anything you need from me?
+make sure to pull the marimo skills from github as well
+
+---
+
+i added fireworks api key
+come up with your own realistic queries.
+we're droping devx profile create a linear ticket to do this in the project
+we're going to add a new modal profile help me do that after
+we can skip PRs and merge them directly!
+
+---
+
+i authed modal with "marcella"
+let's proceed with dropping devx and closign the issue of adding the new profile
+
+---
+
+i added:
+molab-example.py
+
+which has a notebok that had lancedb. use it as inspiration. also change it so that we use marcella as the modal profile
+
+---
+
+sounds good!
+
+---
+
+yes let's do small transcription test
+
+---
+
+<task-notification>
+<task-id>b743uzoft</task-id>
+<tool-use-id>toolu_01MpR2eGsXmpuHfjsnAxtD8m</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/b743uzoft.output</output-file>
+<status>completed</status>
+<summary>Background command "Run Whisper transcription on 4 lectures via Modal marcella" completed (exit code 0)</summary>
+</task-notification>
+
+---
+
+do we want to use A10G, is this the right GPU?
+
+---
+
+i'm fine with yu experimenting
+
+---
+
+use the smallest lecture not 72 minutes wtf
+
+---
+
+yeah this seems way too long
+
+---
+
+<task-notification>
+<task-id>bylwo8eqx</task-id>
+<tool-use-id>toolu_01BXE2BnH4mKKpv3D2rdLLgq</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/bylwo8eqx.output</output-file>
+<status>completed</status>
+<summary>Background command "Benchmark three configs on shortest lecture" completed (exit code 1: No matches found)</summary>
+</task-notification>
+
+---
+
+yes lets' do it!
+
+---
+
+approved
+
+---
+
+<task-notification>
+<task-id>bqs4qewlk</task-id>
+<tool-use-id>toolu_01BAQ2q2gptT4ehvfS6MTz8h</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/bqs4qewlk.output</output-file>
+<status>completed</status>
+<summary>Background command "Transcribe 4 lectures on A10G batch 16" completed (exit code 1: No matches found)</summary>
+</task-notification>
+
+---
+
+update me! how did it go?
+
+---
+
+update me
+
+---
+
+let's proceed with it!
+
+---
+
+do ths first:
+
+
+<pasted_content id="0d6c">
+
+  Smaller loose ends I can handle without waiting on you:
+  1. Switch the notebook to MRRReranker.
+  2. Commit the batching change in epic-sermons.
+  3. Update the Linear tickets (AI-702 through AI-706) to match reality.
+  4. Triage the untracked files.
+</pasted_content id="0d6c">
+
+
+and then do the run
+
+---
+
+update me!
+
+---
+
+i will have to leave in 15 minutes is it possible to make this incremental where even though my wifi ends the script can continue once i get back on wifi and restart it
+
+---
+
+let's do this:
+  - Read the audio on Modal's side: the MP3s are in your R2 bucket, so the job could pull them from there and write results to a Modal volume. That would
+    survive a closed laptop, but it needs a code change and R2 S3 access keys from you. Wrangler can't create those. It's too much to do in 15 minutes, but
+    it's the right fix if the run stops often.
+
+---
+
+help me get the secrets give me links to the pages!
+
+---
+
+i added them to .env.local use CLD prefix to see what they are i didn't match exactly what u did i.e R2_...
+
+---
+
+what are you using modal volumes for?
+
+---
+
+okay this sounds great!
+
+---
+
+<task-notification>
+<task-id>bn4mnfkr1</task-id>
+<tool-use-id>toolu_013yzdbaYBsCA1zda2LorhX2</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/bn4mnfkr1.output</output-file>
+<status>completed</status>
+<summary>Background command "Wait for smoke-test transcript to appear in volume" completed (exit code 0)</summary>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>buhq5p951</task-id>
+<tool-use-id>toolu_01LP5jiH4PkzepWZpJiGSF8J</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/buhq5p951.output</output-file>
+<status>completed</status>
+<summary>Background command "Wait for smoke-test transcript with longer loop" completed (exit code 0)</summary>
+</task-notification>
+
+---
+
+let's continue i'm back on wifi
+
+---
+
+let's just do the lectures and make sure we have beads for anything remaining
+
+---
+
+update me on the transcription
+
+---
+
+lancedb cloud doesn't let me make a read only key!
+
+---
+
+we can have it go through a modal webhook to make queries and the modal app will have the keys.
+
+---
+
+we want to use the notebooks GPU though to do the embdding which we'll send to the modal app
+
+---
+
+anything for me ot do? who are teh transcriptions moving along?
+
+---
+
+modal plan allows 10 at most
+
+---
+
+raise to 10 but don't stop job
+
+---
+
+can you make a prompt for us to do some of the things we've done here but for epic sermons!
+
+---
+
+creae a linear ticket in epic sermons project! for this!
+
+---
+
+cupdate me on cmu transcription!
+
+---
+
+update me?
+
+---
+
+let's continue!
+
+---
+
+update me
+
+---
+
+yeah keep moving forward!
+
+---
+
+<task-notification>
+<task-id>baj3commd</task-id>
+<tool-use-id>toolu_01NmEoi6xpRSxhupKRric9CM</tool-use-id>
+<output-file>/private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/tasks/baj3commd.output</output-file>
+<status>completed</status>
+<summary>Background command "set -a &amp;&amp; . ./.env.local &amp;&amp; set +a &amp;&amp; uv run python scripts/load_corpus.py --transcripts-dir data/corpus/transcription --table lectures &gt; /private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/scratchpad/load_full.log 2&gt;&amp;1; tail -25 /private/tmp/claude-501/-Users-elvis-Documents-hq-repos-cmu-database-group-lectures/8ef563f2-782b-4510-943a-213e3fadf3e8/scratchpad/load_full.log" completed (exit code 0)</summary>
+</task-notification>
