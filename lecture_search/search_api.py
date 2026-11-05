@@ -71,7 +71,7 @@ except ImportError:  # pragma: no cover - only the Modal image has fastapi
     FastAPI = Request = CORSMiddleware = JSONResponse = None  # type: ignore[assignment]
 
 APP_NAME = "cmu-lecture-search"
-DEFAULT_TABLE = "lectures_sample"
+DEFAULT_TABLE = "lectures"
 DEFAULT_REGION = "us-east-1"
 
 # Nomic v1.5 embedding dimension. Duplicated from lecture_search.embed on
@@ -98,6 +98,10 @@ SCALEDOWN_WINDOW_SECONDS = 300
 LECTURES_CACHE_TTL_SECONDS = 3600
 # Upper bound on rows scanned to build the distinct lecture list.
 LECTURE_SCAN_LIMIT = 200_000
+# LanceDB Cloud rejects empty-search scans with k > 10000 ("k cannot be
+# bigger than 10000"), so the /lectures scan pages with offset() at this
+# page size instead of issuing one LECTURE_SCAN_LIMIT-row query.
+LECTURE_SCAN_PAGE_SIZE = 10_000
 
 
 class QueryBuilder(Protocol):
@@ -117,6 +121,10 @@ class QueryBuilder(Protocol):
 
     def limit(self, limit: int) -> QueryBuilder:
         """Set the result limit."""
+        ...
+
+    def offset(self, offset: int) -> QueryBuilder:
+        """Skip the first ``offset`` rows (scan pagination)."""
         ...
 
     def where(self, where: str) -> QueryBuilder:
@@ -333,6 +341,36 @@ def run_hybrid_search(
     return [serialize_row(row) for row in builder.to_list()]
 
 
+def scan_lecture_rows(
+    table: SearchTable,
+    page_size: int = LECTURE_SCAN_PAGE_SIZE,
+    scan_limit: int = LECTURE_SCAN_LIMIT,
+) -> list[dict[str, object]]:
+    """Scan up to ``scan_limit`` chunk rows for the lecture list.
+
+    LanceDB Cloud's RemoteTable has no ``.query()``; an empty ``.search()``
+    with select/limit acts as a full-table scan, but the cloud service caps
+    a single scan at 10000 rows, so this pages with ``offset()`` until a
+    short page or ``scan_limit`` is reached.
+    """
+    rows: list[dict[str, object]] = []
+    offset = 0
+    while offset < scan_limit:
+        page_limit = min(page_size, scan_limit - offset)
+        page = (
+            table.search()
+            .select(["video_id", "title", "date"])
+            .limit(page_limit)
+            .offset(offset)
+            .to_list()
+        )
+        rows.extend(page)
+        if len(page) < page_limit:
+            break
+        offset += page_limit
+    return rows
+
+
 def summarize_lectures(rows: list[dict[str, object]]) -> list[dict[str, str]]:
     """Dedupe scanned chunk rows into one {video_id, title, date} per lecture."""
     lectures: dict[str, dict[str, str]] = {}
@@ -402,14 +440,7 @@ if modal is not None:
             ttl = LECTURES_CACHE_TTL_SECONDS
             if cache is not None and now - cache[0] < ttl:
                 return cache[1]
-            # LanceDB Cloud's RemoteTable has no .query(); an empty
-            # .search() with select/limit acts as a full-table scan.
-            rows = (
-                self.table.search()
-                .select(["video_id", "title", "date"])
-                .limit(LECTURE_SCAN_LIMIT)
-                .to_list()
-            )
+            rows = scan_lecture_rows(self.table)
             lectures = summarize_lectures(rows)
             self._lectures_cache = (now, lectures)
             return lectures

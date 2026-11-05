@@ -2,7 +2,7 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "marimo==0.25.2",
-#     "lancedb==0.40.0",
+#     "httpx==0.28.1",
 #     "sentence-transformers==5.7.0",
 #     # nomic-embed-text-v1.5's trust_remote_code modeling file uses the
 #     # transformers 4.x API (get_extended_attention_mask); 5.x removes it.
@@ -16,7 +16,14 @@
 #     "einops==0.8.2",
 # ]
 # ///
-# Hybrid search over the CMU Database Group lectures_sample LanceDB table.
+# Hybrid search over the CMU Database Group lectures corpus via the public
+# Modal search API (lecture_search/search_api.py, docs/search-api.md).
+#
+# The notebook never touches LanceDB (LanceDB Cloud has no read-only keys):
+# it embeds the query locally — Nomic v1.5 on a GPU if available, else CPU —
+# and POSTs {query, vector, top_k, fts_weight, filters} to the API, which
+# runs the hybrid search and returns whitelisted rows.
+#
 # Interactive: uv run marimo run notebooks/search.py
 # Headless:    uv run notebooks/search.py  (runs sample queries in script mode)
 
@@ -28,98 +35,60 @@ app = marimo.App(width="medium")
 
 @app.cell
 def _():
-    import os
-    from pathlib import Path
-
+    import httpx
     import marimo as mo
 
-    return Path, mo, os
+    return httpx, mo
 
 
 @app.cell
-def _(Path, os):
-    REPO_ROOT = Path(__file__).resolve().parent.parent
-    LANCEDB_URI = os.environ.get("LANCEDB_URI", "db://cmu-database-group-eqdwgi")
-    LANCEDB_REGION = os.environ.get("LANCEDB_REGION", "us-east-1")
-    TABLE_NAME = "lectures_sample"
+def _():
+    # Public read-only search API (Modal workspace "marcella"); see
+    # docs/search-api.md. Not a secret.
+    API_BASE_URL = (
+        "https://marcella--cmu-lecture-search-searchservice-web.us-east.modal.run"
+    )
     NOMIC_MODEL = "nomic-ai/nomic-embed-text-v1.5"
     EMBEDDING_DIMS = 768
     QUERY_PREFIX = "search_query: "
-
-    def load_api_key() -> str | None:
-        key = os.environ.get("LANCEDB_API_KEY")
-        if key:
-            return key
-        env_file = REPO_ROOT / ".env.local"
-        if env_file.exists():
-            for line in env_file.read_text().splitlines():
-                line = line.strip()
-                if line.startswith("LANCEDB_API_KEY="):
-                    return line.split("=", 1)[1].strip("\"'")
-        return None
-
-    LANCEDB_API_KEY = load_api_key()
+    # Modal cold starts (container boot + LanceDB connect) measured at ~7 s;
+    # allow generous headroom before declaring the API unreachable.
+    REQUEST_TIMEOUT_SECONDS = 120.0
 
     return (
+        API_BASE_URL,
         EMBEDDING_DIMS,
-        LANCEDB_API_KEY,
-        LANCEDB_REGION,
-        LANCEDB_URI,
+        NOMIC_MODEL,
         QUERY_PREFIX,
-        TABLE_NAME,
+        REQUEST_TIMEOUT_SECONDS,
     )
 
 
 @app.cell
-def _(LANCEDB_API_KEY, LANCEDB_URI, mo):
-    mo.stop(
-        not LANCEDB_URI,
-        mo.md(
-            "**Missing `LANCEDB_URI`.** Set it in the environment "
-            "(e.g. `db://<project-slug>`) and rerun."
-        ),
-    )
-    mo.stop(
-        LANCEDB_API_KEY is None,
-        mo.md(
-            "**Missing `LANCEDB_API_KEY`.** Export it in the environment or add "
-            "it to `.env.local` at the repo root, then rerun."
-        ),
-    )
-    return
-
-
-@app.cell
-def _(EMBEDDING_DIMS, QUERY_PREFIX, mo):
+def _(EMBEDDING_DIMS, NOMIC_MODEL, QUERY_PREFIX, mo):
     @mo.cache
     def get_embedder():
-        from lancedb.embeddings import get_registry
+        import torch
+        from sentence_transformers import SentenceTransformer
 
-        return get_registry().get("sentence-transformers").create(
-            name="nomic-ai/nomic-embed-text-v1.5",
-            device="cpu",
-            trust_remote_code=True,
-        )
+        # Nomic v1.5 is small enough that the CPU fallback is fine when no
+        # GPU is available (e.g. for viewers of a published molab app).
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        return SentenceTransformer(NOMIC_MODEL, device=device, trust_remote_code=True)
 
     def embed_query(text: str) -> list[float]:
-        prefixed = [QUERY_PREFIX + text]
-        vector = get_embedder().generate_embeddings(prefixed)[0]
+        # normalize_embeddings=True matches how the corpus was embedded
+        # (lancedb's sentence-transformers registry, normalize=True).
+        vector = get_embedder().encode(
+            [QUERY_PREFIX + text],
+            convert_to_numpy=True,
+            normalize_embeddings=True,
+        )[0]
         embedding = [float(value) for value in vector]
         assert len(embedding) == EMBEDDING_DIMS
         return embedding
 
     return embed_query, get_embedder
-
-
-@app.cell
-def _(LANCEDB_API_KEY, LANCEDB_REGION, LANCEDB_URI, TABLE_NAME, mo):
-    import lancedb
-
-    db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=LANCEDB_API_KEY)
-    table = db.open_table(TABLE_NAME)
-    row_count = table.count_rows()
-    mo.md(f"Connected to `{TABLE_NAME}` — **{row_count}** chunks indexed.")
-    return table,
 
 
 @app.cell
@@ -129,7 +98,60 @@ def _(mo):
 
 
 @app.cell
-def _(mo):
+def _(API_BASE_URL, REQUEST_TIMEOUT_SECONDS, httpx, is_script_mode, mo):
+    def fetch_lectures() -> tuple[list[dict[str, str]], str | None]:
+        try:
+            response = httpx.get(
+                f"{API_BASE_URL}/lectures",
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+            response.raise_for_status()
+            return list(response.json()["lectures"]), None
+        except (httpx.HTTPError, ValueError, KeyError) as exc:
+            # Network/HTTP/JSON failure — surface a friendly error.
+            return [], (
+                "Could not load the lecture list from the search API "
+                f"({type(exc).__name__}: {exc}). The API may be cold-starting "
+                "— wait a few seconds and refresh, or try again shortly."
+            )
+
+    if is_script_mode:
+        lectures, lectures_error = fetch_lectures()
+        if lectures_error is not None:
+            pass
+    else:
+        with mo.status.spinner(
+            title="Loading the lecture list — the search API may be "
+            "cold-starting (first load can take ~10 s)…",
+        ):
+            lectures, lectures_error = fetch_lectures()
+    return lectures, lectures_error
+
+
+@app.cell
+def _(lectures, lectures_error, mo):
+    lecture_options = {
+        f"{lecture['title']} ({lecture['date']})": lecture["video_id"]
+        for lecture in lectures
+    }
+    error_view = (
+        mo.callout(mo.md(lectures_error), kind="warn")
+        if lectures_error is not None
+        else None
+    )
+    error_view
+    return (lecture_options,)
+
+
+@app.cell
+def _(lecture_options, lectures, mo):
+    # mo.ui.date_range defaults its value to (today, today), which would
+    # silently filter every search to today's (nonexistent) lectures. Gate
+    # the filter behind a checkbox and default the range to the full corpus
+    # span instead.
+    corpus_dates = sorted(lecture["date"] for lecture in lectures)
+    first_date = corpus_dates[0] if corpus_dates else "2015-01-01"
+    last_date = corpus_dates[-1] if corpus_dates else "2030-12-31"
     search_form = (
         mo.md(
             """
@@ -140,7 +162,13 @@ def _(mo):
             {top_k}
 
             {fts_weight}
-            """
+
+            {use_date_filter}
+
+            {date_range}
+
+            {lecture_filter}
+            """,
         )
         .batch(
             query=mo.ui.text(
@@ -148,13 +176,30 @@ def _(mo):
                 value="how does dbt transform data in the warehouse",
                 full_width=True,
             ),
-            top_k=mo.ui.slider(start=1, stop=10, step=1, value=5, label="Top-k results"),
+            top_k=mo.ui.slider(
+                start=1,
+                stop=10,
+                step=1,
+                value=5,
+                label="Top-k results",
+            ),
             fts_weight=mo.ui.slider(
                 start=0.0,
                 stop=1.0,
                 step=0.05,
                 value=0.5,
                 label="Hybrid weight (0 = pure vector, 1 = pure full-text)",
+            ),
+            use_date_filter=mo.ui.checkbox(label="Filter by date range"),
+            date_range=mo.ui.date_range(
+                start=first_date,
+                stop=last_date,
+                value=(first_date, last_date),
+                label="Lecture date range (applies when the box above is checked)",
+            ),
+            lecture_filter=mo.ui.multiselect(
+                options=lecture_options,
+                label="Restrict to lectures (optional)",
             ),
         )
         .form(submit_button_label="Search", bordered=True)
@@ -164,21 +209,46 @@ def _(mo):
 
 
 @app.cell
-def _(embed_query, mo, table):
+def _(
+    API_BASE_URL,
+    REQUEST_TIMEOUT_SECONDS,
+    embed_query,
+    httpx,
+):
+    from datetime import date
     from typing import Any
 
-    from lancedb.rerankers import MRRReranker
+    def build_payload(
+        query: str,
+        top_k: int,
+        fts_weight: float,
+        date_from: date | None = None,
+        date_to: date | None = None,
+        video_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Assemble the POST /search body (see docs/search-api.md)."""
+        payload: dict[str, Any] = {
+            "query": query,
+            "vector": embed_query(query),
+            "top_k": top_k,
+            "fts_weight": fts_weight,
+        }
+        if date_from is not None:
+            payload["date_from"] = date_from.isoformat()
+        if date_to is not None:
+            payload["date_to"] = date_to.isoformat()
+        if video_ids:
+            payload["video_ids"] = video_ids
+        return payload
 
-    def run_search(query: str, top_k: int, fts_weight: float) -> list[dict[str, Any]]:
-        query_vector = embed_query(query)
-        return (
-            table.search(query_type="hybrid")
-            .vector(query_vector)
-            .text(query)
-            .rerank(MRRReranker(weight_vector=1.0 - fts_weight, weight_fts=fts_weight))
-            .limit(top_k)
-            .to_list()
+    def post_search(payload: dict[str, Any]) -> list[dict[str, Any]]:
+        response = httpx.post(
+            f"{API_BASE_URL}/search",
+            json=payload,
+            timeout=REQUEST_TIMEOUT_SECONDS,
         )
+        response.raise_for_status()
+        return list(response.json()["results"])
 
     def make_snippet(text: str, max_chars: int = 240) -> str:
         collapsed = " ".join(text.split())
@@ -192,20 +262,27 @@ def _(embed_query, mo, table):
         hours, mins = divmod(minutes, 60)
         return f"{hours}:{mins:02d}:{secs:02d}" if hours else f"{mins}:{secs:02d}"
 
-    def result_card(rank: int, row: dict[str, Any]) -> Any:
-        score = row.get("_relevance_score")
+    return build_payload, format_timestamp, make_snippet, post_search
+
+
+@app.cell
+def _(format_timestamp, make_snippet, mo):
+
+    def result_card(rank: int, row: dict):
+        score = row.get("score")
         score_text = f"{float(score):.4f}" if score is not None else "n/a"
         return mo.md(
             f"**{rank}. {row['title']}** ({row['date']}) — "
             f"[▶ {format_timestamp(row['start_seconds'])}]({row['deep_link']}) "
-            f"· score `{score_text}`\n\n> {make_snippet(row['text'])}"
+            f"· score `{score_text}`\n\n> {make_snippet(row['text'])}",
         )
 
-    return format_timestamp, make_snippet, result_card, run_search
+    return (result_card,)
 
 
 @app.cell
-def _(is_script_mode, mo, run_search, search_form):
+def _(build_payload, httpx, is_script_mode, mo, post_search, search_form):
+
     SAMPLE_QUERIES = [
         "how does dbt transform data in the warehouse",
         "distributed SQL database replication",
@@ -214,39 +291,87 @@ def _(is_script_mode, mo, run_search, search_form):
         "how does query optimization work",
     ]
 
+    jobs: list[tuple[str, int, float, dict]] = []
     if is_script_mode:
-        jobs = [(query, 5, 0.5) for query in SAMPLE_QUERIES]
+        jobs = [(query, 5, 0.5, {}) for query in SAMPLE_QUERIES]
     elif search_form.value is not None:
         form_values = search_form.value
+        filters: dict = {}
+        if form_values.get("use_date_filter"):
+            date_range = form_values.get("date_range")
+            if date_range is not None:
+                start, end = date_range
+                if start is not None:
+                    filters["date_from"] = start
+                if end is not None:
+                    filters["date_to"] = end
+        video_ids = form_values.get("lecture_filter") or []
+        if video_ids:
+            filters["video_ids"] = list(video_ids)
         jobs = [
             (
                 form_values["query"],
                 int(form_values["top_k"]),
                 float(form_values["fts_weight"]),
-            )
+                filters,
+            ),
         ]
-    else:
-        jobs = []
 
-    all_results = [
-        (query, fts_weight, run_search(query, top_k, fts_weight))
-        for query, top_k, fts_weight in jobs
-    ]
-    return all_results,
+    all_results: list[tuple[str, float, list[dict]]] = []
+    search_error: str | None = None
+    if jobs:
+
+        def run_jobs() -> list[tuple[str, float, list[dict]]]:
+            return [
+                (
+                    query,
+                    fts_weight,
+                    post_search(build_payload(query, top_k, fts_weight, **filters)),
+                )
+                for query, top_k, fts_weight, filters in jobs
+            ]
+
+        if is_script_mode:
+            all_results = run_jobs()
+        else:
+            with mo.status.spinner(
+                title="Searching — the API may be cold-starting on the first "
+                "query (~10 s)…",
+            ):
+                try:
+                    all_results = run_jobs()
+                except (httpx.HTTPError, ValueError, KeyError) as exc:
+                    # Network/HTTP/JSON failure — surface a friendly error.
+                    search_error = (
+                        "Search request failed "
+                        f"({type(exc).__name__}: {exc}). The search API may be "
+                        "cold-starting or temporarily unavailable — press "
+                        "**Search** again in a few seconds."
+                    )
+    return all_results, search_error
 
 
 @app.cell
-def _(all_results, is_script_mode, mo, result_card, search_form):
+def _(
+    all_results,
+    is_script_mode,
+    mo,
+    result_card,
+    search_error,
+    search_form,
+):
     def render_results() -> object:
+        if search_error is not None:
+            return mo.callout(mo.md(search_error), kind="danger")
         if not all_results:
-            if search_form.value is None:
+            if not is_script_mode and search_form.value is None:
                 return mo.md("_Enter a query above and press **Search**._")
             return mo.md("_No results._")
         blocks: list[object] = []
         for query, fts_weight, rows in all_results:
             header = mo.md(
                 f"### `{query}` — {len(rows)} result(s) "
-                f"(hybrid fts_weight={fts_weight})"
+                f"(hybrid fts_weight={fts_weight})",
             )
             cards = [result_card(rank, row) for rank, row in enumerate(rows, start=1)]
             blocks.append(mo.vstack([header, *cards]))
@@ -258,11 +383,11 @@ def _(all_results, is_script_mode, mo, result_card, search_form):
         for query, fts_weight, rows in all_results:
             print(f"\n=== {query!r} (fts_weight={fts_weight}) ===")
             for rank, row in enumerate(rows, start=1):
-                score = row.get("_relevance_score")
+                score = row.get("score")
                 score_text = f"{float(score):.4f}" if score is not None else "n/a"
                 print(
                     f"{rank}. [{row['date']}] {row['title']} "
-                    f"@ {int(row['start_seconds'])}s score={score_text}"
+                    f"@ {int(row['start_seconds'])}s score={score_text}",
                 )
                 print(f"   {row['deep_link']}")
                 print(f"   {' '.join(row['text'].split())[:120]}")

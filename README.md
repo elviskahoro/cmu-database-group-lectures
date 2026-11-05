@@ -288,14 +288,16 @@ If any step fails, stop and report the failing step number, the command, and the
 [![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/elviskahoro/cmu-database-group-lectures/blob/main/notebooks/search.py)
 
 `notebooks/search.py` is a self-contained (PEP 723) marimo notebook for hybrid
-search over the `lectures_sample` LanceDB Cloud table (CMU Database Group
-lecture transcripts, Nomic v1.5 embeddings). It provides a query form with a
-top-k slider and a hybrid vector↔full-text weight slider
-(`MRRReranker`), and renders results with title/date, a
+search over the full `lectures` corpus (594 CMU Database Group lectures,
+33k chunks, Nomic v1.5 embeddings). The notebook never touches LanceDB: it
+embeds the query locally (GPU if available, else CPU) and calls the public
+Modal search API (`docs/search-api.md`). It provides a query form with a
+top-k slider, a hybrid vector↔full-text weight slider, optional date-range
+and lecture filters, and renders results with title/date, a
 timestamped YouTube deep link, a text snippet, and the relevance score.
 
-Requires `LANCEDB_API_KEY` (environment or `.env.local`); `LANCEDB_URI` and
-`LANCEDB_REGION` default to the project's cloud table. Never commit secrets.
+No secrets required — the search API is public and read-only. The API base
+URL is a constant at the top of the notebook.
 
 ```bash
 uv run marimo run notebooks/search.py   # interactive
@@ -333,10 +335,10 @@ lectures**.
 5. **Search** with `notebooks/search.py` (hybrid vector + FTS,
    `MRRReranker`, adjustable weight).
 6. **Verify retrieval** with `uv run python -m scripts.retrieval_check` —
-   runs the sample-appropriate queries vector-only vs hybrid
+   runs 15 queries against the full `lectures` table, vector-only vs hybrid
    (fts_weight 0.2/0.5/0.8), asserts the expected lecture lands in the top
    10, and writes `data/retrieval_check.json` (results:
-   `docs/retrieval-check.md`; currently PASS, rank 1 everywhere).
+   `docs/retrieval-check.md`; currently PASS, 15/15 in every mode).
 
 Secrets: `LANCEDB_API_KEY` (and `FIREWORKS_API_KEY` for the parity gate)
 live in `.env.local`; load via the environment, never echo or commit them.
