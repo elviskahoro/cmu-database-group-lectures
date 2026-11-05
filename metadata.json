@@ -1,0 +1,47 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6PNV988D4B4N8G2A55SDHB2",
+  "strategy": "manual-commit",
+  "branch": "feat/full-corpus-notebook",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "README.md",
+    "docs/retrieval-check.md",
+    "docs/search-api.md",
+    "lecture_search/search_api.py",
+    "notebooks/search.py",
+    "scripts/retrieval_check.py",
+    "tach.toml",
+    "tests/test_search_api.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 124925,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9321221,
+    "output_tokens": 61499,
+    "api_call_count": 130
+  },
+  "redaction": {
+    "replacements": 18,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 17,
+      "credentialed_uri": 0,
+      "entropy": 1,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
