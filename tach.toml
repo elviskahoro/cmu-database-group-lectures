@@ -258,6 +258,7 @@ depends_on = [
   "lecture_search",
   "lecture_search.embed",
   "lecture_search.fireworks",
+  "lecture_search.quality",
   "lecture_search.search_api",
 ]
 depends_on_external = ["reflex", "httpx"]
@@ -307,6 +308,32 @@ layer = "entrypoints"
 depends_on = []
 depends_on_external = ["httpx"]
 visibility = ["scripts.load_corpus", "tests"]
+
+# Chunk-quality filter (cdgl-819): drops degenerate Whisper chunks before
+# embedding. Pure stdlib text stats; structural ChunkLike protocol keeps it
+# independent of lecture_search.chunking.
+[[modules]]
+path = "lecture_search.quality"
+layer = "entrypoints"
+depends_on = []
+depends_on_external = []
+visibility = ["scripts.load_corpus", "tests"]
+
+[[interfaces]]
+from = ['lecture_search\.quality']
+expose = [
+  "MAX_DOMINANT_BIGRAM_SHARE",
+  "MAX_DOMINANT_WORD_SHARE",
+  "MAX_DUPLICATE_SENTENCE_SHARE",
+  "MAX_REPEATED_TRIGRAM_COVERAGE",
+  "MIN_UNIQUE_RATIO",
+  "MIN_WORDS",
+  "chunk_drop_reasons",
+  "drop_report_lines",
+  "partition_chunks",
+]
+visibility = ["scripts.load_corpus", "tests"]
+exclusive = true
 
 # Modal search API (cdgl-bcy, reworked cdgl-99e): holds the LanceDB key
 # server-side, serves read-only hybrid search. Embedding is client-side —
@@ -362,6 +389,7 @@ depends_on = [
   "lecture_search",
   "lecture_search.embed",
   "lecture_search.fireworks",
+  "lecture_search.quality",
 ]
 depends_on_external = ["lancedb"]
 visibility = []

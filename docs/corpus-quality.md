@@ -85,3 +85,26 @@ tEa5sAh-kVk   2016-05-16  Howard Chu - LMDB
 YeNF3pJwLKw   2021-09-09  03 - Database Storage I
 OIT9Y1IBZUU   2017-10-05  11 Sorting & Joins (borderline: tail truncated)
 ```
+
+## Chunk-quality filter (cdgl-819, 2026-11-05)
+
+Re-transcription does not fix the four failures above (deterministic
+Whisper; `YeNF3pJwLKw` audio is digitally silent after minute 20,
+`6H0yuYPHw0Q` is ~-38 dB), so `lecture_search/quality.py` drops degenerate
+chunks before embedding in `scripts/load_corpus.py`. Rules: fewer than 10
+words, unique-word ratio < 0.30, one word > 35% or one bigram > 30% of the
+chunk, > 25% verbatim-duplicate >=3-word sentences, or > 25%
+repeated-trigram coverage.
+
+Dry-run over the full corpus
+(`uv run python scripts/load_corpus.py --transcripts-dir data/corpus/transcription --dry-run`):
+
+- 33,587 chunks -> 33,412 kept, **175 dropped (0.52%)**
+- `tEa5sAh-kVk` 58/58 dropped (whole-file loop); the degenerate stretched
+  tail chunks of `6H0yuYPHw0Q`, `YeNF3pJwLKw`, and `OIT9Y1IBZUU` dropped
+- healthy lectures: 114/33,440 dropped (0.34%, under the 0.5% budget);
+  spot-checks show these are real junk too (stutter loops, 'Thank you.
+  Thank you.', 'We need to know exactly what's happening.' xN) — e.g.
+  `VHSDhMO63ww` (07 Tree Indexes I, Fall 2018) has 14 hallucinated chunks
+  this report's file-level checks did not flag
+- guarded regression test: `tests/test_chunk_quality.py::test_tuned_thresholds_on_real_corpus`

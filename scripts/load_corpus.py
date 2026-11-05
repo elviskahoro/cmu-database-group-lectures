@@ -1,7 +1,9 @@
 """Full-corpus loader: transcripts -> Fireworks embeddings -> LanceDB (cdgl-tds).
 
 Chunks every transcript in --transcripts-dir with lecture_search.chunking
-(titles/dates from metadata/titles_all.json), embeds with the hosted
+(titles/dates from metadata/titles_all.json), drops degenerate Whisper
+chunks (repetition loops, 'you you you' tails, near-empty stretches; see
+lecture_search.quality and docs/corpus-quality.md), embeds with the hosted
 Fireworks nomic-ai/nomic-embed-text-v1.5 endpoint ('search_document: '
 prepended client-side exactly once by lecture_search.embed.embed_documents),
 caches vectors on disk keyed by chunk id + text hash so reruns make zero API
@@ -49,6 +51,10 @@ from lecture_search.fireworks import (  # noqa: E402
     FireworksEmbedder,
     cache_key,
     load_fireworks_api_key,
+)
+from lecture_search.quality import (  # noqa: E402
+    drop_report_lines,
+    partition_chunks,
 )
 
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
@@ -206,15 +212,24 @@ def main(argv: list[str] | None = None) -> int:
 
     titles = load_titles_all(args.titles_path)
     per_video = process_corpus_transcripts(args.transcripts_dir, titles, args.limit)
-    chunks = [chunk for video_chunks in per_video.values() for chunk in video_chunks]
-    if not chunks:
+    all_chunks = [
+        chunk for video_chunks in per_video.values() for chunk in video_chunks
+    ]
+    if not all_chunks:
         print("No chunks produced", file=sys.stderr)
+        return 1
+
+    chunks, dropped = partition_chunks(all_chunks)
+    for line in drop_report_lines(all_chunks, dropped):
+        print(line)
+    if not chunks:
+        print("No chunks survived the quality filter", file=sys.stderr)
         return 1
 
     total_words = sum(len(chunk.text.split()) for chunk in chunks)
     estimated_tokens = int(total_words / WORDS_PER_TOKEN)
     print(
-        f"Chunked {len(per_video)} transcripts -> {len(chunks)} chunks "
+        f"Chunked {len(per_video)} transcripts -> {len(chunks)} kept chunks "
         f"(~{estimated_tokens:,} tokens estimated)",
     )
 
