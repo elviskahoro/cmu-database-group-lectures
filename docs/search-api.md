@@ -1,8 +1,9 @@
 # Search API (Modal)
 
-Public, read-only hybrid search over the lecture corpus, served by the Modal
+Public, read-only hybrid search over the full lecture corpus (table
+**`lectures`**, 33,412 chunks / 594 lectures), served by the Modal
 app **`cmu-lecture-search`** (`lecture_search/search_api.py`, cdgl-bcy,
-reworked in cdgl-99e).
+reworked in cdgl-99e, pointed at the full corpus in cdgl-ea1).
 
 **Why a server at all:** LanceDB Cloud has no read-only API keys — a key is
 an all-or-nothing shared secret (see `docs/lancedb-findings.md`, §3). The
@@ -80,7 +81,10 @@ construction as `notebooks/search.py`. `fts_weight=0` is pure vector,
 ### `GET /lectures`
 
 Returns `{"lectures": [{video_id, title, date}]}`, one entry per lecture,
-sorted by date descending. Cached per container for 1 hour.
+sorted by date descending. Cached per container for 1 hour. The underlying
+chunk scan pages with `offset()` at 10,000 rows/page (`scan_lecture_rows`)
+because LanceDB Cloud caps a single empty-search scan at `k=10000` — one
+unpaged 200k-row scan returns HTTP 400.
 
 ## Security posture (public, unauthenticated, read-only)
 
@@ -112,16 +116,17 @@ created from `.env.local` without printing values:
 
 ```bash
 set -a; source .env.local; set +a
-MODAL_PROFILE=marcella modal secret create lancedb-search \
+MODAL_PROFILE=marcella modal secret create --force lancedb-search \
   LANCEDB_URI=db://cmu-database-group-eqdwgi \
   LANCEDB_REGION=us-east-1 \
-  LANCEDB_TABLE=lectures_sample \
+  LANCEDB_TABLE=lectures \
   LANCEDB_API_KEY="$LANCEDB_API_KEY"
 ```
 
-To switch to the full corpus, update the secret's `LANCEDB_TABLE` to
-`lectures` (`modal secret create ...` creates a new version; redeploy to pick
-it up).
+`--force` overwrites the existing secret (this CLI version has no
+`modal secret update`); redeploy afterwards to pick the new version up. The
+secret currently points at the full corpus (`LANCEDB_TABLE=lectures`) as of
+cdgl-ea1 (2026-11-05).
 
 Deploy:
 
@@ -141,17 +146,17 @@ last request; `max_containers=5` caps worst-case concurrency. At 1 vCPU /
 1 GiB with no model to load, a traffic pattern of a few searches per minute
 costs cents per day — see https://modal.com/pricing for current rates.
 
-## Measured latency (2026-11-05, client-side embedding rework, `lectures_sample`,
-275 chunks / 5 lectures)
+## Measured latency (2026-11-05, full corpus `lectures`, 33,412 chunks /
+594 lectures, no vector index)
 
-- Image build at deploy: **~10 s** (was minutes with baked Nomic weights)
-- Cold start (first request after deploy, includes container boot + LanceDB
-  connect, no model load): **~6.7 s**
-- Warm `POST /search`: **~0.57 s**
-- Warm `GET /lectures` (cached): **~0.42 s**
+- Cold `GET /lectures` (container boot + LanceDB connect + first paged
+  33k-row scan): **~5.5 s**; warm (cached): **~0.66 s**
+- Warm `POST /search`: **~0.4 s**
 
-Pre-rework numbers (server-side embedding, baked Nomic weights, 2026-11-02):
-~32 s cold, ~1.3 s warm search.
+Earlier numbers (`lectures_sample`, 275 chunks / 5 lectures, same client-side
+embedding rework, 2026-11-05): image build ~10 s, cold start ~6.7 s, warm
+search ~0.57 s, warm `/lectures` ~0.42 s. Pre-rework (server-side embedding,
+baked Nomic weights, 2026-11-02): ~32 s cold, ~1.3 s warm search.
 
 ## Verification
 

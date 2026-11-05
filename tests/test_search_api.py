@@ -28,6 +28,7 @@ from lecture_search.search_api import (
     check_body_size,
     parse_search_request,
     run_hybrid_search,
+    scan_lecture_rows,
     serialize_row,
     summarize_lectures,
 )
@@ -377,6 +378,67 @@ def test_serialize_row_missing_score_is_none() -> None:
 
 
 # --- lecture listing -----------------------------------------------------
+
+
+class _PagedFakeTable:
+    """Serves scan pages from one backing list, honoring limit/offset."""
+
+    def __init__(self, rows: list[dict[str, object]]) -> None:
+        self.rows = rows
+        self.calls: list[tuple[int, int]] = []  # (limit, offset) per page
+
+    def search(self, query_type: str = "auto") -> _PagedFakeBuilder:
+        return _PagedFakeBuilder(self)
+
+
+class _PagedFakeBuilder:
+    def __init__(self, table: _PagedFakeTable) -> None:
+        self.table = table
+        self.limit_value = 0
+        self.offset_value = 0
+
+    def select(self, columns: list[str]) -> _PagedFakeBuilder:
+        return self
+
+    def limit(self, limit: int) -> _PagedFakeBuilder:
+        self.limit_value = limit
+        return self
+
+    def offset(self, offset: int) -> _PagedFakeBuilder:
+        self.offset_value = offset
+        return self
+
+    def to_list(self) -> list[dict[str, object]]:
+        self.table.calls.append((self.limit_value, self.offset_value))
+        start = self.offset_value
+        return self.table.rows[start : start + self.limit_value]
+
+
+def test_scan_lecture_rows_pages_until_short_page() -> None:
+    rows = [
+        {"video_id": f"{index:011d}", "title": "t", "date": "2024-01-01"}
+        for index in range(25)
+    ]
+    table = _PagedFakeTable(rows)
+
+    scanned = scan_lecture_rows(table, page_size=10, scan_limit=200)
+
+    assert scanned == rows
+    assert table.calls == [(10, 0), (10, 10), (10, 20)]
+
+
+def test_scan_lecture_rows_stops_at_scan_limit_on_full_pages() -> None:
+    rows = [
+        {"video_id": f"{index:011d}", "title": "t", "date": "2024-01-01"}
+        for index in range(30)
+    ]
+    table = _PagedFakeTable(rows)
+
+    scanned = scan_lecture_rows(table, page_size=10, scan_limit=25)
+
+    # Last page is capped at the remaining budget; a full capped page stops.
+    assert scanned == rows[:25]
+    assert table.calls == [(10, 0), (10, 10), (5, 20)]
 
 
 def test_summarize_lectures_dedupes_and_sorts_date_desc() -> None:
