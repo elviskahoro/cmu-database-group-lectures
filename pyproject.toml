@@ -10,9 +10,21 @@ dependencies = ["reflex==0.10.0"]
 # it). All linter entrypoints match the tool versions pinned in
 # .trunk/trunk.yaml: pyrefly@1.3.1, pyright@1.1.414, ruff follows ruff.toml,
 # tach@0.35.3. pytest-asyncio is the dev-only async runner for the
-# smoke net's async-context regression check.
+# smoke net's async-context regression check. lancedb and nomic are
+# needed for the lancedb_probe.py script. sentence-transformers runs the
+# local Nomic v1.5 embedder for lecture_search.embed / load_sample.py.
+# einops is required by Nomic v1.5's trust_remote_code modeling file.
 dev = [
+  "einops>=0.8",
+  # Fireworks embeddings client (lecture_search.fireworks) for load_corpus.py.
+  "httpx>=0.28",
   "hypothesis>=6.140.0",
+  "lancedb>=0.1.0",
+  "nomic>=1.0.0",
+  "sentence-transformers>=5.3",
+  # Nomic v1.5's trust_remote_code modeling file uses APIs removed in
+  # transformers 5.x (get_extended_attention_mask); stay on 4.x.
+  "transformers>=4.48,<5",
   "pytest>=9.0",
   "pyrefly==1.3.1",
   "pyright==1.1.414",

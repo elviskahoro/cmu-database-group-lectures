@@ -1,0 +1,2977 @@
+{
+ "-7VjPVmw4vM": {
+  "date": "2016-05-16",
+  "title": "Lecture  #04 - Concurrency Control (Part II) [CMU Database Systems Spring 2016]",
+  "duration": 4262
+ },
+ "01dPh1gZ3cc": {
+  "date": "2016-05-16",
+  "title": "Lecture #21 - Vectorized Execution [CMU Database Systems Spring 2016]",
+  "duration": 3943
+ },
+ "ByHL7Zl5RhE": {
+  "date": "2016-05-16",
+  "title": "Andrew Morrow - MongoDB [Seven Databases in Seven Weeks - CMU Fall 2014]",
+  "duration": 4141
+ },
+ "DUuz1dZPyOw": {
+  "date": "2016-05-16",
+  "title": "Ivan T. Bowman - SQLAnywhere [The Databaseology Lectures - CMU Fall 2015]",
+  "duration": 3660
+ },
+ "E2y_SZYUBk4": {
+  "date": "2016-05-16",
+  "title": "Lecture #20 - Scan Sharing [CMU Database Systems Spring 2016]",
+  "duration": 3050
+ },
+ "FsVV-6nA17o": {
+  "date": "2016-05-16",
+  "title": "Lecture #05 - Concurrency Control (Part III) [CMU Database Systems Spring 2016]",
+  "duration": 3974
+ },
+ "GAAaj3fsmmA": {
+  "date": "2016-05-16",
+  "title": "Ryan Betts - VoltDB [Seven Databases in Seven Weeks - CMU Fall 2014]",
+  "duration": 3670
+ },
+ "GkgDDs9EJUw": {
+  "date": "2016-05-16",
+  "title": "Keith Bostic - WiredTiger [The Databaseology Lectures - CMU Fall 2015]",
+  "duration": 3774
+ },
+ "HO9UKYomI7c": {
+  "date": "2016-05-16",
+  "title": "Lauren Foutz - BerkeleyDB [The Databaseology Lectures - CMU Fall 2015]",
+  "duration": 2636
+ },
+ "IfU0KjQ_zKo": {
+  "date": "2016-05-16",
+  "title": "Lecture #10 - Query Execution & Scheduling [CMU Database Systems Spring 2016]",
+  "duration": 3988
+ },
+ "IwRTchyDGmw": {
+  "date": "2016-05-16",
+  "title": "Lecture #15 - Project Ideas & Extra Credit [CMU Database Systems Spring 2016]",
+  "duration": 2750
+ },
+ "KFU0pRp5mJs": {
+  "date": "2016-05-16",
+  "title": "Seth Proctor - NuoDB [Seven Databases in Seven Weeks - CMU Fall 2014]",
+  "duration": 3975
+ },
+ "L8UUBH_ADRs": {
+  "date": "2016-05-16",
+  "title": "Lecture #18 - Query Planning (Cost Models) [CMU Database Systems Spring 2016]",
+  "duration": 3235
+ },
+ "M0CKkrv7-mQ": {
+  "date": "2016-05-16",
+  "title": "Lecture #17 - Query Planning (Optimizer Implementation) [CMU Database Systems Spring 2016]",
+  "duration": 4478
+ },
+ "MyQzjba1beA": {
+  "date": "2016-05-16",
+  "title": "Lecture #01 - Course Information & History of Databases [CMU Database Systems Spring 2016]",
+  "duration": 4144
+ },
+ "QKNISiRJF-4": {
+  "date": "2016-05-16",
+  "title": "Lecture #02 - In-Memory Databases [CMU Database Systems Spring 2016]",
+  "duration": 4312
+ },
+ "W8mbKKe_nMM": {
+  "date": "2016-05-16",
+  "title": "Lecture #23 - Non-Volatile Memory Database Systems [CMU Database Systems Spring 2016]",
+  "duration": 3853
+ },
+ "XRBOHtcD7Xc": {
+  "date": "2016-05-16",
+  "title": "Lecture #14 - Logging & Recovery (Alternative Methods) [CMU Database Systems Spring 2016]",
+  "duration": 4181
+ },
+ "_vloWsdPCDs": {
+  "date": "2016-05-16",
+  "title": "Lecture #24 - End-of-Semester + MemSQL Tech Talk [CMU Database Systems Spring 2016]",
+  "duration": 6015
+ },
+ "a5eLzRN8OnA": {
+  "date": "2016-05-16",
+  "title": "Lecture #13 - Logging & Recovery (Physical Logging) [CMU Database Systems Spring 2016]",
+  "duration": 4540
+ },
+ "ayxJxWFHlsA": {
+  "date": "2016-05-16",
+  "title": "Lecture #07 - Indexing (OLTP) [CMU Database Systems Spring 2016]",
+  "duration": 3793
+ },
+ "e6VooYgdjFM": {
+  "date": "2016-05-16",
+  "title": "Bradley C.  Kuszmaul - Tokutek [Seven Databases in Seven Weeks - CMU Fall 2014]",
+  "duration": 4027
+ },
+ "f72YVce0TmI": {
+  "date": "2016-05-16",
+  "title": "Lecture #16 - Database Compression [CMU Database Systems Spring 2016]",
+  "duration": 4294
+ },
+ "fXMEoB9j1Tc": {
+  "date": "2016-05-16",
+  "title": "Mike Zwilling - Microsoft Hekaton [Seven Databases in Seven Weeks - CMU Fall 2014]",
+  "duration": 4138
+ },
+ "gpxnbly9bz4": {
+  "date": "2016-05-16",
+  "title": "D. Richard Hipp - SQLite [The Databaseology Lectures - CMU Fall 2015]",
+  "duration": 4027
+ },
+ "jGCv4r8CJEI": {
+  "date": "2016-05-16",
+  "title": "Igor Canadi + Mark Callaghan - RocksDB [The Databaseology Lectures - CMU Fall 2015]",
+  "duration": 3429
+ },
+ "kAeKD3FpBtU": {
+  "date": "2016-05-16",
+  "title": "Lecture #06 - Indexing (Locking & Latching) [CMU Database Systems Spring 2016]",
+  "duration": 3781
+ },
+ "oC8A9jAspAA": {
+  "date": "2016-05-16",
+  "title": "Lecture #08 - Indexing (OLAP) [CMU Database Systems Spring 2016]",
+  "duration": 3925
+ },
+ "pEvY5blD_AU": {
+  "date": "2016-05-16",
+  "title": "Lecture #12 - Join Algorithms (Sorting) [CMU Database Systems Spring 2016]",
+  "duration": 3880
+ },
+ "tEa5sAh-kVk": {
+  "date": "2016-05-16",
+  "title": "Howard Chu - LMDB [The Databaseology Lectures - CMU Fall 2015]",
+  "duration": 4168
+ },
+ "vEo_GY6Pz88": {
+  "date": "2016-05-16",
+  "title": "Lecture #09 - Storage Models & Data Layout [CMU Database Systems Spring 2016]",
+  "duration": 4303
+ },
+ "wQM48YRolRU": {
+  "date": "2016-05-16",
+  "title": "Lecture #11 - Join Algorithms (Hashing) [CMU Database Systems Spring 2016]",
+  "duration": 4427
+ },
+ "wxxQBsLqcCk": {
+  "date": "2016-05-16",
+  "title": "Ankur Goyal - MemSQL [Seven Databases in Seven Weeks - CMU Fall 2014]",
+  "duration": 3675
+ },
+ "x8ZoOfvVlwE": {
+  "date": "2016-05-16",
+  "title": "Lecture  #03 - Concurrency Control (Part I) [CMU Database Systems Spring 2016]",
+  "duration": 4415
+ },
+ "y_quuGMRcds": {
+  "date": "2016-05-16",
+  "title": "Lecture #19 - Query Compilation [CMU Database Systems Spring 2016]",
+  "duration": 3998
+ },
+ "zvodFeo024E": {
+  "date": "2016-05-16",
+  "title": "Lecture #22 - Larger-than-Memory Databases [CMU Database Systems Spring 2016]",
+  "duration": 4071
+ },
+ "UGMLKsma_VU": {
+  "date": "2017-01-24",
+  "title": "L01 - Course Information & History of Databases [CMU Database Systems Spring 2017]",
+  "duration": 4289
+ },
+ "fZHvESD3gPY": {
+  "date": "2017-01-25",
+  "title": "L02 - In-Memory Databases [CMU Database Systems Spring 2017]",
+  "duration": 4298
+ },
+ "OFsg2mAsQDo": {
+  "date": "2017-01-27",
+  "title": "L03 - Concurrency Control Challenges [CMU Database Systems Spring 2017]",
+  "duration": 4884
+ },
+ "6H0yuYPHw0Q": {
+  "date": "2017-01-30",
+  "title": "L04 - Optimistic Concurrency Control [CMU Database Systems Spring 2017]",
+  "duration": 4640
+ },
+ "brn4Fh8mWQ8": {
+  "date": "2017-02-01",
+  "title": "L05 - Multi-Version Concurrency Control [CMU Database Systems Spring 2017]",
+  "duration": 4381
+ },
+ "y8WoIgT_LIQ": {
+  "date": "2017-02-03",
+  "title": "L06 - Index Locking & Latching [CMU Database Systems Spring 2017]",
+  "duration": 4011
+ },
+ "8MgjNtMuUKA": {
+  "date": "2017-02-08",
+  "title": "L07 - Latch-free OLTP Indexes (Part I)  [CMU Database Systems Spring 2017]",
+  "duration": 4908
+ },
+ "OHycDbha3-Q": {
+  "date": "2017-02-10",
+  "title": "L08 - Latch-free OLTP Indexes (Part II)  [CMU Database Systems Spring 2017]",
+  "duration": 4398
+ },
+ "RjYG8wkcbc0": {
+  "date": "2017-02-15",
+  "title": "L09 - OLAP Indexes [CMU Database Systems Spring 2017]",
+  "duration": 4360
+ },
+ "DEYJODQ1M-k": {
+  "date": "2017-02-17",
+  "title": "L10 - Storage Models & Data Layout  [CMU Database Systems Spring 2017]",
+  "duration": 4762
+ },
+ "pbiyGMmSw6U": {
+  "date": "2017-02-22",
+  "title": "L11 - Database Compression [CMU Database Systems Spring 2017]",
+  "duration": 4117
+ },
+ "r4yepvv_m-w": {
+  "date": "2017-02-24",
+  "title": "L12 - Logging Protocols [CMU Database Systems Spring 2017]",
+  "duration": 4711
+ },
+ "cirITb2T6Ko": {
+  "date": "2017-03-01",
+  "title": "L13 - Checkpoint Protocols [CMU Database Systems Spring 2017]",
+  "duration": 3314
+ },
+ "1VX1evaBv20": {
+  "date": "2017-03-03",
+  "title": "L14 - Optimizer Implementation (Part I) [CMU Database Systems Spring 2017]",
+  "duration": 4280
+ },
+ "7ZCDkVcw3aQ": {
+  "date": "2017-03-09",
+  "title": "L15 - Optimizer Implementation (Part II) [CMU Database Systems Spring 2017]",
+  "duration": 4540
+ },
+ "7csNBv4J7zU": {
+  "date": "2017-03-10",
+  "title": "L16 - Optimizer Cost Models [CMU Database Systems Spring 2017]",
+  "duration": 4410
+ },
+ "-rZWBgaupYo": {
+  "date": "2017-03-24",
+  "title": "L17 - Query Execution & Scheduling [CMU Database Systems Spring 2017]",
+  "duration": 4430
+ },
+ "R_FhR1Qr3Vs": {
+  "date": "2017-03-29",
+  "title": "L18 - Parallel Join Algorithms (Hashing) [CMU Database Systems Spring 2017]",
+  "duration": 4040
+ },
+ "707Z60AHZig": {
+  "date": "2017-03-31",
+  "title": "L19 - Parallel Join Algorithms (Sorting) [CMU Database Systems Spring 2017]",
+  "duration": 3917
+ },
+ "xyRyGLVQtEM": {
+  "date": "2017-04-05",
+  "title": "L20 - Query Compilation [CMU Database Systems Spring 2017]",
+  "duration": 4695
+ },
+ "KeaVs1DtsO8": {
+  "date": "2017-04-07",
+  "title": "L21 - Vectorized Execution (Part I) [CMU Database Systems Spring 2017]",
+  "duration": 4274
+ },
+ "pKIWysCcR_I": {
+  "date": "2017-04-12",
+  "title": "L22 - Vectorized Execution (Part II) [CMU Database Systems Spring 2017]",
+  "duration": 2812
+ },
+ "IYpX2Bmujr0": {
+  "date": "2017-04-26",
+  "title": "L23 - Larger-than-Memory Databases [CMU Database Systems Spring 2017]",
+  "duration": 4290
+ },
+ "RW8-TTflCVI": {
+  "date": "2017-05-02",
+  "title": "L24 - Non-Volatile Memory Databases [CMU Database Systems Spring 2017]",
+  "duration": 3555
+ },
+ "V5Eu3NiYWNM": {
+  "date": "2017-05-03",
+  "title": "L25 - Apache Impala/Kudu Tech Talk [CMU Database Systems Spring 2017]",
+  "duration": 4665
+ },
+ "xjhQ0e9Hlds": {
+  "date": "2017-08-28",
+  "title": "CMU Database Systems - 01 Course introduction & Relational Data Model (Fall 2017)",
+  "duration": 3006
+ },
+ "RdZSrD4DUvs": {
+  "date": "2017-09-05",
+  "title": "CMU Database Systems - 02 Relational Algebra (Fall 2017)",
+  "duration": 4875
+ },
+ "6dg6fvJbqu8": {
+  "date": "2017-09-09",
+  "title": "CMU Database Systems - 03 Advanced SQL (Fall 2017)",
+  "duration": 4630
+ },
+ "guOyZBnSKXg": {
+  "date": "2017-09-12",
+  "title": "CMU Database Systems - 04 Functional Dependencies (Fall 2017)",
+  "duration": 4433
+ },
+ "ltMB_dyhxqk": {
+  "date": "2017-09-14",
+  "title": "CMU Database Systems - 05 Normal Forms (Fall 2017)",
+  "duration": 4253
+ },
+ "2SUBRE6wGiA": {
+  "date": "2017-09-15",
+  "title": "Time Series Database Lectures #1 - Paul Dix (InfluxDB)",
+  "duration": 3267
+ },
+ "VLagoZ90ABk": {
+  "date": "2017-09-19",
+  "title": "CMU Database Systems - 06 Database Storage (Fall 2017)",
+  "duration": 4115
+ },
+ "sp_vhhgKQQg": {
+  "date": "2017-09-21",
+  "title": "CMU Database Systems - 07 Buffer Pools (Fall 2017)",
+  "duration": 4223
+ },
+ "jCswlLsE3No": {
+  "date": "2017-09-22",
+  "title": "Time Series Database Lectures #2 - Karthik Ramasamy (Streamlio)",
+  "duration": 3700
+ },
+ "OFYVwCDQcVk": {
+  "date": "2017-09-28",
+  "title": "CMU Database Systems - 08 Hash Tables (Fall 2017)",
+  "duration": 4549
+ },
+ "Z1Qrsm7EfRw": {
+  "date": "2017-09-28",
+  "title": "CMU Database Systems - 09 Order-Preserving Trees (Fall 2017)",
+  "duration": 4996
+ },
+ "JDo7_wOJnC4": {
+  "date": "2017-10-03",
+  "title": "CMU Database Systems - 10 Query Processing (Fall 2017)",
+  "duration": 4371
+ },
+ "OIT9Y1IBZUU": {
+  "date": "2017-10-05",
+  "title": "CMU Database Systems - 11 Sorting & Joins (Fall 2017)",
+  "duration": 4542
+ },
+ "3PzwgNrAG-k": {
+  "date": "2017-10-10",
+  "title": "CMU Database Systems - 12 Hash Joins & Aggregations (Fall 2017)",
+  "duration": 4597
+ },
+ "3c-Bf7F7gnI": {
+  "date": "2017-10-12",
+  "title": "CMU Database Systems - 13 Query Optimization (Fall 2017)",
+  "duration": 4338
+ },
+ "2wJByeBraIo": {
+  "date": "2017-10-14",
+  "title": "Time Series Database Lectures #3 - Saurabh Goel (Two Sigma)",
+  "duration": 3389
+ },
+ "UKaKiqmX8N8": {
+  "date": "2017-10-17",
+  "title": "CMU Database Systems - 14 Parallel Execution (Fall 2017)",
+  "duration": 4247
+ },
+ "trWTqyJ3ZE8": {
+  "date": "2017-10-24",
+  "title": "CMU Database Systems - 15 Embedded Database Logic (Fall 2017)",
+  "duration": 4969
+ },
+ "AiGdfmxEP68": {
+  "date": "2017-10-27",
+  "title": "Time Series Database Lectures #4 - Fintan Quill (Kdb+)",
+  "duration": 3743
+ },
+ "LNOomyGJp8Y": {
+  "date": "2017-10-27",
+  "title": "CMU Database Systems - 16 Concurrency Control Theory (Fall 2017)",
+  "duration": 5237
+ },
+ "OYk3JHukTR8": {
+  "date": "2017-10-31",
+  "title": "CMU Database Systems - 17 Two-Phase Locking (Fall 2017)",
+  "duration": 4565
+ },
+ "poRiberfVxE": {
+  "date": "2017-11-03",
+  "title": "CMU Database Systems - 18 Index Concurrency Control (Fall 2017)",
+  "duration": 4551
+ },
+ "_1IfaDrFvrc": {
+  "date": "2017-11-04",
+  "title": "Time Series Database Lectures #5 - Edouard Alligand (QuasarDB)",
+  "duration": 3718
+ },
+ "xpQ9fQWa14c": {
+  "date": "2017-11-07",
+  "title": "CMU Database Systems - 19 Timestamp Ordering Concurrency Control (Fall 2017)",
+  "duration": 4741
+ },
+ "dK4PSHwf_ZA": {
+  "date": "2017-11-12",
+  "title": "CMU Database Systems - 20 Multi-Version Concurrency Control (Fall 2017)",
+  "duration": 3931
+ },
+ "ajI9HtwtMcg": {
+  "date": "2017-11-14",
+  "title": "CMU Database Systems - 21 Logging Schemes (Fall 2017)",
+  "duration": 4167
+ },
+ "IaZ4hJ3G7wc": {
+  "date": "2017-11-20",
+  "title": "Time Series Database Lectures #6 - Mike Freedman (TimescaleDB)",
+  "duration": 3498
+ },
+ "loCpsrZw6Hk": {
+  "date": "2017-11-21",
+  "title": "CMU Database Systems - 22 Database Recovery (Fall 2017)",
+  "duration": 4582
+ },
+ "tcyDgOejU5g": {
+  "date": "2017-11-28",
+  "title": "CMU Database Systems - 23 Distributed OLTP Systems (Fall 2017)",
+  "duration": 4793
+ },
+ "5j9pSmDgogw": {
+  "date": "2017-12-07",
+  "title": "CMU Database Systems - 25 Barry Morris [NuoDB] (Fall 2017)",
+  "duration": 4393
+ },
+ "AoK8_QEi5U0": {
+  "date": "2017-12-07",
+  "title": "CMU Database Systems - 24 Distributed OLAP Systems (Fall 2017)",
+  "duration": 3660
+ },
+ "poEfLYH9W2M": {
+  "date": "2018-01-22",
+  "title": "CMU Advanced Database Systems - 01 Course Information & History of Databases (Spring 2018)",
+  "duration": 4284
+ },
+ "DIxcS3QbD28": {
+  "date": "2018-01-24",
+  "title": "CMU Advanced Database Systems - 02 In-Memory Databases (Spring 2018)",
+  "duration": 4856
+ },
+ "m7o9rw5HAA8": {
+  "date": "2018-01-25",
+  "title": "CMU Advanced Database Systems - 03 Query Compilation (Spring 2018)",
+  "duration": 4904
+ },
+ "tHlIxfTCMoY": {
+  "date": "2018-02-02",
+  "title": "CMU Advanced Database Systems - 05 Multi-Version Concurrency Control Part I (Spring 2018)",
+  "duration": 5060
+ },
+ "MM0J0_LX8cg": {
+  "date": "2018-02-05",
+  "title": "CMU Advanced Database Systems - 04 Optimistic Concurrency Control (Spring 2018)",
+  "duration": 4953
+ },
+ "ULQMA2A_9k8": {
+  "date": "2018-02-08",
+  "title": "CMU Advanced Database Systems - 06 Multi-Version Concurrency Control Part II (Spring 2018)",
+  "duration": 4388
+ },
+ "nMVplXcfH48": {
+  "date": "2018-02-09",
+  "title": "CMU Advanced Database Systems - 07 Index Locking & Latching (Spring 2018)",
+  "duration": 3683
+ },
+ "pCoox0XbU8Y": {
+  "date": "2018-02-13",
+  "title": "CMU Advanced Database Systems - 08 OLTP Indexes Part I (Spring 2018)",
+  "duration": 4920
+ },
+ "unJcuufh--g": {
+  "date": "2018-02-20",
+  "title": "CMU Advanced Database Systems - 09 OLTP Indexes Part II (Spring 2018)",
+  "duration": 3871
+ },
+ "DIysTwLXu5k": {
+  "date": "2018-02-22",
+  "title": "CMU Advanced Database Systems - 10 Storage Models & Data Layout (Spring 2018)",
+  "duration": 4398
+ },
+ "t_auwVbPWME": {
+  "date": "2018-02-23",
+  "title": "CMU Advanced Database Systems - 11 System Catalogs & Database Compression (Spring 2018)",
+  "duration": 4770
+ },
+ "SNXBc8S1ERA": {
+  "date": "2018-02-27",
+  "title": "CMU Advanced Database Systems - 12 Logging Protocols (Spring 2018)",
+  "duration": 4700
+ },
+ "lOhdumkDROI": {
+  "date": "2018-03-01",
+  "title": "CMU Advanced Database Systems - 13 Database Checkpoints (Spring 2018)",
+  "duration": 4562
+ },
+ "MR2BKmKGBA0": {
+  "date": "2018-03-07",
+  "title": "CMU Advanced Database Systems - 14 Networking (Spring 2018)",
+  "duration": 4620
+ },
+ "qbfPpWnAP-4": {
+  "date": "2018-03-23",
+  "title": "CMU Advanced Database Systems - 15 Optimizer Implementation Part I (Spring 2018)",
+  "duration": 4780
+ },
+ "m7GxSvdV4NU": {
+  "date": "2018-03-29",
+  "title": "CMU Advanced Database Systems - 16 Optimizer Implementation Part II (Spring 2018)",
+  "duration": 4479
+ },
+ "kHrXCeB6jy0": {
+  "date": "2018-03-31",
+  "title": "CMU Advanced Database Systems - 17 Cost Models (Spring 2018)",
+  "duration": 4375
+ },
+ "d-k4AS-XFYs": {
+  "date": "2018-04-04",
+  "title": "CMU Advanced Database Systems - 18 Query Execution & Scheduling (Spring 2018)",
+  "duration": 5016
+ },
+ "tNxvuZWW98E": {
+  "date": "2018-04-06",
+  "title": "Carnegie Mellon University School of Computer Science -- 2018 Joel & Ruth Spira Teaching Award",
+  "duration": 332
+ },
+ "d0nnbIB4WI0": {
+  "date": "2018-04-08",
+  "title": "CMU Advanced Database Systems - 19 Parallel Hash Join Algorithms (Spring 2018)",
+  "duration": 4872
+ },
+ "sEU1toaISuY": {
+  "date": "2018-04-18",
+  "title": "CMU Advanced Database Systems - 20 Parallel Sort-Merge Join Algorithms (Spring 2018)",
+  "duration": 4810
+ },
+ "73XjCd4fEuU": {
+  "date": "2018-04-30",
+  "title": "CMU Advanced Database Systems - 22 Vectorized Query Execution Part II (Spring 2018)",
+  "duration": 2330
+ },
+ "e92_3SNG5jQ": {
+  "date": "2018-04-30",
+  "title": "CMU Advanced Database Systems - 21 Vectorized Query Execution Part I (Spring 2018)",
+  "duration": 4645
+ },
+ "isadhmfYonE": {
+  "date": "2018-05-08",
+  "title": "CMU Advanced Database Systems - 23 Larger-than-Memory Databases (Spring 2018)",
+  "duration": 3995
+ },
+ "yjdzTIX9Y-c": {
+  "date": "2018-05-08",
+  "title": "CMU Advanced Database Systems - 24 Databases on New Hardware (Spring 2018)",
+  "duration": 4363
+ },
+ "dABd7JQz0A8": {
+  "date": "2018-05-09",
+  "title": "CMU Advanced Database Systems - 25 Ashish Motivala [Snowflake]  (Spring 2018)",
+  "duration": 4822
+ },
+ "80atcA6gBU8": {
+  "date": "2018-08-30",
+  "title": "CMU Database Systems - 02 Advanced SQL (Fall 2018)",
+  "duration": 4855
+ },
+ "vyVGm_2iFwU": {
+  "date": "2018-08-30",
+  "title": "CMU Database Systems - 01 Course introduction & Relational Data Model (Fall 2018)",
+  "duration": 4049
+ },
+ "uuX4PQXBeos": {
+  "date": "2018-09-08",
+  "title": "CMU Database Systems - 03 Database Storage I (Fall 2018)",
+  "duration": 4387
+ },
+ "NXRgIsH83xE": {
+  "date": "2018-09-11",
+  "title": "CMU Database Systems - 04 Database Storage II (Fall 2018)",
+  "duration": 4351
+ },
+ "_vRG1ksPlXs": {
+  "date": "2018-09-13",
+  "title": "CMU Database Systems - 05 Buffer Pools (Fall 2018)",
+  "duration": 4233
+ },
+ "MtGbaaozb1A": {
+  "date": "2018-09-17",
+  "title": "Hardware Accelerated Database Lectures #1 - Kinetica (Nima Negahban + Eli Glaser)",
+  "duration": 4035
+ },
+ "ByG1IMM6Ua8": {
+  "date": "2018-09-18",
+  "title": "CMU Database Systems - 06 Hash Tables (Fall 2018)",
+  "duration": 4871
+ },
+ "ps-t7Dgo4oU": {
+  "date": "2018-09-21",
+  "title": "Hardware Accelerated Database Lectures #2 - MapD (Todd Mostak + Alex Baden)",
+  "duration": 3403
+ },
+ "VHSDhMO63ww": {
+  "date": "2018-09-22",
+  "title": "CMU Database Systems - 07 Tree Indexes Part I (Fall 2018)",
+  "duration": 4637
+ },
+ "6AiAR_giC6A": {
+  "date": "2018-10-01",
+  "title": "CMU Database Systems - 09 Index Concurrency Control (Fall 2018)",
+  "duration": 4082
+ },
+ "YhHKScosf0I": {
+  "date": "2018-10-01",
+  "title": "CMU Database Systems - 08 Tree Indexes Part II (Fall 2018)",
+  "duration": 4642
+ },
+ "vmI72W-vgYI": {
+  "date": "2018-10-04",
+  "title": "CMU Database Systems - 10 Query Processing (Fall 2018)",
+  "duration": 3134
+ },
+ "9wv-ZzClKks": {
+  "date": "2018-10-05",
+  "title": "CMU Database Systems - 11 Sorting & Aggregation Algorithms (Fall 2018)",
+  "duration": 1689
+ },
+ "bSYFwd50EcU": {
+  "date": "2018-10-05",
+  "title": "Hardware Accelerated Database Lectures #3 - SQream DB (Jake Wheat + Arnon Shimoni)",
+  "duration": 3296
+ },
+ "9W8HnmSXE4s": {
+  "date": "2018-10-12",
+  "title": "CMU Database Systems - 12 Join Algorithms (Fall 2018)",
+  "duration": 3929
+ },
+ "uLKzlSO6O1M": {
+  "date": "2018-10-23",
+  "title": "CMU Database Systems - 13 Query Optimization (Fall 2018)",
+  "duration": 4419
+ },
+ "FPQPRiVFPfA": {
+  "date": "2018-10-24",
+  "title": "CMU Database Systems - 14 Parallel Execution (Fall 2018)",
+  "duration": 2372
+ },
+ "dednJSoYZMM": {
+  "date": "2018-10-25",
+  "title": "CMU Database Systems - 15 Embedded Logic (Fall 2018)",
+  "duration": 4377
+ },
+ "tUIrR_mj9fQ": {
+  "date": "2018-10-28",
+  "title": "Hardware Accelerated Database Lectures #4 - BlazingDB (Felipe Aramburu)",
+  "duration": 3406
+ },
+ "r0nI_yV9KCo": {
+  "date": "2018-10-31",
+  "title": "CMU Database Systems - 16 Concurrency Control Theory (Fall 2018)",
+  "duration": 4626
+ },
+ "E0zvyYkdXbU": {
+  "date": "2018-11-01",
+  "title": "CMU Database Systems - 17 Two-Phase Locking Concurrency Control (Fall 2018)",
+  "duration": 4693
+ },
+ "oL0IIMQjFrs": {
+  "date": "2018-11-02",
+  "title": "Hardware Accelerated Database Lectures #5 - Brytlyt (Richard Heyns)",
+  "duration": 3624
+ },
+ "TB_hfpQleAc": {
+  "date": "2018-11-06",
+  "title": "CMU Database Systems - 18 Timestamp Ordering Concurrency Control (Fall 2018)",
+  "duration": 4838
+ },
+ "GILqZvxD6_g": {
+  "date": "2018-11-13",
+  "title": "CMU Database Systems - 19 Multi-Version Concurrency Control (Fall 2018)",
+  "duration": 4174
+ },
+ "GUqC-PVfm-c": {
+  "date": "2018-11-13",
+  "title": "CMU Database Systems - 20 Logging Schemes (Fall 2018)",
+  "duration": 4588
+ },
+ "De7X0NMAaUI": {
+  "date": "2018-11-16",
+  "title": "CMU Database Systems - 21 Database Recovery (Fall 2018)",
+  "duration": 4591
+ },
+ "FijDo-sEx5c": {
+  "date": "2018-11-20",
+  "title": "CMU Database Systems - 22 Distributed OLTP Databases Part I (Fall 2018)",
+  "duration": 4252
+ },
+ "swgT4huBvN0": {
+  "date": "2018-11-28",
+  "title": "CMU Database Systems - 23 Distributed OLTP Databases Part II (Fall 2018)",
+  "duration": 4777
+ },
+ "RLFXFrA8NCA": {
+  "date": "2018-11-30",
+  "title": "CMU Database Systems - 24 Distributed OLAP Databases (Fall 2018)",
+  "duration": 3982
+ },
+ "j5pJHgw2bqg": {
+  "date": "2018-11-30",
+  "title": "Hardware Accelerated Database Lectures #6 - Swarm64 (Karsten Rönner)",
+  "duration": 4183
+ },
+ "MOdpjfhxRZU": {
+  "date": "2018-12-05",
+  "title": "CMU Database Systems - 25 Ethan Zhang [VoltDB] (Fall 2018)",
+  "duration": 4933
+ },
+ "n75Mcv5iF7s": {
+  "date": "2018-12-06",
+  "title": "CMU Database Systems - 26 Systems Potpourri [CockroachDB, Spanner, MongoDB] (Fall 2018)",
+  "duration": 4734
+ },
+ "m72mt4VN9ik": {
+  "date": "2019-01-15",
+  "title": "CMU Advanced Database Systems - 01 In-Memory Databases (Spring 2019)",
+  "duration": 4016
+ },
+ "DyYO3yaA1wc": {
+  "date": "2019-01-22",
+  "title": "CMU Advanced Database Systems - 02 Transaction Models & In-Memory Concurrency Control (Spring 2019)",
+  "duration": 6050
+ },
+ "BShOt5gYiPs": {
+  "date": "2019-01-25",
+  "title": "CMU Advanced Database Systems - 03 Multi-Version Concurrency Control Design Decisions (Spring 2019)",
+  "duration": 4779
+ },
+ "9EY0vYFNWxY": {
+  "date": "2019-01-29",
+  "title": "CMU Advanced Database Systems - 04 Multi-Version Concurrency Control Protocols (Spring 2019)",
+  "duration": 4682
+ },
+ "AD1HW9mLlrg": {
+  "date": "2019-02-03",
+  "title": "CMU Advanced Database Systems - 05 MVCC Garbage Collection (Spring 2019)",
+  "duration": 4747
+ },
+ "IaI_gHffhf0": {
+  "date": "2019-02-07",
+  "title": "CMU Advanced Database Systems - 07 OLTP Indexes: Latch-free Data Structures (Spring 2019)",
+  "duration": 4576
+ },
+ "tEZEicWhrAs": {
+  "date": "2019-02-07",
+  "title": "CMU Advanced Database Systems - 06 Index Locking & Latching (Spring 2019)",
+  "duration": 4787
+ },
+ "gjY13VrXcBo": {
+  "date": "2019-02-12",
+  "title": "CMU Advanced Database Systems - 08 OLTP Indexes: Trie Data Structures (Spring 2019)",
+  "duration": 4870
+ },
+ "BuKmw3CFHYY": {
+  "date": "2019-02-14",
+  "title": "CMU Advanced Database Systems - 09 Storage Models & Data Layout (Spring 2019)",
+  "duration": 5068
+ },
+ "ocyl1Qx2UbY": {
+  "date": "2019-02-19",
+  "title": "CMU Advanced Database Systems - 10 Database Compression (Spring 2019)",
+  "duration": 4818
+ },
+ "2S_V8H6du10": {
+  "date": "2019-02-21",
+  "title": "CMU Advanced Database Systems - 11 Larger-than-Memory Databases (Spring 2019)",
+  "duration": 4322
+ },
+ "BOJpKozfTfU": {
+  "date": "2019-02-26",
+  "title": "CMU Advanced Database Systems - 12 Recovery Protocols (Spring 2019)",
+  "duration": 4372
+ },
+ "2sSryjCLgMg": {
+  "date": "2019-02-28",
+  "title": "CMU Advanced Database Systems - 13 Networking Protocols (Spring 2019)",
+  "duration": 5088
+ },
+ "AhXWzzJYqPs": {
+  "date": "2019-03-11",
+  "title": "CMU Advanced Database Systems - 14 Scheduling (Spring 2019)",
+  "duration": 4010
+ },
+ "NQvv8bnHWQU": {
+  "date": "2019-03-27",
+  "title": "CMU Advanced Database Systems - 16 Server-side Logic Execution (Spring 2019)",
+  "duration": 3762
+ },
+ "v1P-aZvPcJQ": {
+  "date": "2019-03-27",
+  "title": "CMU Advanced Database Systems - 15 Query Processing & Execution (Spring 2019)",
+  "duration": 3863
+ },
+ "vPP1CwCGjVg": {
+  "date": "2019-03-29",
+  "title": "CMU Advanced Database Systems - 17 Parallel Hash Join Algorithms (Spring 2019)",
+  "duration": 4684
+ },
+ "baOAbOdcnxs": {
+  "date": "2019-04-05",
+  "title": "CMU Advanced Database Systems - 19 Query Compilation & Code Generation (Spring 2019)",
+  "duration": 4771
+ },
+ "dXC7gNx-kp8": {
+  "date": "2019-04-05",
+  "title": "CMU Advanced Database Systems - 18 Parallel Sort-Merge Join Algorithms (Spring 2019)",
+  "duration": 3602
+ },
+ "6k0gHSqiaKA": {
+  "date": "2019-04-16",
+  "title": "CMU Advanced Database Systems - 21 Vectorization vs. Compilation (Spring 2019)",
+  "duration": 2512
+ },
+ "7hgZKrFXYNs": {
+  "date": "2019-04-16",
+  "title": "CMU Advanced Database Systems - 20 Vectorized Query Execution (Spring 2019)",
+  "duration": 3773
+ },
+ "iEyu7AcOhuI": {
+  "date": "2019-04-19",
+  "title": "CMU Advanced Database Systems - 22 Query Optimizer Implementation (Part I) (Spring 2019)",
+  "duration": 4505
+ },
+ "BQNsGoZ--Is": {
+  "date": "2019-04-28",
+  "title": "CMU Advanced Database Systems - 23 Query Optimizer Implementation (Part 2) (Spring 2019)",
+  "duration": 4362
+ },
+ "eGqMbcat9Gs": {
+  "date": "2019-04-28",
+  "title": "CMU Advanced Database Systems - 24 Query Optimizer Cost Models (Spring 2019)",
+  "duration": 3899
+ },
+ "0_YLzb7BegI": {
+  "date": "2019-05-02",
+  "title": "CMU Advanced Database Systems - 25 Self-Driving Databases (Spring 2019)",
+  "duration": 4530
+ },
+ "aiQdWS9MLVI": {
+  "date": "2019-05-03",
+  "title": "CMU Advanced Database Systems - 26 Anil Goel (SAP HANA) (Spring 2019)",
+  "duration": 4632
+ },
+ "oeYBdghaIjc": {
+  "date": "2019-08-28",
+  "title": "01 - Course Introduction & Relational Model (CMU Databases Systems / Fall 2019)",
+  "duration": 4004
+ },
+ "6VCHuLqfmV8": {
+  "date": "2019-09-02",
+  "title": "02 - Advanced SQL (CMU Databases Systems / Fall 2019)",
+  "duration": 4820
+ },
+ "1D81vXw2T_w": {
+  "date": "2019-09-07",
+  "title": "03 - Database Storage I (CMU Databases Systems / Fall 2019)",
+  "duration": 4797
+ },
+ "YWRYEXNy6IE": {
+  "date": "2019-09-11",
+  "title": "04 - Database Storage II (CMU Databases Systems / Fall 2019)",
+  "duration": 4430
+ },
+ "uZ3-aeFYE5k": {
+  "date": "2019-09-12",
+  "title": "05 - Buffer Pools + Memory Management (CMU Databases Systems / Fall 2019)",
+  "duration": 4739
+ },
+ "j5X1bBPulAk": {
+  "date": "2019-09-17",
+  "title": "06 - Hash Tables (CMU Databases Systems / Fall 2019)",
+  "duration": 4406
+ },
+ "JHZFc4hMGhk": {
+  "date": "2019-09-23",
+  "title": "07 - Tree Indexes I (CMU Databases Systems / Fall 2019)",
+  "duration": 4682
+ },
+ "Y_h1bH2FJ7M": {
+  "date": "2019-09-26",
+  "title": "08 - Tree Indexes II (CMU Databases Systems / Fall 2019)",
+  "duration": 4663
+ },
+ "x5tqzyf0zrk": {
+  "date": "2019-09-27",
+  "title": "09 - Multi-Threaded Index Concurrency Control  (CMU Databases Systems / Fall 2019)",
+  "duration": 4451
+ },
+ "GjzMFrTYEfo": {
+  "date": "2019-10-01",
+  "title": "10 - Sorting & Aggregations  (CMU Databases Systems / Fall 2019)",
+  "duration": 4701
+ },
+ "nUwT7PEQ49o": {
+  "date": "2019-10-04",
+  "title": "11 - Join Algorithms  (CMU Databases Systems / Fall 2019)",
+  "duration": 4294
+ },
+ "L5NhM7kw6Eg": {
+  "date": "2019-10-08",
+  "title": "12 - Query Execution I (CMU Databases Systems / Fall 2019)",
+  "duration": 3938
+ },
+ "XRLrHiT825U": {
+  "date": "2019-10-13",
+  "title": "13 - Query Execution II (CMU Databases Systems / Fall 2019)",
+  "duration": 4372
+ },
+ "28hSVkOs6x8": {
+  "date": "2019-10-20",
+  "title": "14 - Query Planning & Optimization I (CMU Databases Systems / Fall 2019)",
+  "duration": 3774
+ },
+ "cJ2fZIRkRVE": {
+  "date": "2019-10-24",
+  "title": "15 - Query Planning & Optimization II (CMU Databases Systems / Fall 2019)",
+  "duration": 4739
+ },
+ "mYFo1aE47xE": {
+  "date": "2019-10-27",
+  "title": "16 - Concurrency Control Theory (CMU Databases Systems / Fall 2019)",
+  "duration": 4987
+ },
+ "0N--mEuDmxY": {
+  "date": "2019-11-04",
+  "title": "17 - Two-Phase Locking Concurrency Control (CMU Databases Systems / Fall 2019)",
+  "duration": 4039
+ },
+ "cPxJEt2to2A": {
+  "date": "2019-11-05",
+  "title": "18 - Timestamp Ordering Concurrency Control (CMU Databases Systems / Fall 2019)",
+  "duration": 4752
+ },
+ "E4u4ogqfEIA": {
+  "date": "2019-11-10",
+  "title": "19 - Multi-Version Concurrency Control (CMU Databases Systems / Fall 2019)",
+  "duration": 3518
+ },
+ "hh21I1702OY": {
+  "date": "2019-11-15",
+  "title": "20 - Database Logging Schemes (CMU Databases Systems / Fall 2019)",
+  "duration": 4518
+ },
+ "0_m5gPfzEYQ": {
+  "date": "2019-11-21",
+  "title": "22 - Introduction to Distributed Databases (CMU Databases Systems / Fall 2019)",
+  "duration": 4431
+ },
+ "4VGkRXVM5fk": {
+  "date": "2019-11-21",
+  "title": "21 - ARIES Database Recovery (CMU Databases Systems / Fall 2019)",
+  "duration": 4686
+ },
+ "iqWQy-VEs7Q": {
+  "date": "2019-11-24",
+  "title": "23 - Distributed OLTP Databases (CMU Databases Systems / Fall 2019)",
+  "duration": 4943
+ },
+ "dPMc7FZ3Gqo": {
+  "date": "2019-12-01",
+  "title": "24 - Distributed OLAP Databases (CMU Databases Systems / Fall 2019)",
+  "duration": 5115
+ },
+ "XB53N2eIAig": {
+  "date": "2019-12-06",
+  "title": "26 - Systems Potpourri (Facebook Scuba, MongoDB, CockroachDB) (CMU Databases Systems / Fall 2019)",
+  "duration": 4292
+ },
+ "sE_JEeHQChY": {
+  "date": "2019-12-06",
+  "title": "25 - Shasank Chavan (Oracle In-Memory Databases) (CMU Databases Systems / Fall 2019)",
+  "duration": 4835
+ },
+ "SdW5RKUboKc": {
+  "date": "2020-01-13",
+  "title": "01 - History of Databases (CMU Databases / Spring 2020)",
+  "duration": 3925
+ },
+ "a70jRWLjQFk": {
+  "date": "2020-01-20",
+  "title": "02 - In-Memory Databases (CMU Databases / Spring 2020)",
+  "duration": 4369
+ },
+ "1Od_SuOQshM": {
+  "date": "2020-01-23",
+  "title": "03 - Multi-Version Concurrency Control [Design Decisions] (CMU Databases / Spring 2020)",
+  "duration": 5185
+ },
+ "DjWo8ixF9QY": {
+  "date": "2020-01-28",
+  "title": "04 - Multi-Version Concurrency Control [Protocols] (CMU Databases / Spring 2020)",
+  "duration": 4662
+ },
+ "8cwokv2y-c4": {
+  "date": "2020-01-30",
+  "title": "05 - Multi-Version Concurrency Control [Garbage Collection] (CMU Databases / Spring 2020)",
+  "duration": 4711
+ },
+ "asyvZHhpMOY": {
+  "date": "2020-02-05",
+  "title": "06 - OLTP Indexes [Part I] (CMU Databases / Spring 2020)",
+  "duration": 4628
+ },
+ "N6rhECUjdaI": {
+  "date": "2020-02-10",
+  "title": "07 - OLTP Indexes [Part II] (CMU Databases / Spring 2020)",
+  "duration": 4446
+ },
+ "y6qFHu0YKMM": {
+  "date": "2020-02-14",
+  "title": "08 - Database Storage Models & Layout (CMU Databases / Spring 2020)",
+  "duration": 4711
+ },
+ "V8qQcx_9rts": {
+  "date": "2020-02-16",
+  "title": "09 - Database Compression (CMU Databases / Spring 2020)",
+  "duration": 4824
+ },
+ "r0qZKOVByi4": {
+  "date": "2020-02-18",
+  "title": "10 - Recovery Protocols (CMU Databases / Spring 2020)",
+  "duration": 3959
+ },
+ "b86yEXSh9wA": {
+  "date": "2020-02-23",
+  "title": "11 - Networking (CMU Databases / Spring 2020)",
+  "duration": 4599
+ },
+ "pjE_NNqEz6E": {
+  "date": "2020-02-25",
+  "title": "12 - Scheduling (CMU Databases / Spring 2020)",
+  "duration": 4788
+ },
+ "SERwFknJYAo": {
+  "date": "2020-03-01",
+  "title": "13 - Query Execution & Processing (CMU Databases / Spring 2020)",
+  "duration": 4337
+ },
+ "DvhqgmRQuAk": {
+  "date": "2020-03-05",
+  "title": "14 - Query Compilation & Code Generation (CMU Databases / Spring 2020)",
+  "duration": 4791
+ },
+ "Hn4l8XC3-PQ": {
+  "date": "2020-03-06",
+  "title": "15 - Vectorized Execution (CMU Databases / Spring 2020)",
+  "duration": 5249
+ },
+ "Fr0CkACLBM4": {
+  "date": "2020-03-23",
+  "title": "16 - Vectorization vs. Compilation (CMU Databases / Spring 2020)",
+  "duration": 3058
+ },
+ "J0nbgXIarhc": {
+  "date": "2020-03-25",
+  "title": "17 - Hash Join Algorithms (CMU Databases / Spring 2020)",
+  "duration": 5202
+ },
+ "HeFwVNHsDzc": {
+  "date": "2020-03-30",
+  "title": "18 - Parallel Sort-Merge / Sorting Algorithms (CMU Databases / Spring 2020)",
+  "duration": 4233
+ },
+ "q4NeEGMoKmc": {
+  "date": "2020-04-02",
+  "title": "19 - Query Optimizer Implementation I (CMU Databases / Spring 2020)",
+  "duration": 5396
+ },
+ "AywssLlkF1U": {
+  "date": "2020-04-07",
+  "title": "20 - Query Optimizer Implementation II (CMU Databases / Spring 2020)",
+  "duration": 4424
+ },
+ "7pBYKI7BCAo": {
+  "date": "2020-04-15",
+  "title": "21 - Query Optimizer Implementation III (CMU Databases / Spring 2020)",
+  "duration": 2595
+ },
+ "TunjBbjKHvs": {
+  "date": "2020-04-15",
+  "title": "22 - Query Optimizer Cost Models (CMU Databases / Spring 2020)",
+  "duration": 3675
+ },
+ "oVro2uEzQ9s": {
+  "date": "2020-04-20",
+  "title": "23 - Larger-than-Memory Database Architectures (CMU Databases / Spring 2020)",
+  "duration": 5245
+ },
+ "rAR_lBP2tgY": {
+  "date": "2020-04-23",
+  "title": "24 - Server-Side Logic Execution (CMU Databases / Spring 2020)",
+  "duration": 4286
+ },
+ "PFUZlNQIndo": {
+  "date": "2020-04-27",
+  "title": "DuckDB – The SQLite for Analytics (Mark Raasveldt, CWI)",
+  "duration": 4080
+ },
+ "YgCqS6AQG_E": {
+  "date": "2020-04-28",
+  "title": "25 - Databases on New Hardware (CMU Databases / Spring 2020)",
+  "duration": 5566
+ },
+ "9qU1zO9wCNs": {
+  "date": "2020-05-04",
+  "title": "Anna: A KVS for Any Scale (Chenggang Wu, UC Berkeley)",
+  "duration": 2782
+ },
+ "fGG9dApIhDU": {
+  "date": "2020-05-13",
+  "title": "Introducing ClickHouse -- The Fastest Data Warehouse You've Never Heard Of (Robert Hodges, Altinity)",
+  "duration": 3684
+ },
+ "NiVf5UzJ7sI": {
+  "date": "2020-05-24",
+  "title": "APOLLO: Automatic Detection & Diagnosis of Performance Regressions in Databases (Jinho Jung, GTech)",
+  "duration": 3665
+ },
+ "9XTg09W5USM": {
+  "date": "2020-06-08",
+  "title": "Materialize: A Streaming SQL Database Powered by Timely Dataflow (Arjun Narayan, Materialize)",
+  "duration": 3707
+ },
+ "Np46NQ6lqP8": {
+  "date": "2020-06-10",
+  "title": "Finding Logic Bugs in Database Management Systems (Manuel Rigger, ETH SQLancer)",
+  "duration": 3393
+ },
+ "oF_lIZHJPig": {
+  "date": "2020-06-17",
+  "title": "Deepgreen DB: Greenplum At Speed (CK Tan, Vitesse Data)",
+  "duration": 3966
+ },
+ "FIB1qvLHYsw": {
+  "date": "2020-07-01",
+  "title": "Testing Cloud-Native Databases with Chaos Mesh (Siddon Tang, PingCAP)",
+  "duration": 3232
+ },
+ "L8DtI3BtxiU": {
+  "date": "2020-07-13",
+  "title": "Dolt: Another Relational Database, Why and How (Oscar Batori & Zach Musgrave , DoltHub)",
+  "duration": 4303
+ },
+ "Z1yf0WZYx8g": {
+  "date": "2020-07-19",
+  "title": "DataStax Astra: How We Built a Cassandra-as-a-Service (Jim McCollom & Jeff Carpenter, DataStax)",
+  "duration": 3557
+ },
+ "YayQfWr3yzo": {
+  "date": "2020-07-24",
+  "title": "Rockset: Realtime Indexing for Fast Queries on Massive Semi-structured Data (Dhruba Borthakur)",
+  "duration": 3685
+ },
+ "OPJ_IcdSqig": {
+  "date": "2020-07-30",
+  "title": "Black-box Isolation Checking with Elle (Kyle Kingsbury, Jepsen.io)",
+  "duration": 3488
+ },
+ "DAFQcYXK2-o": {
+  "date": "2020-08-09",
+  "title": "YugabyteDB: Bringing Together the Best of Amazon Aurora and Google Spanner (Karthik Ranganathan)",
+  "duration": 3717
+ },
+ "SHY7uAgusG8": {
+  "date": "2020-08-13",
+  "title": "Splice Machine – An HTAP DB at Scale (Daniel Gómez Ferro & Yi Xia)",
+  "duration": 3941
+ },
+ "CaESy_ILFDs": {
+  "date": "2020-08-22",
+  "title": "TerminusDB: Building a Native Revision Control DB from Scratch (Gavin Mendel-Gleason)",
+  "duration": 2997
+ },
+ "0S6i9BmuF8U": {
+  "date": "2020-08-29",
+  "title": "ScyllaDB: No-Compromise Performance (Avi Kivity)",
+  "duration": 3796
+ },
+ "TZb6m5ACIsA": {
+  "date": "2020-09-07",
+  "title": "PlanetScale: Query Planning for a Sharded System like Vitess (Sugu Sougoumarane)",
+  "duration": 4139
+ },
+ "CPWn1SZUZqE": {
+  "date": "2020-09-26",
+  "title": "Query Optimization at Snowflake (Jiaqi Yan, SnowflakeDB)",
+  "duration": 4132
+ },
+ "wHo-VtzTHx0": {
+  "date": "2020-09-29",
+  "title": "CockroachDB's Query Optimizer (Rebecca Taft, Cockroach Labs)",
+  "duration": 3852
+ },
+ "RGslyyVpLQE": {
+  "date": "2020-10-11",
+  "title": "Apache Arrow Flight: Accelerating Columnar Dataset Transport (Wes McKinney, Ursa Labs)",
+  "duration": 3485
+ },
+ "Xb2zm4-F1HI": {
+  "date": "2020-10-16",
+  "title": "A Deep Dive into Spark SQL's Catalyst Optimizer (Cheng Lian + Maryann Xue, DataBricks)",
+  "duration": 4129
+ },
+ "OJb8A6h9jQQ": {
+  "date": "2020-10-24",
+  "title": "FoundationDB or: How I Learned to Stop Worrying and Trust the Database (Markus Pilman, Snowflake)",
+  "duration": 4007
+ },
+ "cL1-BIaQSYE": {
+  "date": "2020-10-31",
+  "title": "Datometry Hyper-Q: Virtualizing the World's Enterprise Data Warehouses (Lyublena Antova, Datometry)",
+  "duration": 2759
+ },
+ "u7JOinvbMxc": {
+  "date": "2020-11-06",
+  "title": "Refactoring Query Processing in MySQL (Norvald H. Ryeng, Oracle)",
+  "duration": 4254
+ },
+ "kfWHw4RemaM": {
+  "date": "2020-11-11",
+  "title": "EraDB: Designing Systems for Cardinality and Dimensionality (Todd Persen, EraDB)",
+  "duration": 3976
+ },
+ "mxQMum5RmHA": {
+  "date": "2020-11-26",
+  "title": "Fauna: Lessons Learned Building a Real World, Calvin-based System (Matt Freels, Fauna)",
+  "duration": 4052
+ },
+ "KUQuegJ4do8": {
+  "date": "2020-11-29",
+  "title": "ksqlDB: A Stream-Relational Database System (Matthias J. Sax, Confluent)",
+  "duration": 4152
+ },
+ "pQe1LQJiXN0": {
+  "date": "2020-12-20",
+  "title": "The Cascades Framework for Query Optimization at Microsoft (Nico Bruno + Cesar Galindo-Legaria)",
+  "duration": 4740
+ },
+ "mmzoSkEhYrA": {
+  "date": "2020-12-21",
+  "title": "TiDB: On the Long Journey of HTAP (Shawn Ma, PingCAP)",
+  "duration": 3722
+ },
+ "TAdiilOOvNI": {
+  "date": "2021-02-10",
+  "title": "SLOG: Serializable, Low-latency, Geo-replicated Transactions (Daniel Abadi, University of Maryland)",
+  "duration": 3675
+ },
+ "elRLJ997p6A": {
+  "date": "2021-02-10",
+  "title": "Performance Testing at MongoDB (David Daly, MongoDB)",
+  "duration": 3631
+ },
+ "bwO0HSXguFA": {
+  "date": "2021-02-18",
+  "title": "Star-Tree Index: Space-Time Trade Off in OLAP (Kishore Gopalakrishna, Apache Pinot)",
+  "duration": 3656
+ },
+ "X-aAgXJZRqM": {
+  "date": "2021-02-23",
+  "title": "Citus: Distributed PostgreSQL as an Extension (Microsoft Citus Data)",
+  "duration": 3964
+ },
+ "qSJ8_Lc1oAY": {
+  "date": "2021-03-02",
+  "title": "Inside Apache Druid's Storage and Query Engine (Gian Merlino)",
+  "duration": 3565
+ },
+ "FCs7Dz8hgjQ": {
+  "date": "2021-03-09",
+  "title": "Novel Design Choices in Apache CouchDB (Adam Kocoloski)",
+  "duration": 3385
+ },
+ "-TIUGC4X2q8": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #2 - 44 Years of Mike (David DeWitt)",
+  "duration": 867
+ },
+ "5_rBDXH-tcE": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #4 - Postgres & Beyond (Jhingran, Olson, Hellerstein, Hong, Seltzer)",
+  "duration": 2849
+ },
+ "AP3toxf8d54": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #5 - Streaming Databases (Stan Zdonik)",
+  "duration": 1982
+ },
+ "H3epfME4YqU": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #8 - Students (Magda Balazinska, Andy Pavlo)",
+  "duration": 2232
+ },
+ "RvcFD_9pB7k": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #6 - MIT Impact (Sam Madden)",
+  "duration": 847
+ },
+ "URpn_bBxIXk": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #10 - Closing Remarks (Mike Stonebraker)",
+  "duration": 590
+ },
+ "_UGUDVeSQSI": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #1 - Introduction (Andy Pavlo)",
+  "duration": 924
+ },
+ "aWSe0beRVQg": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #9 - Open Mic + Messages",
+  "duration": 2442
+ },
+ "dnOzgWuOZGg": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #7 - Vertica & Column Stores (Andy Palmer)",
+  "duration": 1170
+ },
+ "xXyQ-uyEiH0": {
+  "date": "2021-03-11",
+  "title": "Celebration of Mike Stonebraker #3 - Ingres / Berkeley Panel (Allman, Held, Selinger, Carey)",
+  "duration": 4151
+ },
+ "I5_xIs6xsJQ": {
+  "date": "2021-03-17",
+  "title": "HarperDB’s Data Storage Journey: From File System to LMDB (Kyle Bernhardy)",
+  "duration": 4238
+ },
+ "YqW9Pq5488s": {
+  "date": "2021-03-23",
+  "title": "NoisePage: The Self-Driving Database Management System (Lin Ma)",
+  "duration": 3201
+ },
+ "4Y0oNFud-VA": {
+  "date": "2021-04-05",
+  "title": "FASTER: Efficient State Management for the Modern Edge-Cloud (Badrish Chandramouli)",
+  "duration": 3734
+ },
+ "Zk5_RcRg3nA": {
+  "date": "2021-04-06",
+  "title": "Query Processing in Google BigQuery (Hossein Ahmadi + Aleksandras Surna)",
+  "duration": 3807
+ },
+ "o467OKy7Q0g": {
+  "date": "2021-04-18",
+  "title": "LeanStore: In-Memory Data Management Beyond Main Memory (Viktor Leis)",
+  "duration": 3460
+ },
+ "Fmz2DUGJLUY": {
+  "date": "2021-04-27",
+  "title": "eXtremeDB: Deterministic Database Management in Mission-Critical Applications (Andrei Gorine)",
+  "duration": 4035
+ },
+ "aFpB_TSyJqE": {
+  "date": "2021-04-30",
+  "title": "SingleStore: Separation of Storage and Compute for Transactions and Analytics (Joyo Victor)",
+  "duration": 2597
+ },
+ "ertF5ZwCHP0": {
+  "date": "2021-05-05",
+  "title": "Under the Hood of an Exadata Transaction – How We Harnessed the Power of Persistent Memory (Jia Shi)",
+  "duration": 4296
+ },
+ "_zbwz-4RDXg": {
+  "date": "2021-05-20",
+  "title": "The Design of InfluxDB IOx: In-Memory Columnar Database Written in Rust with Apache Arrow (Paul Dix)",
+  "duration": 3843
+ },
+ "kVv9Pik6QGY": {
+  "date": "2021-05-21",
+  "title": "Noria: Fast Materialized Views for Fast Websites (Malte Schwarzkopf)",
+  "duration": 4188
+ },
+ "vjWRE0UnJDQ": {
+  "date": "2021-05-30",
+  "title": "MonetDB: Scale Up Before You Scale Out (Martin Kersten)",
+  "duration": 3996
+ },
+ "XA3SBgcZwtE": {
+  "date": "2021-06-11",
+  "title": "PostgreSQL Optimizer Methodology (Robert Haas)",
+  "duration": 3909
+ },
+ "1q8ZiPGv_z8": {
+  "date": "2021-06-24",
+  "title": "Systems for Human Data Interaction (Eugene Wu)",
+  "duration": 2957
+ },
+ "B2fWjPGh-EU": {
+  "date": "2021-09-03",
+  "title": "02 - Intermediate SQL (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4891
+ },
+ "v4bU6n97Vr8": {
+  "date": "2021-09-03",
+  "title": "01 - Course Introduction & Relational Model (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4413
+ },
+ "YeNF3pJwLKw": {
+  "date": "2021-09-09",
+  "title": "03 - Database Storage I (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4028
+ },
+ "ZJJwJ-auby8": {
+  "date": "2021-09-14",
+  "title": "04 - Database Storage II (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4661
+ },
+ "JLlIAWjvHxM": {
+  "date": "2021-09-15",
+  "title": "rqlite: The Distributed Database Built on Raft and SQLite (Philip O'Toole)",
+  "duration": 3956
+ },
+ "Moz2AgC9hG4": {
+  "date": "2021-09-16",
+  "title": "05 - Buffer Pools (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4715
+ },
+ "f71kc4osCyM": {
+  "date": "2021-09-21",
+  "title": "06 - Hash Tables (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4721
+ },
+ "dtWwUWB5JyQ": {
+  "date": "2021-09-22",
+  "title": "Google Napa: Scalable Data Warehousing with Robust Query Performance (Jagan Sankaranarayanan)",
+  "duration": 3757
+ },
+ "6cxBfOc9MBs": {
+  "date": "2021-09-24",
+  "title": "07 - Tree Indexes (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4213
+ },
+ "BdNRRD9KRo8": {
+  "date": "2021-09-28",
+  "title": "The TileDB Universal Database (Stavros Papadopoulos)",
+  "duration": 4193
+ },
+ "jcqGSehrMGU": {
+  "date": "2021-09-29",
+  "title": "08 - Index Concurrency Control (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4492
+ },
+ "0nOBUnPF7mE": {
+  "date": "2021-10-02",
+  "title": "09 - Sorting & Aggregations (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4254
+ },
+ "DJ1sGQryoAc": {
+  "date": "2021-10-05",
+  "title": "Bodo: Automatic HPC Performance and Scaling for Data Processing in Python (Ehsan Totoni)",
+  "duration": 3945
+ },
+ "yko1mAQUjTA": {
+  "date": "2021-10-05",
+  "title": "10 - Join Algorithms (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4822
+ },
+ "0K0kI1H2KTE": {
+  "date": "2021-10-07",
+  "title": "11 - Query Execution I (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4701
+ },
+ "gPhreHDIenE": {
+  "date": "2021-10-12",
+  "title": "How to Count Things with dbt - Data Build Tool (Drew Banin)",
+  "duration": 3989
+ },
+ "tHkhlPTgx84": {
+  "date": "2021-10-12",
+  "title": "12 - Query Execution II (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4698
+ },
+ "ir6V7DkBe-w": {
+  "date": "2021-10-19",
+  "title": "Reinventing Amazon Redshift (Ippokratis Pandis)",
+  "duration": 3558
+ },
+ "naIMdtnfLqY": {
+  "date": "2021-10-19",
+  "title": "13 - Query Planning & Optimization I (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4490
+ },
+ "oXPhD8u-wdI": {
+  "date": "2021-10-21",
+  "title": "14 - Query Planning & Optimization II (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4469
+ },
+ "7u-XH_2gVbA": {
+  "date": "2021-10-26",
+  "title": "15 - Concurrency Control Theory (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4887
+ },
+ "ZwaVZplVmVA": {
+  "date": "2021-10-26",
+  "title": "An Overview of the Starburst Trino Query Optimizer (Karol Sobczak)",
+  "duration": 4022
+ },
+ "4O1-tXw44Yo": {
+  "date": "2021-10-28",
+  "title": "16 - Two-Phase Locking Concurrency Control (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4461
+ },
+ "6UbWb9YEgUU": {
+  "date": "2021-11-02",
+  "title": "17 - Timestamp Ordering Concurrency Control (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 5065
+ },
+ "QXWf1sgwvSs": {
+  "date": "2021-11-04",
+  "title": "18 - Multi-Version Concurrency Control (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 5288
+ },
+ "8LXotdzX_84": {
+  "date": "2021-11-05",
+  "title": "The Pinecone Vector Database System (Edo Liberty)",
+  "duration": 3995
+ },
+ "KvkzVUooqq4": {
+  "date": "2021-11-09",
+  "title": "Vertica – High Performance Over Varying Terrain (Stephen Walkauskas)",
+  "duration": 3750
+ },
+ "mD5znxu4Vq4": {
+  "date": "2021-11-09",
+  "title": "19 - Database Logging (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4910
+ },
+ "0wocj5Tp5dM": {
+  "date": "2021-11-12",
+  "title": "20 - Database Recovery (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4293
+ },
+ "h838F6i8f_4": {
+  "date": "2021-11-16",
+  "title": "21 - Introduction to Distributed Databases (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4775
+ },
+ "n4TEdXZ86E4": {
+  "date": "2021-11-18",
+  "title": "22 - Distributed OLTP Databases (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 5020
+ },
+ "WP4_-FSWPK4": {
+  "date": "2021-11-19",
+  "title": "Fluree - Cloud-Native Ledger Graph Database (Brian Platz)",
+  "duration": 3970
+ },
+ "t6dpjpQxwmw": {
+  "date": "2021-11-23",
+  "title": "23 - Distributed OLAP Databases (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4360
+ },
+ "IOIgcgzw93Y": {
+  "date": "2021-11-26",
+  "title": "Query Optimization and Acceleration at Dremio (Steven Phillips + Vivekanand Vellanki)",
+  "duration": 3832
+ },
+ "iizcidmSwJ4": {
+  "date": "2021-11-30",
+  "title": "Convex: Life Without a Backend Team (James Cowling)",
+  "duration": 3701
+ },
+ "Pr1kLvHbb88": {
+  "date": "2021-12-05",
+  "title": "25 - Final Review (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 1994
+ },
+ "YhF8YR0OEFk": {
+  "date": "2021-12-07",
+  "title": "Apache Arrow: High-Performance Columnar Data Framework (Wes McKinney)",
+  "duration": 3746
+ },
+ "9rW9uEJ15tU": {
+  "date": "2021-12-15",
+  "title": "How We Build Firebolt (Benjamin Wagner)",
+  "duration": 3818
+ },
+ "spYEOcFZz2I": {
+  "date": "2022-02-04",
+  "title": "RavenDB: Practical Considerations for ACID/MVCC Storage Engines (Oren Eini)",
+  "duration": 3803
+ },
+ "lXizkPvSbHU": {
+  "date": "2022-02-08",
+  "title": "SpiceDB: Flexible Permissions Database for the Internet Era (Jake Moshenko)",
+  "duration": 3673
+ },
+ "JplMnVl22aM": {
+  "date": "2022-02-15",
+  "title": "HTAP with Azure Cosmos DB: Hybrid Transaction & Analytical Processing (Hari Sudan S)",
+  "duration": 2919
+ },
+ "8NzvZ9X8inM": {
+  "date": "2022-02-23",
+  "title": "Orca: A Modular Query Optimizer Architecture for VMware Greenplum (Venkatesh Raghavan)",
+  "duration": 3659
+ },
+ "ji_L-GNVnwk": {
+  "date": "2022-03-08",
+  "title": "ApertureDB: Designing a Purpose-built System for Visual Data and Data Science (Vishakha Gupta)",
+  "duration": 3398
+ },
+ "G7TvRzPQH-U": {
+  "date": "2022-03-15",
+  "title": "Open-source Change Data Capture With Debezium (Gunnar Morling)",
+  "duration": 4151
+ },
+ "CzPZRK6mALg": {
+  "date": "2022-03-22",
+  "title": "Stardog Query Optimiser: Architecture and Cardinality Estimations for Graph Queries (Pavel Klinov)",
+  "duration": 3708
+ },
+ "WRHy7M30mM4": {
+  "date": "2022-03-29",
+  "title": "Design and Implementation of the RelationalAI Knowledge Graph Management System (Martin Bravenboer)",
+  "duration": 3960
+ },
+ "uHMcVDNkHi4": {
+  "date": "2022-04-05",
+  "title": "Yellowbrick: An Elastic Data Warehouse on Kubernetes (Mark Cusack)",
+  "duration": 4043
+ },
+ "AxxutZ0v3HE": {
+  "date": "2022-04-14",
+  "title": "QuestDB: Fast Open Source Time Series Database (Vlad Ilyushchenko)",
+  "duration": 4009
+ },
+ "WBvTHAUMLYU": {
+  "date": "2022-04-19",
+  "title": "Velox: An Open-source Unified Execution Engine (Deepak Majeti)",
+  "duration": 3711
+ },
+ "4JtHxGT_oso": {
+  "date": "2022-04-28",
+  "title": "RonDB: A Key-Value Store with SQL Capabilities and LATS Properties (Mikael Ronström)",
+  "duration": 3739
+ },
+ "3Oj7fBAqVTw": {
+  "date": "2022-05-03",
+  "title": "IO in PostgreSQL: Past, Present, Future (Andres Freund)",
+  "duration": 3973
+ },
+ "uikbtpVZS2s": {
+  "date": "2022-08-31",
+  "title": "01 - Relational Model & Relational Algebra (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4779
+ },
+ "II5qNuxfSoo": {
+  "date": "2022-09-05",
+  "title": "02 - Modern SQL (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 5254
+ },
+ "df-l2PxUidI": {
+  "date": "2022-09-07",
+  "title": "03 - Database Storage 1 (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 5007
+ },
+ "2HtfGdsrwqA": {
+  "date": "2022-09-09",
+  "title": "04 - Database Storage 2 (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4461
+ },
+ "q4W5r3GR0OU": {
+  "date": "2022-09-14",
+  "title": "05 - Columnar Databases & Compression (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4949
+ },
+ "Y9H2HaRKOIw": {
+  "date": "2022-09-16",
+  "title": "06 - Memory Management + Buffer Cache (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4841
+ },
+ "pS2_AJNIxzU": {
+  "date": "2022-09-19",
+  "title": "Umbra: A Disk-Based System with In-Memory Performance (Thomas Neumann)",
+  "duration": 3527
+ },
+ "Kr-Vzvkyabw": {
+  "date": "2022-09-20",
+  "title": "Snowflake Iceberg Tables, Streaming Ingest, and Unistore! (N.Shingte, T.Jones,  A.Motivala)",
+  "duration": 3495
+ },
+ "9yUlSabzVwQ": {
+  "date": "2022-09-22",
+  "title": "07 - Hash Tables (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4985
+ },
+ "9QPr8Ufzt5M": {
+  "date": "2022-09-23",
+  "title": "08 - B+Tree Indexes (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4967
+ },
+ "LPAm2dP69pE": {
+  "date": "2022-09-27",
+  "title": "Rockset: High Performance Queries with Dynamically Typed SQL (Ben Hannel)",
+  "duration": 3006
+ },
+ "5KClozM1jjw": {
+  "date": "2022-09-28",
+  "title": "09 - Concurrent Indexes (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4924
+ },
+ "CMzf9Az1vl4": {
+  "date": "2022-09-30",
+  "title": "10 - Sorting & Aggregation Algorithms (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4583
+ },
+ "VEYdZL0bU-I": {
+  "date": "2022-10-04",
+  "title": "Odyssey: PostgreSQL Connection Proxy! (Andrey Borodin)",
+  "duration": 4062
+ },
+ "yFk_GfaY2Hk": {
+  "date": "2022-10-05",
+  "title": "11 - Join Algorithms (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 5041
+ },
+ "I0QdCSu06_o": {
+  "date": "2022-10-07",
+  "title": "12 - Query Execution 1 (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4900
+ },
+ "FG_wr-0QYg4": {
+  "date": "2022-10-16",
+  "title": "13 - Parallel Query Execution (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 3860
+ },
+ "drgriZCRyrQ": {
+  "date": "2022-10-22",
+  "title": "Litestream: Making Single-Node Deployments Cool Again (Ben Johnson)",
+  "duration": 3189
+ },
+ "rES0yzeERns": {
+  "date": "2022-10-25",
+  "title": "Neon: Serverless PostgreSQL! (Heikki Linnakangas)",
+  "duration": 3536
+ },
+ "2c8YwZhXJEw": {
+  "date": "2022-10-26",
+  "title": "14 - Query Planning & Optimization (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4991
+ },
+ "W5FFiI5ALTc": {
+  "date": "2022-10-28",
+  "title": "15 - Concurrency Control Theory (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 5058
+ },
+ "-818Ch1F6tI": {
+  "date": "2022-11-01",
+  "title": "16 - Two-Phase Locking in Databases (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4920
+ },
+ "B-gqtJr87v4": {
+  "date": "2022-11-01",
+  "title": "Architecture Insight of OceanBase: A Distributed SQL Database (Charlie Yang)",
+  "duration": 3535
+ },
+ "am_GBPToN5w": {
+  "date": "2022-11-04",
+  "title": "17 - Timestamp-Ordering Concurrency Control (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4846
+ },
+ "oTL6DbfkBB0": {
+  "date": "2022-11-08",
+  "title": "RisingWave: Reinventing(?!) Stream Processing in the Cloud Era (Yingjun Wu)",
+  "duration": 3538
+ },
+ "ht8Tx6DWn_E": {
+  "date": "2022-11-09",
+  "title": "18 - Multi-Version Concurrency Control MVCC (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4736
+ },
+ "5blTGTwKZPI": {
+  "date": "2022-11-11",
+  "title": "19 - Database Logging & Shadow Paging (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4939
+ },
+ "jfpCHRyPdzw": {
+  "date": "2022-11-15",
+  "title": "Gaia: Direct Database Access without Database APIs (Tengiz Kharatishvili)",
+  "duration": 3779
+ },
+ "xoZmZGKxRYM": {
+  "date": "2022-11-16",
+  "title": "20 - Database Recovery with ARIES (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 5065
+ },
+ "BUOSup1APPw": {
+  "date": "2022-11-18",
+  "title": "21 - Introduction to Distributed Databases (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4518
+ },
+ "FyGukn77gqA": {
+  "date": "2022-11-23",
+  "title": "TigerBeetle: Magical Memory Tour! (Joran Dirk Greef)",
+  "duration": 3821
+ },
+ "yu2TZF7S1Mg": {
+  "date": "2022-11-24",
+  "title": "22 - Distributed Transactional Database Systems (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4986
+ },
+ "1gOlXfbiT_Y": {
+  "date": "2022-11-29",
+  "title": "SplinterDB: A Key-Value Store for Modern Storage Devices (Alex Conway)",
+  "duration": 3910
+ },
+ "4m1-QdumkwU": {
+  "date": "2022-11-29",
+  "title": "24 - Justin Levandoski (Google BigQuery) (CMU Intro to Database Systems / Fall 2021)",
+  "duration": 4240
+ },
+ "qdLXIWIUI6E": {
+  "date": "2022-11-30",
+  "title": "23 - Distributed Analytical Database Systems (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4881
+ },
+ "mf-YS1ZDQxw": {
+  "date": "2022-12-02",
+  "title": "24 - Embedded Database Logic (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 5169
+ },
+ "8Fr-d9RPa1Y": {
+  "date": "2022-12-06",
+  "title": "CrateDB: Distributed SQL Database Built on Top of Lucene (Marija Selakovic  + Marios Trivyzas)",
+  "duration": 3913
+ },
+ "xnuv6vr8USE": {
+  "date": "2022-12-11",
+  "title": "25 - Snowflake Database Architecture Overview (CMU Intro to Database Systems / Fall 2022)",
+  "duration": 4612
+ },
+ "LWS8LEQAUVc": {
+  "date": "2023-01-23",
+  "title": "01 - History of Databases (CMU Advanced Databases / Spring 2023)",
+  "duration": 4574
+ },
+ "7V1oi_8uvuM": {
+  "date": "2023-01-26",
+  "title": "02 - Modern Analytical Database Systems (CMU Advanced Databases / Spring 2023)",
+  "duration": 3182
+ },
+ "oWaeWlvPCyk": {
+  "date": "2023-01-30",
+  "title": "03 - Database Storage Models & Data Layout (CMU Advanced Databases / Spring 2023)",
+  "duration": 4664
+ },
+ "lGRAq98ejWs": {
+  "date": "2023-02-02",
+  "title": "04 - Analytical Database Indexes (CMU Advanced Databases / Spring 2023)",
+  "duration": 4941
+ },
+ "Bpy5hYyHAuQ": {
+  "date": "2023-02-07",
+  "title": "05 - Database Compression (CMU Advanced Databases / Spring 2023)",
+  "duration": 4141
+ },
+ "ck3PkXTOueU": {
+  "date": "2023-02-09",
+  "title": "06 - Query Execution & Processing Models (CMU Advanced Databases / Spring 2023)",
+  "duration": 4231
+ },
+ "RtcrbAxtjp8": {
+  "date": "2023-02-14",
+  "title": "07 - Query Scheduling (CMU Advanced Databases / Spring 2023)",
+  "duration": 4830
+ },
+ "FrspnYbFSxQ": {
+  "date": "2023-02-16",
+  "title": "08 - Vectorized Query Execution with SIMD (CMU Advanced Databases / Spring 2023)",
+  "duration": 4543
+ },
+ "eurwtUhY5fk": {
+  "date": "2023-02-21",
+  "title": "09 - Query Compilation & JIT Code Generation (CMU Advanced Databases / Spring 2023)",
+  "duration": 4852
+ },
+ "rhxd_xaeMPU": {
+  "date": "2023-02-23",
+  "title": "10 - Query Vectorization vs. Compilation (CMU Advanced Databases / Spring 2023)",
+  "duration": 3956
+ },
+ "pqRV7Mss1Fg": {
+  "date": "2023-03-01",
+  "title": "11 - Parallel Hash Join Algorithms (CMU Advanced Databases / Spring 2023)",
+  "duration": 4552
+ },
+ "rn5u0pfWlcs": {
+  "date": "2023-03-14",
+  "title": "12 - Parallel Sort-Merge Join Algorithms (CMU Advanced Databases / Spring 2023)",
+  "duration": 3284
+ },
+ "knyIDmbJQno": {
+  "date": "2023-03-17",
+  "title": "13 - Multi-Way / Worst-Case Optimal Join Algorithms (CMU Advanced Databases / Spring 2023)",
+  "duration": 2294
+ },
+ "DRFuyLd29eA": {
+  "date": "2023-03-21",
+  "title": "14 - Server-side Logic Execution / User-defined Functions (CMU Advanced Databases / Spring 2023)",
+  "duration": 4427
+ },
+ "3NTCjo3cebs": {
+  "date": "2023-03-23",
+  "title": "15 - Database Networking (CMU Advanced Databases / Spring 2023)",
+  "duration": 4503
+ },
+ "bXfvmeWsQ78": {
+  "date": "2023-03-28",
+  "title": "16 - Query Optimizer Implementations - Part 1 (CMU Advanced Databases / Spring 2023)",
+  "duration": 4775
+ },
+ "PXS49-tFLcI": {
+  "date": "2023-03-30",
+  "title": "17 - Query Optimizer Implementations - Part 2 (CMU Advanced Databases / Spring 2023)",
+  "duration": 4880
+ },
+ "JxeITDS-xh0": {
+  "date": "2023-04-12",
+  "title": "19 - Google BigQuery / Dremel (CMU Advanced Databases / Spring 2023)",
+  "duration": 4563
+ },
+ "HqZstqwWq5E": {
+  "date": "2023-04-13",
+  "title": "20 - Databricks Photon / Spark SQL (CMU Advanced Databases / Spring 2023)",
+  "duration": 4078
+ },
+ "bveqnSk15JQ": {
+  "date": "2023-04-18",
+  "title": "21 - Snowflake Data Warehouse Internals (CMU Advanced Databases / Spring 2023)",
+  "duration": 4684
+ },
+ "bZOvAKGkzpQ": {
+  "date": "2023-04-20",
+  "title": "22 - DuckDB Internals (CMU Advanced Databases / Spring 2023)",
+  "duration": 4759
+ },
+ "Zx4caucPF7s": {
+  "date": "2023-04-26",
+  "title": "23 - Meta Velox (CMU Advanced Databases / Spring 2023)",
+  "duration": 3352
+ },
+ "Ww8xyjmtg3A": {
+  "date": "2023-04-27",
+  "title": "24 - Amazon Redshift Internals (CMU Advanced Databases / Spring 2023)",
+  "duration": 3581
+ },
+ "XGMoq-D_mao": {
+  "date": "2023-08-29",
+  "title": "F2023 #01 - Relational Model & Algebra (CMU Intro to Database Systems)",
+  "duration": 4603
+ },
+ "n9S4Ibh5O0E": {
+  "date": "2023-08-31",
+  "title": "F2023 #02 - Modern SQL (CMU Intro to Database Systems)",
+  "duration": 4550
+ },
+ "vdPALZ-GCfI": {
+  "date": "2023-09-02",
+  "title": "F2023 #00 - Course Overview & Logistics (CMU Intro to Database Systems)",
+  "duration": 1113
+ },
+ "DJ5u5HrbcMk": {
+  "date": "2023-09-07",
+  "title": "F2023 #03 - Database Storage Part 1 (CMU Intro to Database Systems)",
+  "duration": 4750
+ },
+ "Ra50bFHkeM8": {
+  "date": "2023-09-12",
+  "title": "F2023 #04 - Database Storage Part 2 (CMU Intro to Database Systems)",
+  "duration": 4645
+ },
+ "UuHw3SQMrog": {
+  "date": "2023-09-14",
+  "title": "F2023 #05 - Storage Models & Database Compression (CMU Intro to Database Systems)",
+  "duration": 5005
+ },
+ "bU38Ovdh3NY": {
+  "date": "2023-09-15",
+  "title": "Qdrant: Open Source Vector Search Engine and Vector Database (Andrey Vasnetsov)",
+  "duration": 3758
+ },
+ "BS5h8QZHCPk": {
+  "date": "2023-09-19",
+  "title": "F2023 #06 - Database Memory & Disk I/O Management (CMU Intro to Database Systems)",
+  "duration": 4964
+ },
+ "glBoRyShD7E": {
+  "date": "2023-09-19",
+  "title": "OtterTune: AI-Powered Database Optimization as a Service! (Dana Van Aken)",
+  "duration": 3991
+ },
+ "eBgKVqFUUlA": {
+  "date": "2023-09-21",
+  "title": "F2023 #07 - Hash Tables (CMU Intro to Database Systems)",
+  "duration": 4725
+ },
+ "5gXn5fLkbM0": {
+  "date": "2023-09-26",
+  "title": "F2023 #08 - B+Tree Indexes (CMU Intro to Database Systems)",
+  "duration": 4967
+ },
+ "F0mzDqLQB4Q": {
+  "date": "2023-09-26",
+  "title": "Less is More with PostgresML (Montana Low)",
+  "duration": 3492
+ },
+ "POuQogLy3E8": {
+  "date": "2023-09-28",
+  "title": "F2023 #09 - Index Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 4799
+ },
+ "DOu7SVUbuuM": {
+  "date": "2023-10-04",
+  "title": "F2023 #10 - Sorting & Aggregation Algorithms (CMU Intro to Database Systems)",
+  "duration": 3924
+ },
+ "RFaOmqxJf_M": {
+  "date": "2023-10-05",
+  "title": "F2023 #11 - Join Algorithms (CMU Intro to Database Systems)",
+  "duration": 4514
+ },
+ "4sLJapXEPd4": {
+  "date": "2023-10-08",
+  "title": "Weaviate: An Architectural Deep Dive (Etienne Dilocker)",
+  "duration": 3860
+ },
+ "3F3FWgujN9Q": {
+  "date": "2023-10-10",
+  "title": "F2023 #12 - Query Execution Part 1 (CMU Intro to Database Systems)",
+  "duration": 4712
+ },
+ "ZsWa6XiBc-U": {
+  "date": "2023-10-16",
+  "title": "FeatureForm: Feature Store Architectures & Technical Challenges (Simba Khadder)",
+  "duration": 3923
+ },
+ "M-w_-4YnWXU": {
+  "date": "2023-10-17",
+  "title": "FeatureBase: A Deep Dive (Pat O'Keeffe)",
+  "duration": 3796
+ },
+ "MUjS0tIDnEE": {
+  "date": "2023-10-24",
+  "title": "F2023 #13 - Query Execution Part 2 (CMU Intro to Database Systems)",
+  "duration": 4579
+ },
+ "ePGPVJCyCAk": {
+  "date": "2023-10-26",
+  "title": "F2023 #14 - Query Planning & Optimization (CMU Intro to Database Systems)",
+  "duration": 4734
+ },
+ "ixpbVyrsuL8": {
+  "date": "2023-10-27",
+  "title": "Lance: A Modern Columnar Data Format (Chang She)",
+  "duration": 3471
+ },
+ "NJyisAkDJYI": {
+  "date": "2023-10-31",
+  "title": "F2023 #15 - Concurrency Control Theory (CMU Intro to Database Systems)",
+  "duration": 4120
+ },
+ "iykASLbeG8Q": {
+  "date": "2023-11-01",
+  "title": "Akamas: Autonomous Performance Optimization (Stefano Cereda)",
+  "duration": 3799
+ },
+ "9uvn9STdKvA": {
+  "date": "2023-11-02",
+  "title": "F2023 #16 - Two-Phase Locking Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 4849
+ },
+ "319q3W253Dk": {
+  "date": "2023-11-07",
+  "title": "F2023 #17 - Timestamp Ordering Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 4920
+ },
+ "wO0PfAFiK3U": {
+  "date": "2023-11-09",
+  "title": "F2023 #18 - Multi-Version Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 4853
+ },
+ "kIj-KKnC-PA": {
+  "date": "2023-11-10",
+  "title": "Milvus: A Purpose-Built Vector Data Management System! (Li Liu)",
+  "duration": 3628
+ },
+ "-mY8ALcJVTk": {
+  "date": "2023-11-14",
+  "title": "F2023 #19 - Database Logging (CMU Intro to Database Systems)",
+  "duration": 5000
+ },
+ "dsgHthzROj4": {
+  "date": "2023-11-14",
+  "title": "Alibaba: Domain Knowledge Augmented AI for Databases (Jian Tan)",
+  "duration": 3677
+ },
+ "GEPXvTtf9gE": {
+  "date": "2023-11-16",
+  "title": "F2023 #20 - Database Recovery (CMU Intro to Database Systems)",
+  "duration": 5045
+ },
+ "YU66YlZW6dA": {
+  "date": "2023-11-21",
+  "title": "pgvector: Stylish Hierarchical Navigable Small World Indexes (Jonathan Katz)",
+  "duration": 4237
+ },
+ "fyDeu_5svbg": {
+  "date": "2023-11-21",
+  "title": "F2023 #21 - Intro to Distributed Databases (CMU Intro to Database Systems)",
+  "duration": 4880
+ },
+ "E4ot5d79jdA": {
+  "date": "2023-11-28",
+  "title": "Chroma Vector Database: Retrieval for LLMs (Hammad Bashir + Liquan Pei)",
+  "duration": 3643
+ },
+ "QRJs_57Pung": {
+  "date": "2023-11-28",
+  "title": "F2023 #22 - Distributed Transaction Processing Databases (CMU Intro to Database Systems)",
+  "duration": 5076
+ },
+ "olpOmddAPhM": {
+  "date": "2023-11-30",
+  "title": "F2023 #23 - Distributed Data Warehouse OLAP Databases (CMU Intro to Database Systems)",
+  "duration": 4981
+ },
+ "niQ46NQR2eI": {
+  "date": "2023-12-05",
+  "title": "F2023 #24 - SingleStore Database Overview (CMU Intro to Database Systems)",
+  "duration": 4534
+ },
+ "fZbwD1gzjLk": {
+  "date": "2023-12-07",
+  "title": "F2023 #25 - Potpourri: Redis, CockroachDB, Snowflake, MangoDB, TabDB (CMU Intro to Database Systems)",
+  "duration": 4908
+ },
+ "NLycrsJ1jI8": {
+  "date": "2024-01-18",
+  "title": "S2024 #00 - Course Overview & Logistics (CMU Advanced Database Systems)",
+  "duration": 1997
+ },
+ "5J-I8Mj8tss": {
+  "date": "2024-01-23",
+  "title": "S2024 #01 - Modern OLAP Database Systems (CMU Advanced Database Systems)",
+  "duration": 4145
+ },
+ "1hdynBJo3ew": {
+  "date": "2024-01-25",
+  "title": "S2024 #02 - Data Formats & Encoding Part 1 (CMU Advanced Database Systems)",
+  "duration": 4988
+ },
+ "h3EOs7GH7hM": {
+  "date": "2024-01-30",
+  "title": "S2024 #03 - Data Formats & Encoding Part 2 (CMU Advanced Database Systems)",
+  "duration": 4908
+ },
+ "tsbbwiWw9VE": {
+  "date": "2024-02-06",
+  "title": "S2024 #04 - Query Execution & Processing Part 1 (CMU Advanced Database Systems)",
+  "duration": 5023
+ },
+ "et54i_Rplik": {
+  "date": "2024-02-08",
+  "title": "S2024 #05 - Query Execution & Processing Part 2 (CMU Advanced Database Systems)",
+  "duration": 5095
+ },
+ "yU1S8gwjGEw": {
+  "date": "2024-02-13",
+  "title": "S2024 #06 - Vectorized Query Execution Using SIMD (CMU Advanced Database Systems)",
+  "duration": 4720
+ },
+ "UPQ53hM6AWE": {
+  "date": "2024-02-15",
+  "title": "S2024 #07 - JIT Query Compilation & Code Generation (CMU Advanced Database Systems)",
+  "duration": 4916
+ },
+ "VZjzKVfU46k": {
+  "date": "2024-02-20",
+  "title": "S2024 #08 - Query Scheduling & Coordination (CMU Advanced Database Systems)",
+  "duration": 5071
+ },
+ "S40K8iGa8Ek": {
+  "date": "2024-02-22",
+  "title": "S2024 #09 - Parallel Hash Join Algorithms (CMU Advanced Database Systems)",
+  "duration": 5136
+ },
+ "1aHT3KitTYo": {
+  "date": "2024-02-27",
+  "title": "S2024 #10 - Multi-Way Join Algorithms / Worst-Case Optimal Joins (CMU Advanced Database Systems)",
+  "duration": 4182
+ },
+ "FaS-E-oq-X4": {
+  "date": "2024-03-12",
+  "title": "S2024 #11 - User-Defined Function Optimizations (CMU Advanced Database Systems)",
+  "duration": 4824
+ },
+ "0tfDldfzlR8": {
+  "date": "2024-03-14",
+  "title": "S2024 #12 - Database Networking Protocols (CMU Advanced Database Systems)",
+  "duration": 4976
+ },
+ "DwX0X8CyBSg": {
+  "date": "2024-03-19",
+  "title": "S2024 #13 - Query Optimizer Implementation 1 (CMU Advanced Database Systems)",
+  "duration": 5010
+ },
+ "B9gJa5ZLg8s": {
+  "date": "2024-03-21",
+  "title": "S2024 #14 - Query Optimizer Implementation 2 (CMU Advanced Database Systems)",
+  "duration": 4831
+ },
+ "anVC4AJeXqw": {
+  "date": "2024-04-03",
+  "title": "S2024 #15 - Query Optimizer Implementation 3 (CMU Advanced Database Systems)",
+  "duration": 2592
+ },
+ "VOZax1tbvxw": {
+  "date": "2024-04-09",
+  "title": "S2024 #17 - Google BigQuery / Dremel (CMU Advanced Database Systems)",
+  "duration": 4139
+ },
+ "PwnUf6_0H0k": {
+  "date": "2024-04-11",
+  "title": "S2024 #18 - Databricks Photon / Spark SQL (CMU Advanced Database Systems)",
+  "duration": 4049
+ },
+ "NhWp1bTG0Cw": {
+  "date": "2024-04-16",
+  "title": "S2024 #19 - Snowflake Data Warehouse Internals (CMU Advanced Database Systems)",
+  "duration": 4855
+ },
+ "4iD4h4sGLz4": {
+  "date": "2024-04-18",
+  "title": "S2024 #20 - DuckDB Embedded Database System (CMU Advanced Database Systems)",
+  "duration": 3733
+ },
+ "hkTK6Auh5vE": {
+  "date": "2024-04-23",
+  "title": "S2024 #21 - Yellowbrick Data Warehouse System (CMU Advanced Database Systems)",
+  "duration": 4870
+ },
+ "T9-MM8oHzsM": {
+  "date": "2024-04-25",
+  "title": "S2024 #22 - Amazon Redshift Data Warehouse System (CMU Advanced Database Systems)",
+  "duration": 3843
+ },
+ "otE2WvX3XdQ": {
+  "date": "2024-08-26",
+  "title": "#00 - Course Overview & Logistics (CMU Intro to Database Systems)",
+  "duration": 1280
+ },
+ "APqWIjtzNGE": {
+  "date": "2024-08-27",
+  "title": "#01 - Relational Model & Algebra (CMU Intro to Database Systems)",
+  "duration": 5018
+ },
+ "MzigBKf84aY": {
+  "date": "2024-08-29",
+  "title": "#02 - Modern SQL (CMU Intro to Database Systems)",
+  "duration": 4724
+ },
+ "dSxV5Sob5V8": {
+  "date": "2024-09-05",
+  "title": "#03 - Database Storage: Files & Pages ✸ Neon Database Talk (CMU Intro to Database Systems)",
+  "duration": 4947
+ },
+ "IHtVWGhG0Xg": {
+  "date": "2024-09-09",
+  "title": "#04 - Database Storage: Log-Structured Merge Trees & Tuples (CMU Intro to Database Systems)",
+  "duration": 4961
+ },
+ "nhlpwmOBEiE": {
+  "date": "2024-09-11",
+  "title": "#05 - Row vs. Column Storage + Compression ✸ StarTree Database Talk (CMU Intro to Database Systems)",
+  "duration": 5280
+ },
+ "aoewwZwVmv4": {
+  "date": "2024-09-17",
+  "title": "#06 - Memory & Disk I/O Management (CMU Intro to Database Systems)",
+  "duration": 5036
+ },
+ "VkP_yLM5KBU": {
+  "date": "2024-09-18",
+  "title": "#07 - Hash Tables ✸ RelationalAI Database Talk (CMU Intro to Database Systems)",
+  "duration": 5023
+ },
+ "scUtG_6M_lU": {
+  "date": "2024-09-23",
+  "title": "#08 - Tree Indexes: B+Trees (CMU Intro to Database Systems)",
+  "duration": 4934
+ },
+ "iJhRbDFJjbg": {
+  "date": "2024-09-24",
+  "title": "Apache Arrow DataFusion: A Fast, Embeddable, Modular Analytic Query Engine (Andrew Lamb)",
+  "duration": 4012
+ },
+ "foMMYyycRgk": {
+  "date": "2024-09-26",
+  "title": "#09 - Vector Indexes, Inverted Indexes, Filters, Tries ✸ TiDB Talk (CMU Intro to Database Systems)",
+  "duration": 4870
+ },
+ "lgUNTj0Q54M": {
+  "date": "2024-09-30",
+  "title": "#10 - Index Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 4602
+ },
+ "o59s0d3HE1k": {
+  "date": "2024-10-01",
+  "title": "Accelerating Apache Spark Workloads with Apache DataFusion Comet (Andy Grove)",
+  "duration": 2757
+ },
+ "mM3sFwSuGNY": {
+  "date": "2024-10-03",
+  "title": "#11 - Sorting & Aggregation Algorithms ✸ dbt Database Talk (CMU Intro to Database Systems)",
+  "duration": 4676
+ },
+ "MFazkaZKs1s": {
+  "date": "2024-10-08",
+  "title": "#12 - Join Algorithms: Hash, Sort-Merge, Nested Loop Joins (CMU Intro to Database Systems)",
+  "duration": 4462
+ },
+ "Vxb8TELNM98": {
+  "date": "2024-10-08",
+  "title": "ParadeDB – Postgres for Search and Analytics (Philippe Noël)",
+  "duration": 3527
+ },
+ "HNtlew7mCc4": {
+  "date": "2024-10-21",
+  "title": "#13 - Query Execution Part 1 (CMU Intro to Database Systems)",
+  "duration": 4999
+ },
+ "tyM-ec1lKfU": {
+  "date": "2024-10-22",
+  "title": "Accelerating Data and AI with Spice.ai Open-Source Software (Luke Kim)",
+  "duration": 3941
+ },
+ "Vy2t_wZx4Is": {
+  "date": "2024-10-26",
+  "title": "#14 - Query Execution Part 2 ✸ ClickHouse Database Talk (CMU Intro to Database Systems)",
+  "duration": 3769
+ },
+ "X8EHO8VLeG0": {
+  "date": "2024-10-29",
+  "title": "#15 - Query Planning & Optimization (CMU Intro to Database Systems)",
+  "duration": 4878
+ },
+ "fltZMO8EGl0": {
+  "date": "2024-10-29",
+  "title": "Exon: A Built for Purpose Bioinformatics Database (Trent Hauck)",
+  "duration": 3855
+ },
+ "4y656idl8ZU": {
+  "date": "2024-10-31",
+  "title": "#16 - Concurrency Control Theory ✸ Firebolt Database Talk (CMU Intro to Database Systems)",
+  "duration": 5229
+ },
+ "bXpkEt5P_Js": {
+  "date": "2024-11-05",
+  "title": "#17 - Two-Phase Locking Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 3922
+ },
+ "z38WY9uZtt4": {
+  "date": "2024-11-05",
+  "title": "Synnada: Towards “Unified” Compute Engines: Opportunities and Challenges (Mehmet Ozan Kabak)",
+  "duration": 4246
+ },
+ "-TA0QIwFUnU": {
+  "date": "2024-11-07",
+  "title": "#18 - Optimistic Concurrency Control ✸ Weaviate Database Talk (CMU Intro to Database Systems)",
+  "duration": 4853
+ },
+ "AGS4GNGDK_4": {
+  "date": "2024-11-12",
+  "title": "Building InfluxDB 3.0 with the FDAP Stack: Apache Flight, DataFusion, Arrow and Parquet (Paul Dix)",
+  "duration": 4183
+ },
+ "niLwbfE3V9Q": {
+  "date": "2024-11-12",
+  "title": "#19 - Multi-Version Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 5227
+ },
+ "mbelzgz-97s": {
+  "date": "2024-11-14",
+  "title": "#20 - Database Logging ✸ Confluent Database Talk (CMU Intro to Database Systems)",
+  "duration": 4761
+ },
+ "Sor3KZpmbHg": {
+  "date": "2024-11-19",
+  "title": "Biting the Bullet: Rebuilding GlareDB from the Ground Up (Sean Smith)",
+  "duration": 4161
+ },
+ "yVpzHdAP0TY": {
+  "date": "2024-11-19",
+  "title": "#21 - Database Recovery with ARIES (CMU Intro to Database Systems)",
+  "duration": 4375
+ },
+ "o7bjRUcDMx0": {
+  "date": "2024-11-21",
+  "title": "#22 - Distributed Database Architectures ✸ DataStax Database Talk (CMU Intro to Database Systems)",
+  "duration": 4982
+ },
+ "3wNmpE6DsSs": {
+  "date": "2024-11-26",
+  "title": "#23 - Distributed Transactional Databases (CMU Intro to Database Systems)",
+  "duration": 5093
+ },
+ "L6E75IyBgpk": {
+  "date": "2024-12-03",
+  "title": "#24 - Distributed Analytical Databases (CMU Intro to Database Systems)",
+  "duration": 4975
+ },
+ "eVMIzY1K5iQ": {
+  "date": "2024-12-03",
+  "title": "Apache OpenDAL: One Layer, All Storage (Xuanwo)",
+  "duration": 3886
+ },
+ "fr5lIchF6pw": {
+  "date": "2024-12-05",
+  "title": "#25 - BigQuery + Snowflake + Redshift + Databricks + DuckDB (CMU Intro to Database Systems)",
+  "duration": 5157
+ },
+ "VLAvZw0ZEwI": {
+  "date": "2024-12-10",
+  "title": "GreptimeDB: Implement, Integrate and Extend a Query Engine (Ruihang Xia)",
+  "duration": 4241
+ },
+ "YWtH10gfcY0": {
+  "date": "2025-01-14",
+  "title": "#01 - SQL Optimization Background (CMU Optimize!)",
+  "duration": 3237
+ },
+ "62cAdANFhBg": {
+  "date": "2025-01-16",
+  "title": "#02 - History of Query Optimizers ft. IBM System R (CMU Optimize!)",
+  "duration": 4240
+ },
+ "iXMiG1vdnyc": {
+  "date": "2025-01-23",
+  "title": "#03 - IBM Starburst Query Rewriter + Optimizer (CMU Optimize!)",
+  "duration": 4448
+ },
+ "kguocoOxXKM": {
+  "date": "2025-01-28",
+  "title": "#04 - EXODUS + Volcano Query Optimizer Generators (CMU Optimize!)",
+  "duration": 5008
+ },
+ "bjOIbEg0Stc": {
+  "date": "2025-01-30",
+  "title": "#05 - Cascades Query Optimizer (CMU Optimize!)",
+  "duration": 5248
+ },
+ "oyi02nNjU-o": {
+  "date": "2025-02-04",
+  "title": "#06 - Query Plan Transformations (CMU Optimize!)",
+  "duration": 4835
+ },
+ "CcUVvnYv7Hg": {
+  "date": "2025-02-06",
+  "title": "#07 - Join Ordering: Bottom-up (CMU Optimize!)",
+  "duration": 4101
+ },
+ "vq_kt_XExfY": {
+  "date": "2025-02-11",
+  "title": "#08 - Join Ordering: Top-Down / Transformational (CMU Optimize!)",
+  "duration": 4221
+ },
+ "rg9XfV2W07Q": {
+  "date": "2025-02-13",
+  "title": "#09 - Search Parallelization: Bottom-up (CMU Optimize!)",
+  "duration": 3573
+ },
+ "zpgV0SPILmQ": {
+  "date": "2025-02-13",
+  "title": "Larry Ellison was Right (kinda)! TypeScript Stored Procedures for the Modern Age (James Cowling)",
+  "duration": 3796
+ },
+ "TBAf5l1RmcA": {
+  "date": "2025-02-18",
+  "title": "Towards Sanity in Query Languages (Viktor Leis + Thomas Neumann)",
+  "duration": 3751
+ },
+ "joc82ibs4Xo": {
+  "date": "2025-02-18",
+  "title": "#10 - Search Parallelization: Top-Down (CMU Optimize!)",
+  "duration": 4291
+ },
+ "Ax4y8dPPYJA": {
+  "date": "2025-02-20",
+  "title": "#11 - Unnesting Queries (CMU Optimize!)",
+  "duration": 4455
+ },
+ "pHB-m-ZITw4": {
+  "date": "2025-02-21",
+  "title": "The Weaviate Vector Database — Bring AI-native applications to life.",
+  "duration": 737
+ },
+ "gpmKJazbOiU": {
+  "date": "2025-02-25",
+  "title": "#12 - Query Cost Models: Statistics (CMU Optimize!)",
+  "duration": 4487
+ },
+ "yRMhAL_6f4o": {
+  "date": "2025-02-25",
+  "title": "Apache Pinot Query Optimizer (Yash Mayya + Gonzalo Ortiz)",
+  "duration": 3778
+ },
+ "Kf9Nj3zI9WI": {
+  "date": "2025-02-27",
+  "title": "#13 - Query Cost Models: Cardinality Estimation (CMU Optimize!)",
+  "duration": 4297
+ },
+ "ZIkjAQ7AwSM": {
+  "date": "2025-03-11",
+  "title": "Google's Pipe Syntax in SQL: SQL for the 21st Century (Jeff Shute)",
+  "duration": 3568
+ },
+ "4sZZRiG_7Xg": {
+  "date": "2025-03-14",
+  "title": "#14 - Query Cost Models: More Cardinality Estimation (CMU Optimize!)",
+  "duration": 4313
+ },
+ "pLeF4j_Irg4": {
+  "date": "2025-03-18",
+  "title": "Malloy: A Modern Open Source Language for Analyzing, Transforming, and Modeling Data (Lloyd Tabb)",
+  "duration": 3057
+ },
+ "g73fALu7Vyo": {
+  "date": "2025-03-19",
+  "title": "Confluent: Leveraging Data StreamingPlatform (DSP) for Analytics & GenAl",
+  "duration": 865
+ },
+ "pgaHCSV3Ilw": {
+  "date": "2025-03-25",
+  "title": "PRQL: Pipelined Relational Query Language (Tobias Brandt)",
+  "duration": 3537
+ },
+ "54qawFuvXY4": {
+  "date": "2025-03-26",
+  "title": "ClickHouse",
+  "duration": 632
+ },
+ "RAcqr8yPblo": {
+  "date": "2025-04-02",
+  "title": "Evolving Transactions in Oracle 23ai: New Advances in Concurrency and Consistency",
+  "duration": 3433
+ },
+ "hzMOXfTkg-4": {
+  "date": "2025-04-04",
+  "title": "StarRocks Query Optimizer (Kaisen Kang)",
+  "duration": 3407
+ },
+ "qOFSTjMk82s": {
+  "date": "2025-04-07",
+  "title": "Apache Pinot / StarTree",
+  "duration": 949
+ },
+ "iPYh8ayz3EM": {
+  "date": "2025-04-08",
+  "title": "OxQL: Oximeter Query Language from the Oxide Computer Company (Benjamin Naecker)",
+  "duration": 3815
+ },
+ "i6yz3Xm3eOg": {
+  "date": "2025-04-14",
+  "title": "Firebolt Transactions",
+  "duration": 799
+ },
+ "0pveVPP4gY4": {
+  "date": "2025-04-15",
+  "title": "MariaDB’s Query Optimizer: A Multi-tool That Does Some Things Differently (Monty Widenius)",
+  "duration": 3888
+ },
+ "cW_qFb8fWuc": {
+  "date": "2025-04-21",
+  "title": "dbt Labs",
+  "duration": 642
+ },
+ "LXAdrA_s3RY": {
+  "date": "2025-04-23",
+  "title": "Architecture of Aerospike (Srinivasan Seshadri)",
+  "duration": 3349
+ },
+ "RzLo-pdUJ7I": {
+  "date": "2025-04-23",
+  "title": "Gel: Replacing SQL and Improving on the Relational Database Model (Michael Sullivan)",
+  "duration": 3660
+ },
+ "dTuK8vmtC2M": {
+  "date": "2025-05-12",
+  "title": "RelationalAl: Systems and theory united against software complexity",
+  "duration": 581
+ },
+ "omOHjFLhrQU": {
+  "date": "2025-05-16",
+  "title": "DBSP: Incremental Computation on Streams and Its Applications to Databases",
+  "duration": 4700
+ },
+ "7NPIENPr-zk": {
+  "date": "2025-08-26",
+  "title": "#01 - Relational Model & Algebra (CMU Intro to Database Systems)",
+  "duration": 4489
+ },
+ "O5gU9NQjCAs": {
+  "date": "2025-08-28",
+  "title": "#02 - Modern SQL ✸ dbt Database Talk (CMU Intro to Database Systems)",
+  "duration": 4661
+ },
+ "PRLXdIMJhOg": {
+  "date": "2025-09-04",
+  "title": "#03 - Database Storage: Files, Pages, Tuples (CMU Intro to Database Systems)",
+  "duration": 4622
+ },
+ "8-2yv4z0VZc": {
+  "date": "2025-09-09",
+  "title": "#04 - Memory Management & Buffer Pools (CMU Intro to Database Systems)",
+  "duration": 4810
+ },
+ "2_sTdS4h-bY": {
+  "date": "2025-09-11",
+  "title": "#05 - Log-Structured Database Storage ✸ SingleStore Database Talk (CMU Intro to Database Systems)",
+  "duration": 4758
+ },
+ "yWnToWrskXE": {
+  "date": "2025-09-16",
+  "title": "#06 - Column-Store Databases (CMU Intro to Database Systems)",
+  "duration": 4880
+ },
+ "nuNW8IfgPNU": {
+  "date": "2025-09-19",
+  "title": "#07 - Database Hash Tables ✸ YugabyteDB Database Talk (CMU Intro to Database Systems)",
+  "duration": 4830
+ },
+ "kJaD0WuQ1Bg": {
+  "date": "2025-09-23",
+  "title": "An Extremely Technical Overview of How Apache Iceberg Planning Actually Works (Russell Spitzer)",
+  "duration": 3853
+ },
+ "u7ii_Lvm9rM": {
+  "date": "2025-09-23",
+  "title": "#08 - B+Trees: The Best Data Structure in the World (CMU Intro to Database Systems)",
+  "duration": 5082
+ },
+ "PjST2n7abAY": {
+  "date": "2025-09-25",
+  "title": "#09 - Vector Indexes + Inverted Indexes + Skip Lists + Bloom Filters (CMU Intro to Database Systems)",
+  "duration": 5009
+ },
+ "YgOvfXl6pss": {
+  "date": "2025-09-30",
+  "title": "#10 - Latching in Data Structures (CMU Intro to Database Systems)",
+  "duration": 4938
+ },
+ "LzyKTpeIgts": {
+  "date": "2025-10-02",
+  "title": "#11 - Sorting & Aggregation Algorithms ✸ MotherDuck Database Talk (CMU Intro to Database Systems)",
+  "duration": 4808
+ },
+ "AYaw06_Xazo": {
+  "date": "2025-10-07",
+  "title": "Apache Hudi: A Database Layer Over Cloud Storage for Fast Mutations & Queries (Vinoth Chandar)",
+  "duration": 4104
+ },
+ "YIdIaPopfpk": {
+  "date": "2025-10-07",
+  "title": "#12 - Hash Joins, Sort-Merge Joins, Nested Loop Join Algorithms (CMU Intro to Database Systems)",
+  "duration": 4753
+ },
+ "z2GhznqtIz0": {
+  "date": "2025-10-07",
+  "title": "DuckLake: Learning from Cloud Data Warehouses to Build a Robust “Lakehouse” (Jordan Tigani)",
+  "duration": 3305
+ },
+ "zyn_T5uragA": {
+  "date": "2025-10-14",
+  "title": "Vortex: LLVM for File Formats (Will Manning)",
+  "duration": 3690
+ },
+ "E-UUd6cB57w": {
+  "date": "2025-10-21",
+  "title": "#13 - Query Execution Part 1 (CMU Intro to Database Systems)",
+  "duration": 4818
+ },
+ "TjlmNGNx77E": {
+  "date": "2025-10-21",
+  "title": "Where We’re Going, We Don’t Need Rows: Columnar Data Connectivity with Apache Arrow ADBC (Ian Cook)",
+  "duration": 3825
+ },
+ "bSKkzZsapZI": {
+  "date": "2025-10-22",
+  "title": "Introduction to Apache Airflow (Julian LaNeve)",
+  "duration": 3841
+ },
+ "Kzf1hGjtZOU": {
+  "date": "2025-10-23",
+  "title": "#14 - Parallel Query Engine Architectures ✸ SpiralDB Database Talk (CMU Intro to Database Systems)",
+  "duration": 4753
+ },
+ "0tABbNHUgZo": {
+  "date": "2025-10-28",
+  "title": "SingleStore: Storage Metadata for Modern Cloud Databases (Joyo Victor)",
+  "duration": 3517
+ },
+ "b53huOGcsZ8": {
+  "date": "2025-10-28",
+  "title": "#15 - Database Query Optimizers Part 1 (CMU Intro to Database Systems)",
+  "duration": 4779
+ },
+ "azTHRpzl10o": {
+  "date": "2025-10-30",
+  "title": "#16 - Query Optimization Part 2 (CMU Intro to Database Systems)",
+  "duration": 4877
+ },
+ "YmY_NwaoxNk": {
+  "date": "2025-11-04",
+  "title": "Multi-statement Transactions in the Databricks Lakehouse (Ryan Johnson)",
+  "duration": 3373
+ },
+ "tMFAgvDViAI": {
+  "date": "2025-11-04",
+  "title": "#17 - Concurrency Control Theory (CMU Intro to Database Systems)",
+  "duration": 4845
+ },
+ "drStlhNbfHI": {
+  "date": "2025-11-07",
+  "title": "#18 - Transactions with Two-Phase Locking ✸ Firebolt Database Talk (CMU Intro to Database Systems)",
+  "duration": 4984
+ },
+ "rLjK64J8ev4": {
+  "date": "2025-11-09",
+  "title": "Transactions and Coordination in Amazon Aurora DSQL",
+  "duration": 4169
+ },
+ "VqFZyWHGQVM": {
+  "date": "2025-11-11",
+  "title": "Mooncake: Real-Time Apache Iceberg Without Compromise (Cheng Chen)",
+  "duration": 3767
+ },
+ "risHwKeWbBM": {
+  "date": "2025-11-11",
+  "title": "#19 - Timestamp Ordering Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 5082
+ },
+ "tUFha9-DuSk": {
+  "date": "2025-11-13",
+  "title": "#20 - MVCC: Multi-Version Concurrency Control (CMU Intro to Database Systems)",
+  "duration": 5000
+ },
+ "CedEy54pe3g": {
+  "date": "2025-11-18",
+  "title": "#21 - Write-Ahead Logging + Shadow Paging (CMU Intro to Database Systems)",
+  "duration": 4909
+ },
+ "Vf-N3JzWz0g": {
+  "date": "2025-11-18",
+  "title": "Firebolt: Why Powering User Facing Applications on Iceberg is Hard (Benjamin Wagner)",
+  "duration": 4068
+ },
+ "X2jc4qalNy0": {
+  "date": "2025-11-20",
+  "title": "#22 - Database Crash Recovery ✸ ClickHouse Database Talk (CMU Intro to Database Systems)",
+  "duration": 4674
+ },
+ "atzrfHUeq30": {
+  "date": "2025-11-21",
+  "title": "Real Time Analytics Query Architecture Evolution @ Uber (Ankit Sultana)",
+  "duration": 3345
+ },
+ "IFLQBWY6dlE": {
+  "date": "2025-11-25",
+  "title": "#23 - Distributed Databases Pt. 1 (CMU Intro to Database Systems)",
+  "duration": 5108
+ },
+ "zzqDBSVljsQ": {
+  "date": "2025-11-25",
+  "title": "Reconstructing History with XTDB (Jeremy Taylor + James Henderson)",
+  "duration": 3944
+ },
+ "GnzsgE4igL4": {
+  "date": "2025-12-02",
+  "title": "From Storage Formats to Open Governance: The Evolution to Apache Polaris (Prashant Singh)",
+  "duration": 4344
+ },
+ "pQh5fka3FC0": {
+  "date": "2025-12-02",
+  "title": "#24 - Distributed Databases Pt. 2 (CMU Intro to Database Systems)",
+  "duration": 4745
+ },
+ "qiVUf9X6ItM": {
+  "date": "2025-12-04",
+  "title": "#25 - Databricks + Yellowbrick + ClickHouse ✸ RelationalAI DB Talk (CMU Intro to Database Systems)",
+  "duration": 5143
+ },
+ "mcFHZFb1CAo": {
+  "date": "2025-12-09",
+  "title": "Apache Fluss: A Streaming Storage for Real-Time Lakehouse (Jark Wu)",
+  "duration": 3649
+ },
+ "QnGBxn_XP5U": {
+  "date": "2026-01-29",
+  "title": "Introduction to dbt (Drew Banin)",
+  "duration": 441
+ },
+ "jlWWyFYcO7g": {
+  "date": "2026-01-29",
+  "title": "Introduction to SingleStore (Joseph Victor)",
+  "duration": 593
+ },
+ "aIGyEQhTG78": {
+  "date": "2026-02-04",
+  "title": "Redpanda Oxla or: Why Your Hashmaps are Secretly Wrecking Your Performance (Akidau + Symanski)",
+  "duration": 3684
+ },
+ "9NdAOHyBq44": {
+  "date": "2026-02-05",
+  "title": "YugabyteDB: A Brief Introduction (Hari Krishna Sunder)",
+  "duration": 525
+ },
+ "mK2h9VPRgnI": {
+  "date": "2026-02-10",
+  "title": "Aurora DSQL: Serverless, Scalable, Global OLTP Database System (Marc Brooker)",
+  "duration": 3795
+ },
+ "gAhzB5ah6jg": {
+  "date": "2026-02-17",
+  "title": "TopK: Billion-Scale Hybrid Retrieval from the Ground Up (Marek Galovic)",
+  "duration": 3670
+ },
+ "zGBecRI6Qd4": {
+  "date": "2026-02-19",
+  "title": "MotherDuck: Building a Cloud Data Warehouse with an In-Process OLAP DBMS (Boaz Leskes)",
+  "duration": 749
+ },
+ "EdgeqeW47_w": {
+  "date": "2026-02-24",
+  "title": "HorizonDB: Co‑Designing PostgreSQL and Azure for Cloud‑Native OLTP (Adam Prout)",
+  "duration": 3587
+ },
+ "ucZrjmM11sg": {
+  "date": "2026-02-25",
+  "title": "Chronon – Mixed-workload Data Processing Framework (Nikhil Simha)",
+  "duration": 3393
+ },
+ "pqoRNwNaxfs": {
+  "date": "2026-03-10",
+  "title": "turbopuffer: Object Storage-native Database for Search (Simon Eskildsen)",
+  "duration": 4134
+ },
+ "GYIQW_zLWE4": {
+  "date": "2026-03-17",
+  "title": "YugabyteDB: Distributed PostgreSQL for Modern Apps (Hari Krishna Sunder)",
+  "duration": 3876
+ },
+ "M62bhgueNjU": {
+  "date": "2026-03-20",
+  "title": "Firebolt: Modern Shuffle @ 100 GBit/second (Mosha Pasumansky)",
+  "duration": 1029
+ },
+ "YuEPZlXBImg": {
+  "date": "2026-03-24",
+  "title": "TonicDB: Databases without an OS? Meet QuinineHM (Filip Obradovic)",
+  "duration": 4013
+ },
+ "AbCvWET6rTQ": {
+  "date": "2026-03-26",
+  "title": "RelationalAI: Efficient Iterative and Recursive Computations Inside Databases (Amir Shaikhha)",
+  "duration": 747
+ },
+ "wf82I0UzRoE": {
+  "date": "2026-03-31",
+  "title": "Pixeltable: A DBMS for Multimodal AI Applications (Marcel Kornacker)",
+  "duration": 3810
+ },
+ "elLeyFMb7vU": {
+  "date": "2026-04-03",
+  "title": "SpiralDB: Building a Machine-scale Database (Will Manning)",
+  "duration": 632
+ },
+ "-GhNDYCchqc": {
+  "date": "2026-04-07",
+  "title": "SpacetimeDB → Inverting the Backend: Why We Built our MMORPG Inside a Database (Tyler Cloutier)",
+  "duration": 3958
+ },
+ "gziRsJcl5_k": {
+  "date": "2026-04-12",
+  "title": "Introduction to ClickHouse's Data Storage Architecture (George Larionov)",
+  "duration": 655
+ },
+ "9_kbqi9XYE8": {
+  "date": "2026-04-14",
+  "title": "Multigres: Bringing Horizontal Scaling and Enterprise Operations to PostgreSQL (Sugu Sougoumarane)",
+  "duration": 3678
+ },
+ "Kq3csHJqgJQ": {
+  "date": "2026-04-15",
+  "title": "Floe: A SQL Compute Service for the Data Lakehouse (Kurt Westerfeld + Mark Cusack)",
+  "duration": 3536
+ },
+ "dQ_1DkoOzG4": {
+  "date": "2026-04-21",
+  "title": "Introduction to Floe (Kurt Westerfeld)",
+  "duration": 685
+ },
+ "xGbNoXUovJ0": {
+  "date": "2026-04-21",
+  "title": "VillageSQL: Decisions, Principles, & Lessons in Teaching MySQL New Tricks (Steve Schirripa)",
+  "duration": 4423
+ },
+ "gmXVEULVWlE": {
+  "date": "2026-04-28",
+  "title": "Sirius: A GPU-Native SQL Engine (Xiangyao Yu)",
+  "duration": 4046
+ },
+ "vYk4s5pr2FI": {
+  "date": "2026-09-03",
+  "title": "dbt Fall 2026   HD 720p",
+  "duration": 692
+ },
+ "J_YtAoPL2c4": {
+  "date": "2026-09-28",
+  "title": "Apache Doris: Real-Time Analytics and Search Database for AI Agents (Owen Xiao)",
+  "duration": 3791
+ },
+ "1eVkT-ZnKC8": {
+  "date": "2026-09-29",
+  "title": "Everything Has Bugs. Here’s How Antithesis Catches Them. (Marco Primi)",
+  "duration": 3662
+ },
+ "HTHzZco2jIw": {
+  "date": "2026-10-20",
+  "title": "Inside the Guts of FloeScan and other Interesting Design Magic (Thomas Kejser)",
+  "duration": 3853
+ },
+ "xg8qksWY2eY": {
+  "date": "2026-10-29",
+  "title": "Lakebases, Lakehouses, and LTAP: Unifying Transactions and Analytics on Open Storage (Ippo Pandis)",
+  "duration": 3160
+ }
+}
