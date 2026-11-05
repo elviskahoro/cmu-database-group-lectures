@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6PGMKFZMDFSDPFTZDT086J9",
+  "session_id": "01a1acfe-1fca-77e2-9cea-0ef5897e6eeb",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-05T18:48:16.682078Z",
+  "branch": "feat/chunk-quality-filter",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "docs/corpus-quality.md",
+    "lecture_search/quality.py",
+    "scripts/load_corpus.py",
+    "tach.toml",
+    "tests/test_chunk_quality.py"
+  ],
+  "agent": "Pi",
+  "model": "accounts/fireworks/models/kimi-k3",
+  "turn_id": "1e37b8f59e33",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 70065,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2428491,
+    "output_tokens": 30308,
+    "api_call_count": 57
+  },
+  "redaction": {
+    "replacements": 4,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 3,
+      "credentialed_uri": 0,
+      "entropy": 1,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 1
+  }
+}
