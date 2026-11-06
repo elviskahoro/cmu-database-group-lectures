@@ -115,4 +115,7 @@ uv.lock
 # Gas City / marimo generated
 .pi/extensions/gc-hooks.js
 /repos/
-notebooks/__marimo__/
+# marimo session snapshots are committed so molab static previews render with
+# outputs (https://docs.marimo.io/guides/molab/#static-previews)
+notebooks/__marimo__/*
+!notebooks/__marimo__/session/
