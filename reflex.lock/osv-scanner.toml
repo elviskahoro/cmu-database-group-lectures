@@ -1,0 +1,6 @@
+# osv-scanner configuration. Trunk copies this file into its run sandbox
+# (direct_configs: [osv-scanner.toml] in the osv-scanner plugin definition).
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+ignoreUntil = 2027-05-06
+reason = "minimatch 10.2.6 DoS via globparts amplification. Transitive build-time-only dependency of the Reflex frontend via @react-router/fs-routes (^10.2.5); the fixed release (11.0.1) is outside that range, so resolution requires an upstream @react-router/fs-routes bump. minimatch here only matches glob patterns from this repo's own route files at build time, never untrusted input, so the DoS vector is not reachable."

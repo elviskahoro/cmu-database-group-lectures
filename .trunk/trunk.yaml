@@ -116,8 +116,10 @@ lint:
     # no first-class "restrict this linter to a directory" field on `enabled`
     # entries, and `regexes` (unlike `extensions`) match the full path from
     # the repo root, so markdown outside docs/ (README.md, CHANGELOG.md) is
-    # never picked up. Dormant until a docs/ tree and .vale.ini exist here;
-    # gtm-sdk scopes its vale the same way.
+    # never picked up. A rule-less .vale.ini exists at the repo root (see its
+    # comment for why no StylesPath is possible under trunk's sandbox); vale
+    # stays a no-op until real styles are adopted. gtm-sdk scopes its vale the
+    # same way.
     - name: vale
       files: [docs-markdown]
 
@@ -127,8 +129,8 @@ lint:
         - ^docs/.+\.(md|mdx)$
 
   # Mirrors gtm-sdk's enabled list (shared lint stack; renovate bumps versions
-  # independently per repo). Vale is dormant until a docs/ tree and .vale.ini
-  # exist; it currently has no matching files.
+  # independently per repo). Vale now has matching files (docs/**) and runs
+  # against the rule-less root .vale.ini.
   enabled:
     # Pinned to the latest release before 1.17.0 added the cache-write-untrusted,
     # cache-call-unrestricted, and cache-operation policies (default-on in 1.17.0;

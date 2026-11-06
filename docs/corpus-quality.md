@@ -14,7 +14,7 @@ Source: Modal volume `cmu-transcripts` (`/transcription`), pulled with
 ## Automated checks (all 595 files)
 
 | Check | Result |
-|---|---|
+| --- | --- |
 | File count | 595/595 ✓ |
 | Empty files / empty transcripts | 0 ✓ |
 | Every `video_id` in `metadata/titles_all.json` present | 595/595, none missing, none extra ✓ |
@@ -41,7 +41,7 @@ Source: Modal volume `cmu-transcripts` (`/transcription`), pulled with
 
 ### Borderline — recommend re-transcribe
 
-4. **`OIT9Y1IBZUU` — 2017-10-05 11 Sorting & Joins (Fall 2017)**
+1. **`OIT9Y1IBZUU` — 2017-10-05 11 Sorting & Joins (Fall 2017)**
    Last segment ends at 4 294 s of a 4 542 s lecture (248 s / 5.5 % early)
    and the final segment is a "you you you …" loop. Bulk of the lecture
    (699 words in the last 5 min of transcript) is fine, but the tail is
@@ -79,7 +79,7 @@ rather than re-transcribing. No "postgrest"/"postgress" misrenderings found.
 
 Delete these from the volume and re-run the resumable job:
 
-```
+```text
 tEa5sAh-kVk   2016-05-16  Howard Chu - LMDB
 6H0yuYPHw0Q   2017-01-30  L04 - Optimistic Concurrency Control
 YeNF3pJwLKw   2021-09-09  03 - Database Storage I

@@ -21,7 +21,7 @@ Fireworks embeddings against local sentence-transformers embeddings for
   synthetic database-jargon sentences (hash joins, MVCC, WAL, LSM, etc.) —
   22 texts total.
 
-## How Fireworks treats the `search_document: ` prefix
+## How Fireworks treats the `search_document:` prefix
 
 **Fireworks does NOT apply the Nomic task prefix server-side.** The
 request has no `prompt_template` field that injects it; whatever string
@@ -31,7 +31,7 @@ exactly once.
 Evidence (mean cosine over all 22 texts):
 
 | comparison | mean cosine |
-|---|---|
+| --- | --- |
 | Fireworks(raw) vs local(raw) | 0.999985 |
 | Fireworks(prefixed) vs local(prefixed) | 0.999974 |
 | Fireworks(raw) vs local(prefixed) | 0.926138 |
@@ -39,7 +39,7 @@ Evidence (mean cosine over all 22 texts):
 Raw-to-raw agrees to ~5 decimal places while raw-to-prefixed collapses to
 0.93, so Fireworks is embedding exactly what it is sent. This matches the
 existing convention in `lecture_search/embed.py`, which prepends
-`search_document: ` / `search_query: ` manually — that code is compatible
+`search_document:` / `search_query:` manually — that code is compatible
 with swapping the local embedder for the Fireworks endpoint as long as the
 caller keeps prepending the prefix. Double-prefixing (prefixing before
 calling an endpoint that also prefixes) is not a risk here because
