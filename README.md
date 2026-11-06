@@ -1,5 +1,9 @@
 # Reflex Starter Template
 
+[![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/elviskahoro/cmu-database-group-lectures/blob/main/notebooks/search.py)
+
+Hybrid search over the CMU Database Group lecture corpus lives in [`notebooks/search.py`](notebooks/search.py) — open it in [molab](https://molab.marimo.io/github/elviskahoro/cmu-database-group-lectures/blob/main/notebooks/search.py) to run it as an app (see `docs/molab-deployment.md` and `docs/search-api.md`).
+
 Production-ready [Reflex](https://reflex.dev) starter that deploys to [Railway](https://railway.app) via Docker. The frontend is pre-built into static assets at image build time and served by Caddy; the Reflex backend runs on a separate port and is reverse-proxied for `_event` and `_upload` routes.
 
 This document is written for an autonomous agent. Follow the sections in order. Each command is the literal command to run; do not paraphrase. When a step says "verify", do not skip — stop and report if the check fails.
