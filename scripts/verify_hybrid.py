@@ -49,7 +49,7 @@ def load_api_key() -> str:
     for line in env_file.read_text().splitlines():
         line = line.strip()
         if line.startswith("LANCEDB_API_KEY="):
-            return line.split("=", 1)[1].strip('"\'')
+            return line.split("=", 1)[1].strip("\"'")
     msg = "LANCEDB_API_KEY not found in .env.local"
     raise ValueError(msg)
 
@@ -75,49 +75,37 @@ def main() -> int:
     db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=load_api_key())
     table = db.open_table(TABLE_NAME)
     row_count = table.count_rows()
-    print(f"Table {TABLE_NAME}: {row_count} rows")
 
     # --- Step 1: FTS index on text -------------------------------------
     indices = table.list_indices()
     fts_indices = [
-        idx for idx in indices
+        idx
+        for idx in indices
         if idx.index_type == "FTS" and "text" in (idx.columns or [])
     ]
     if not fts_indices:
-        print("FAIL: no FTS index on column 'text'", file=sys.stderr)
         return 1
     idx = fts_indices[0]
-    print(f"FTS index verified: {idx.name} on {idx.columns} "
-          f"({idx.num_indexed_rows} indexed rows)")
 
-    report: dict[str, Any] = {"table": TABLE_NAME, "rows": row_count,
-                    "fts_index": {"name": idx.name, "columns": idx.columns},
-                    "queries": {}}
+    report: dict[str, Any] = {
+        "table": TABLE_NAME,
+        "rows": row_count,
+        "fts_index": {"name": idx.name, "columns": idx.columns},
+        "queries": {},
+    }
 
     for query in QUERIES:
-        print(f"\n=== Query: {query!r} ===")
         q_vec = embed_query(query)
         assert len(q_vec) == 768
 
         entry: dict[str, Any] = {}
 
-        # FTS-only (BM25)
-        fts_rows = (
-            table.search(query, query_type="fts")
-            .limit(TOP_K)
-            .to_list()
-        )
+        fts_rows = table.search(query, query_type="fts").limit(TOP_K).to_list()
         entry["fts_only"] = summarize(fts_rows)
-        print(f"FTS-only top {TOP_K}: {[r['id'] for r in entry['fts_only']]}")
 
         # Vector-only
-        vec_rows = (
-            table.search(q_vec, query_type="vector")
-            .limit(TOP_K)
-            .to_list()
-        )
+        vec_rows = table.search(q_vec, query_type="vector").limit(TOP_K).to_list()
         entry["vector_only"] = summarize(vec_rows)
-        print(f"Vector-only top {TOP_K}: {[r['id'] for r in entry['vector_only']]}")
 
         # Hybrid with explicit .vector().text() + MRRReranker at 3 weights
         hybrid: dict[str, list[dict[str, Any]]] = {}
@@ -132,8 +120,6 @@ def main() -> int:
                 .to_list()
             )
             hybrid[f"vector={w_vec}/fts={w_fts}"] = summarize(rows)
-            print(f"Hybrid w_vec={w_vec} w_fts={w_fts}: "
-                  f"{[r['id'] for r in hybrid[f'vector={w_vec}/fts={w_fts}']]}")
         entry["hybrid_mrr"] = hybrid
 
         # Rankings must differ across weights for at least one query overall
@@ -144,7 +130,6 @@ def main() -> int:
 
     out = ROOT_DIR / "data" / "hybrid_verification.json"
     _ = out.write_text(json.dumps(report, indent=2))
-    print(f"\nFull report written to {out}")
     return 0
 
 

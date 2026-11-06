@@ -15,10 +15,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-from http import HTTPStatus
 import os
 import tempfile
 import time
+from http import HTTPStatus
 from pathlib import Path
 from typing import Any
 
@@ -200,14 +200,14 @@ def _mock_transport(
     return httpx.MockTransport(handler), seen_inputs
 
 
-def test_cache_key_tracks_text():
+def test_cache_key_tracks_text() -> None:
     assert cache_key("vid:0", "alpha") == cache_key("vid:0", "alpha")
     assert cache_key("vid:0", "alpha") != cache_key("vid:0", "beta")
     assert cache_key("vid:0", "alpha") != cache_key("vid:1", "alpha")
     assert cache_key("vid:0", "alpha").startswith("vid:0:")
 
 
-def test_embedding_cache_roundtrip(tmp_path: Path):
+def test_embedding_cache_roundtrip(tmp_path: Path) -> None:
     cache = EmbeddingCache(tmp_path / "cache.json")
     assert cache.get("k") is None
     cache.set("k", [1.0, 2.0])
@@ -218,7 +218,7 @@ def test_embedding_cache_roundtrip(tmp_path: Path):
     assert reloaded.get("k") == [1.0, 2.0]
 
 
-def test_batches_and_token_accounting():
+def test_batches_and_token_accounting() -> None:
     transport, seen = _mock_transport([200])
     embedder = FireworksEmbedder(
         "key",
@@ -233,7 +233,7 @@ def test_batches_and_token_accounting():
     assert embedder.tokens_used == 7 * 5
 
 
-def test_retry_on_429_then_success(monkeypatch):
+def test_retry_on_429_then_success(monkeypatch) -> None:
     transport, seen = _mock_transport([429, 200])
     monkeypatch.setattr(time, "sleep", lambda _: None)
     embedder = FireworksEmbedder(
@@ -248,7 +248,7 @@ def test_retry_on_429_then_success(monkeypatch):
     assert embedder.requests_made == 1
 
 
-def test_retry_on_5xx_exhaustion_raises(monkeypatch):
+def test_retry_on_5xx_exhaustion_raises(monkeypatch) -> None:
     transport, _ = _mock_transport([500])
     monkeypatch.setattr(time, "sleep", lambda _: None)
     embedder = FireworksEmbedder(
@@ -266,7 +266,7 @@ def test_retry_on_5xx_exhaustion_raises(monkeypatch):
         raise AssertionError("expected RuntimeError")
 
 
-def test_non_retryable_400_raises_immediately():
+def test_non_retryable_400_raises_immediately() -> None:
     transport, seen = _mock_transport([400])
     embedder = FireworksEmbedder(
         "key",
@@ -283,4 +283,4 @@ def test_non_retryable_400_raises_immediately():
 
 
 if __name__ == "__main__":
-    print("Run tests via pytest (tests/test_fireworks_client.py wraps these).")
+    pass

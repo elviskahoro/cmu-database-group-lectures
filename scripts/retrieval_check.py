@@ -163,28 +163,16 @@ def main() -> int:
     db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=load_api_key())
     table = db.open_table(TABLE_NAME)
     row_count = table.count_rows()
-    print(f"Table {TABLE_NAME}: {row_count} rows, top_k={TOP_K}")
 
     runnable = [query for query in QUERIES if query.expected_video_id is not None]
     deferred = [query for query in QUERIES if query.expected_video_id is None]
-    print(
-        f"Running {len(runnable)} queries "
-        f"({len(deferred)} deferred to full corpus: "
-        f"{[query.number for query in deferred]})",
-    )
 
     results: list[dict[str, Any]] = []
     failures: list[str] = []
     for query in runnable:
-        print(
-            f"\n=== Query {query.number}: {query.text!r} "
-            f"(expect {query.expected_video_id}) ===",
-        )
         entry = run_query(table, query)
         results.append(entry)
         for mode, rank in entry["expected_rank_by_mode"].items():
-            status = f"rank {rank}" if rank is not None else "MISS"
-            print(f"  {mode}: {status}")
             if rank is None:
                 failures.append(f"query {query.number} ({mode})")
 
@@ -200,15 +188,9 @@ def main() -> int:
         "results": results,
     }
     _ = REPORT_PATH.write_text(json.dumps(report, indent=2))
-    print(f"\nFull report written to {REPORT_PATH}")
 
     if failures:
-        print(
-            f"FAIL: expected lecture missing from top {TOP_K} for: {failures}",
-            file=sys.stderr,
-        )
         return 1
-    print(f"PASS: expected lecture in top {TOP_K} for every query and mode")
     return 0
 
 

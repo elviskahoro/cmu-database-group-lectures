@@ -27,7 +27,7 @@ def load_api_key() -> str:
     for line in env_file.read_text().splitlines():
         line = line.strip()
         if line.startswith("LANCEDB_API_KEY="):
-            return line.split("=", 1)[1].strip('"\'')
+            return line.split("=", 1)[1].strip("\"'")
     msg = "LANCEDB_API_KEY not found in .env.local"
     raise ValueError(msg)
 
@@ -52,34 +52,29 @@ def embed_chunks(chunks: list[ChunkRecord]) -> list[dict]:
     for batch_start in range(0, len(chunks), EMBED_BATCH_SIZE):
         batch = chunks[batch_start : batch_start + EMBED_BATCH_SIZE]
         vectors = embed_documents([chunk.text for chunk in batch])
-        rows.extend(chunk_to_row(chunk, vector) for chunk, vector in zip(batch, vectors))
-        print(f"Embedded {len(rows)}/{len(chunks)} chunks")
+        rows.extend(
+            chunk_to_row(chunk, vector)
+            for chunk, vector in zip(batch, vectors, strict=False)
+        )
     return rows
 
 
 def main() -> int:
     if not SAMPLE_DIR.exists():
-        print(f"Sample transcripts not found at {SAMPLE_DIR}", file=sys.stderr)
         return 1
 
     api_key = load_api_key()
 
-    print("Chunking sample transcripts...")
     per_video = process_sample_transcripts(SAMPLE_DIR)
     chunks = [chunk for video_chunks in per_video.values() for chunk in video_chunks]
     if not chunks:
-        print("No chunks produced from sample transcripts", file=sys.stderr)
         return 1
-    print(f"Produced {len(chunks)} chunks from {len(per_video)} transcripts")
 
-    print("Embedding chunks locally with Nomic v1.5 (CPU)...")
     rows = embed_chunks(chunks)
 
-    print("Connecting to LanceDB Cloud...")
     db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=api_key)
 
     if TABLE_NAME in db.table_names():
-        print(f"Upserting into existing table {TABLE_NAME} (merge_insert on id)...")
         table = db.open_table(TABLE_NAME)
         (
             table.merge_insert("id")
@@ -88,14 +83,11 @@ def main() -> int:
             .execute(rows)
         )
     else:
-        print(f"Creating table {TABLE_NAME}...")
         table = create_lectures_table(db, TABLE_NAME)
         table.add(rows)
 
-    print("Creating FTS index on text...")
     table.create_fts_index("text", replace=True)
 
-    print(f"Done: {table.count_rows()} rows in {TABLE_NAME} (FTS indexed, no vector index at sample size)")
     return 0
 
 

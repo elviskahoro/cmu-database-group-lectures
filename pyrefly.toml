@@ -1,4 +1,5 @@
-project-includes = ["rxconfig.py", "web"]
+project-includes = ["rxconfig.py", "web", "lecture_search", "scripts"]
+project-excludes = ["notebooks/**", "tests/**", ".venv/**"]
 python-version = "3.11"
 untyped-def-behavior = "check-and-infer-return-any"
 permissive-ignores = false

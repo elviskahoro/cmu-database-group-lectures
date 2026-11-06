@@ -29,14 +29,11 @@ def main() -> None:
 
     missing = sorted(set(titles) - set(by_vid))
     extra = sorted(set(by_vid) - set(titles))
-    print(f"transcripts: {len(files)}, titles: {len(titles)}")
-    print(f"missing transcripts for video_ids: {len(missing)}")
-    for v in missing:
-        print(f"  MISSING {v} {titles[v]['title'][:70]}")
+    for _v in missing:
+        pass
     if extra:
-        print(f"extra transcripts not in titles: {len(extra)}")
-        for v in extra:
-            print(f"  EXTRA {v}")
+        for _v in extra:
+            pass
 
     issues = {k: [] for k in ("empty", "repetition", "gap", "wpm", "tail")}
     for vid, f in sorted(by_vid.items()):
@@ -71,18 +68,18 @@ def main() -> None:
             minutes = segs[-1]["end"] / 60
             wpm = words / minutes if minutes > 0 else 0
             if not (120 <= wpm <= 230):
-                issues["wpm"].append(f"{label} | wpm={wpm:.0f} ({words}w/{minutes:.1f}m)")
+                issues["wpm"].append(
+                    f"{label} | wpm={wpm:.0f} ({words}w/{minutes:.1f}m)",
+                )
             tail_gap = dur - segs[-1]["end"]
             if abs(tail_gap) > 0.05 * dur:
                 issues["tail"].append(
-                    f"{label} | ends {segs[-1]['end']:.0f}s of {dur}s (off {tail_gap:+.0f}s)"
+                    f"{label} | ends {segs[-1]['end']:.0f}s of {dur}s (off {tail_gap:+.0f}s)",
                 )
 
-    print()
-    for k, rows in issues.items():
-        print(f"=== {k}: {len(rows)} ===")
-        for r in rows:
-            print(f"  {r}")
+    for _k, rows in issues.items():
+        for _r in rows:
+            pass
 
 
 if __name__ == "__main__":

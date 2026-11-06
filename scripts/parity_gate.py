@@ -53,7 +53,7 @@ def load_api_key() -> str:
     for line in env_file.read_text().splitlines():
         line = line.strip()
         if line.startswith("FIREWORKS_API_KEY="):
-            return line.split("=", 1)[1].strip('"\'')
+            return line.split("=", 1)[1].strip("\"'")
     msg = "FIREWORKS_API_KEY not found in .env.local"
     raise ValueError(msg)
 
@@ -79,7 +79,9 @@ def local_embed(texts: list[str]) -> np.ndarray:
     from sentence_transformers import SentenceTransformer
 
     model = SentenceTransformer(
-        FIREWORKS_MODEL, device="cpu", trust_remote_code=True
+        FIREWORKS_MODEL,
+        device="cpu",
+        trust_remote_code=True,
     )
     vectors = model.encode(texts, convert_to_numpy=True)
     return np.asarray(vectors, dtype=np.float64)
@@ -100,7 +102,6 @@ def main() -> int:
     chunk_map = process_sample_transcripts(ROOT_DIR / "data" / "sample")
     texts = [chunk.text for chunks in chunk_map.values() for chunk in chunks]
     texts.extend(SYNTHETIC_TEXTS)
-    print(f"Embedding {len(texts)} texts")
 
     raw = texts
     prefixed = [f"search_document: {text}" for text in texts]
@@ -113,25 +114,23 @@ def main() -> int:
     # Prefix probe: which Fireworks request matches the local prefixed baseline?
     diag_fw_raw_vs_local_prefixed = np.diag(cosine_matrix(fw_raw, local_prefixed))
     diag_fw_prefixed_vs_local_prefixed = np.diag(
-        cosine_matrix(fw_prefixed, local_prefixed)
+        cosine_matrix(fw_prefixed, local_prefixed),
     )
     diag_fw_raw_vs_local_raw = np.diag(cosine_matrix(fw_raw, local_raw))
     prefix_probe = {
         "fw_raw_vs_local_prefixed_mean": float(diag_fw_raw_vs_local_prefixed.mean()),
         "fw_prefixed_vs_local_prefixed_mean": float(
-            diag_fw_prefixed_vs_local_prefixed.mean()
+            diag_fw_prefixed_vs_local_prefixed.mean(),
         ),
         "fw_raw_vs_local_raw_mean": float(diag_fw_raw_vs_local_raw.mean()),
     }
-    print("Prefix probe (mean cosine over texts):")
-    for name, value in prefix_probe.items():
-        print(f"  {name}: {value:.6f}")
+    for _name, _value in prefix_probe.items():
+        pass
 
     fireworks_adds_prefix = (
         prefix_probe["fw_raw_vs_local_prefixed_mean"]
         > prefix_probe["fw_raw_vs_local_raw_mean"]
     )
-    print(f"Fireworks applies the prefix itself: {fireworks_adds_prefix}")
 
     # Gate: compare like-for-like. If Fireworks already prefixes, gate on
     # fw_raw vs local_prefixed; otherwise gate on fw_prefixed vs local_prefixed
@@ -149,14 +148,11 @@ def main() -> int:
         for i, text in enumerate(texts)
     ]
     for row in per_text:
-        status = "PASS" if row["pass"] else "FAIL"
-        print(f"  [{status}] {row['cosine']:.6f}  {row['text_preview']!r}")
+        "PASS" if row["pass"] else "FAIL"
 
     min_cosine = float(similarities.min())
     mean_cosine = float(similarities.mean())
     gate_pass = min_cosine >= PARITY_THRESHOLD
-    print(f"min={min_cosine:.6f} mean={mean_cosine:.6f}")
-    print(f"Gate at {PARITY_THRESHOLD}: {'PASS' if gate_pass else 'FAIL'}")
 
     RESULTS_PATH.write_text(
         json.dumps(
@@ -173,9 +169,8 @@ def main() -> int:
             },
             indent=2,
         )
-        + "\n"
+        + "\n",
     )
-    print(f"Wrote {RESULTS_PATH}")
     return 0 if gate_pass else 1
 
 

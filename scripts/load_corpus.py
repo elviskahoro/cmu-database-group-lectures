@@ -142,10 +142,6 @@ def embed_chunks_with_cache(
     miss_positions = [i for i, vector in enumerate(vectors) if vector is None]
     if miss_positions:
         miss_texts = [chunks[i].text for i in miss_positions]
-        print(
-            f"Embedding {len(miss_texts)} uncached chunks "
-            f"({len(chunks) - len(miss_texts)} cache hits)...",
-        )
         embedded = embed_documents(miss_texts, embedder=embedder)
         for position, vector in zip(miss_positions, embedded, strict=True):
             if len(vector) != EMBEDDING_DIMS:
@@ -155,7 +151,7 @@ def embed_chunks_with_cache(
             cache.set(keys[position], vector)
         cache.save()
     else:
-        print(f"All {len(chunks)} chunks served from embedding cache (0 API calls)")
+        pass
 
     return [vector for vector in vectors if vector is not None]
 
@@ -178,7 +174,6 @@ def upsert_rows(
     if table.count_rows() == 0:
         for start in range(0, len(rows), batch_size):
             table.add(rows[start : start + batch_size])
-            print(f"Added {min(start + batch_size, len(rows))}/{len(rows)} rows")
         table.create_scalar_index("id", replace=True)
         return table
 
@@ -190,7 +185,6 @@ def upsert_rows(
             .when_not_matched_insert_all()
             .execute(batch)
         )
-        print(f"Upserted {min(start + batch_size, len(rows))}/{len(rows)} rows")
     return table
 
 
@@ -217,7 +211,6 @@ def main(argv: list[str] | None = None) -> int:
     started = time.monotonic()
 
     if not args.transcripts_dir.exists():
-        print(f"Transcripts dir not found: {args.transcripts_dir}", file=sys.stderr)
         return 1
 
     titles = load_titles_all(args.titles_path)
@@ -226,25 +219,18 @@ def main(argv: list[str] | None = None) -> int:
         chunk for video_chunks in per_video.values() for chunk in video_chunks
     ]
     if not all_chunks:
-        print("No chunks produced", file=sys.stderr)
         return 1
 
     chunks, dropped = partition_chunks(all_chunks)
-    for line in drop_report_lines(all_chunks, dropped):
-        print(line)
+    for _line in drop_report_lines(all_chunks, dropped):
+        pass
     if not chunks:
-        print("No chunks survived the quality filter", file=sys.stderr)
         return 1
 
     total_words = sum(len(chunk.text.split()) for chunk in chunks)
-    estimated_tokens = int(total_words / WORDS_PER_TOKEN)
-    print(
-        f"Chunked {len(per_video)} transcripts -> {len(chunks)} kept chunks "
-        f"(~{estimated_tokens:,} tokens estimated)",
-    )
+    int(total_words / WORDS_PER_TOKEN)
 
     if args.dry_run:
-        print("Dry run: no embedding calls, no DB writes.")
         return 0
 
     cache = EmbeddingCache(args.cache_path)
@@ -265,21 +251,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     table = upsert_rows(db, args.table, rows, args.upsert_batch_size)
 
-    print("Creating FTS index on text...")
     table.create_index("text", config=FTS(with_position=True), replace=True)
 
-    row_count = table.count_rows()
-    print(maybe_create_vector_index(table, row_count))
+    table.count_rows()
 
-    elapsed = time.monotonic() - started
-    cost = embedder.tokens_used / 1_000_000 * COST_PER_MILLION_TOKENS_USD
-    print(
-        f"Done: {row_count} rows in {args.table}. "
-        f"Embedding API: {embedder.requests_made} requests, "
-        f"{embedder.tokens_used:,} tokens measured "
-        f"(~${cost:.4f} at ${COST_PER_MILLION_TOKENS_USD}/1M), "
-        f"{elapsed:.1f}s wall clock.",
-    )
+    time.monotonic() - started
+    embedder.tokens_used / 1_000_000 * COST_PER_MILLION_TOKENS_USD
     return 0
 
 

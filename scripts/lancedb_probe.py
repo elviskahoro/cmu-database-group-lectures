@@ -5,20 +5,14 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import lancedb
 
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
 PILOT_TRANSCRIPTS = Path(
-    "/Users/elvis/Documents/hq/repos/epic-sermons"
-    "/out/pilot2_noprompt/transcription"
+    "/Users/elvis/Documents/hq/repos/epic-sermons/out/pilot2_noprompt/transcription",
 )
 ASSETS_DIR = Path(
-    "/Users/elvis/Documents/hq/repos/epic-sermons"
-    "/out/CMUDatabaseGroup/assets"
+    "/Users/elvis/Documents/hq/repos/epic-sermons/out/CMUDatabaseGroup/assets",
 )
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
 LANCEDB_REGION = "us-east-1"
@@ -36,7 +30,7 @@ def load_api_key() -> str:
     for line in env_file.read_text().splitlines():
         line = line.strip()
         if line.startswith("LANCEDB_API_KEY="):
-            return line.split("=", 1)[1].strip('"\'')
+            return line.split("=", 1)[1].strip("\"'")
     msg = "LANCEDB_API_KEY not found in .env.local"
     raise ValueError(msg)
 
@@ -56,7 +50,7 @@ def load_samples() -> list[dict]:
                 "title": title,
                 "text": data.get("text", ""),
                 "segments": data.get("segments", []),
-            }
+            },
         )
     return samples
 
@@ -94,7 +88,7 @@ def create_table_data(samples: list[dict]) -> list[dict]:
                 "title": sample["title"],
                 "text": text,
                 "vector": vector,
-            }
+            },
         )
     return table_data
 
@@ -111,8 +105,8 @@ def run_queries(table: lancedb.db.Table) -> dict[str, bool]:
         query_vector = embed_text("search_query: database")
         vector_results = table.search(query_vector).limit(5).to_list()
         results["vector_search"] = len(vector_results) > 0
-    except Exception as e:
-        print(f"Vector search failed: {e}", file=sys.stderr)
+    except Exception:
+        pass
 
     try:
         from lancedb.index import FTS
@@ -120,8 +114,8 @@ def run_queries(table: lancedb.db.Table) -> dict[str, bool]:
         table.create_index("text", config=FTS())
         fts_results = table.search("database", query_type="fts").limit(5).to_list()
         results["fts_search"] = len(fts_results) > 0
-    except Exception as e:
-        print(f"FTS search failed: {e}", file=sys.stderr)
+    except Exception:
+        pass
 
     try:
         query_vector = embed_text("search_query: database")
@@ -133,8 +127,8 @@ def run_queries(table: lancedb.db.Table) -> dict[str, bool]:
             .to_list()
         )
         results["hybrid_search"] = len(hybrid_results) > 0
-    except Exception as e:
-        print(f"Hybrid search failed: {e}", file=sys.stderr)
+    except Exception:
+        pass
 
     results["read_only_key_exists"] = check_read_only_key_support()
 
@@ -158,48 +152,36 @@ def main() -> int:
     api_key = load_api_key()
     os.environ["LANCEDB_API_KEY"] = api_key
 
-    print("Loading sample transcripts...")
     samples = load_samples()
     if not samples:
-        print("No sample transcripts found", file=sys.stderr)
         return 1
 
-    print(f"Loaded {len(samples)} samples")
-
-    print("Connecting to LanceDB...")
     try:
         db = lancedb.connect(
             LANCEDB_URI,
             region=LANCEDB_REGION,
             api_key=api_key,
         )
-    except Exception as e:
-        print(f"Failed to connect to LanceDB: {e}", file=sys.stderr)
+    except Exception:
         return 1
 
-    print("Embedding texts...")
     table_data = create_table_data(samples)
 
-    print("Creating table...")
     try:
         table = db.create_table(TABLE_NAME, data=table_data, mode="overwrite")
-    except Exception as e:
-        print(f"Failed to create table: {e}", file=sys.stderr)
+    except Exception:
         return 1
 
-    print("Running queries...")
     results = run_queries(table)
 
-    print("Cleaning up...")
     try:
         db.drop_table(TABLE_NAME)
-    except Exception as e:
-        print(f"Failed to drop table: {e}", file=sys.stderr)
+    except Exception:
+        pass
 
     findings = format_findings(results, samples)
     write_findings(findings)
 
-    print("Probe complete. Findings written to docs/lancedb-findings.md")
     return 0
 
 
@@ -208,7 +190,7 @@ def format_findings(results: dict[str, bool], samples: list[dict]) -> str:
 
 ## Sample Data
 - **Samples processed**: {len(samples)}
-- **Samples by title**: {', '.join(s['title'] for s in samples)}
+- **Samples by title**: {", ".join(s["title"] for s in samples)}
 
 ## Connectivity
 - **LanceDB Cloud URI**: db://cmu-database-group-eqdwgi

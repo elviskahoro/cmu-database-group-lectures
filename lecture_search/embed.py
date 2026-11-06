@@ -16,10 +16,14 @@ QUERY_PREFIX = "search_query: "
 # per process); never construct it inside a row-add loop. Nomic prefixes are
 # NOT auto-applied by the registry, so embed_documents/embed_query prepend
 # them manually.
-_EMBEDDER = get_registry().get("sentence-transformers").create(
-    name=NOMIC_MODEL,
-    device="cpu",
-    trust_remote_code=True,
+_EMBEDDER = (
+    get_registry()
+    .get("sentence-transformers")
+    .create(
+        name=NOMIC_MODEL,
+        device="cpu",
+        trust_remote_code=True,
+    )
 )
 
 
@@ -46,7 +50,10 @@ def _embed_with_prefix(
     embedder: EmbeddingFunction,
 ) -> list[list[float]]:
     prefixed = [prefix + text for text in texts]
-    return [[float(value) for value in vector] for vector in embedder.generate_embeddings(prefixed)]
+    return [
+        [float(value) for value in vector]
+        for vector in embedder.generate_embeddings(prefixed)
+    ]
 
 
 def embed_documents(
@@ -76,7 +83,7 @@ class _StubEmbedder:
         return [[float(i)] * EMBEDDING_DIMS for i, _ in enumerate(texts)]
 
 
-def test_document_prefix_applied():
+def test_document_prefix_applied() -> None:
     stub = _StubEmbedder()
     vectors = embed_documents(["alpha", "beta"], embedder=stub)
 
@@ -85,7 +92,7 @@ def test_document_prefix_applied():
     assert all(len(vector) == EMBEDDING_DIMS for vector in vectors)
 
 
-def test_query_prefix_applied():
+def test_query_prefix_applied() -> None:
     stub = _StubEmbedder()
     vector = embed_query("what is a b-tree", embedder=stub)
 
@@ -93,7 +100,7 @@ def test_query_prefix_applied():
     assert len(vector) == EMBEDDING_DIMS
 
 
-def test_schema_vector_is_fixed_size_float32_768():
+def test_schema_vector_is_fixed_size_float32_768() -> None:
     schema = LectureChunk.to_arrow_schema()
     vector_field = schema.field("vector")
 
@@ -118,4 +125,3 @@ if __name__ == "__main__":
     test_document_prefix_applied()
     test_query_prefix_applied()
     test_schema_vector_is_fixed_size_float32_768()
-    print("All tests passed!")
