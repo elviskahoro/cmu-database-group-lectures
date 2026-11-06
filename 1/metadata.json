@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6RFXNWF6WDDQTWN2KRT24ES",
+  "session_id": "8ef563f2-782b-4510-943a-213e3fadf3e8",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-06T13:14:15.344387Z",
+  "branch": "docs/wrapup-runbook",
+  "checkpoints_count": 10,
+  "save_step_count": 1,
+  "files_touched": [],
+  "agent": "Claude Code",
+  "model": "claude-sonnet-5-5",
+  "turn_id": "c8be7eb5b27b",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 88,
+    "cache_creation_tokens": 203273,
+    "cache_read_tokens": 2544565,
+    "output_tokens": 11404,
+    "api_call_count": 35
+  },
+  "redaction": {
+    "replacements": 103,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 87,
+      "credentialed_uri": 0,
+      "entropy": 16,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 58
+  }
+}

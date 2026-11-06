@@ -3,7 +3,7 @@
   "checkpoint_id": "01M6RFXNWF6WDDQTWN2KRT24ES",
   "strategy": "manual-commit",
   "branch": "docs/wrapup-runbook",
-  "checkpoints_count": 1,
+  "checkpoints_count": 11,
   "files_touched": [
     "README.md"
   ],
@@ -14,24 +14,31 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 32960,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 461122,
-    "output_tokens": 6955,
-    "api_call_count": 24
+    "input_tokens": 33048,
+    "cache_creation_tokens": 203273,
+    "cache_read_tokens": 3005687,
+    "output_tokens": 18359,
+    "api_call_count": 59
   },
   "redaction": {
-    "replacements": 7,
+    "replacements": 110,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
-      "credential_value": 3,
+      "credential_value": 90,
       "credentialed_uri": 0,
-      "entropy": 4,
+      "entropy": 20,
       "key_context": 0,
       "provider_token": 0,
       "shell_stdin": 0
