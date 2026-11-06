@@ -19,7 +19,7 @@ Usage:
 Never prints secrets. Vector index is created only above the sequential-scan
 threshold (~50k rows, see .agents/skills/sdk-lancedb INDEXING_AND_TUNING);
 FTS index on `text` is always (re)built.
-"""
+"""  # noqa: INP001  # standalone script, not a package
 
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ from lecture_search import (  # noqa: E402
 )
 from lecture_search.embed import (  # noqa: E402
     EMBEDDING_DIMS,
-    LectureChunk,
+    create_lectures_table,
     embed_documents,
 )
 from lecture_search.fireworks import (  # noqa: E402
@@ -55,6 +55,11 @@ from lecture_search.fireworks import (  # noqa: E402
 from lecture_search.quality import (  # noqa: E402
     drop_report_lines,
     partition_chunks,
+)
+from scripts.lancedb_typed import (  # noqa: E402
+    InsertRow,
+    add_rows,
+    merge_insert_rows,
 )
 
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
@@ -70,29 +75,29 @@ WORDS_PER_TOKEN = 0.75  # rough prose ratio for dry-run token estimates
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse CLI arguments (see module docstring for usage)."""
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument(
+    parser = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
+    _ = parser.add_argument(
         "--transcripts-dir",
         type=Path,
         required=True,
         help="Directory of 'YYYY-MM-DD·video_id·transcription.json' files",
     )
-    parser.add_argument("--table", default="lectures", help="LanceDB table name")
-    parser.add_argument(
+    _ = parser.add_argument("--table", default="lectures", help="LanceDB table name")
+    _ = parser.add_argument(
         "--limit",
         type=int,
         default=None,
         help="Process at most N transcripts",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Chunk and estimate tokens only; no API calls, no DB writes",
     )
-    parser.add_argument("--titles-path", type=Path, default=DEFAULT_TITLES_PATH)
-    parser.add_argument("--cache-path", type=Path, default=DEFAULT_CACHE_PATH)
-    parser.add_argument("--embed-batch-size", type=int, default=64)
-    parser.add_argument("--upsert-batch-size", type=int, default=UPSERT_BATCH_SIZE)
+    _ = parser.add_argument("--titles-path", type=Path, default=DEFAULT_TITLES_PATH)
+    _ = parser.add_argument("--cache-path", type=Path, default=DEFAULT_CACHE_PATH)
+    _ = parser.add_argument("--embed-batch-size", type=int, default=64)
+    _ = parser.add_argument("--upsert-batch-size", type=int, default=UPSERT_BATCH_SIZE)
     return parser.parse_args(argv)
 
 
@@ -109,7 +114,7 @@ def load_lancedb_api_key() -> str:
     raise ValueError(msg)
 
 
-def chunk_to_row(chunk: ChunkRecord, vector: list[float]) -> dict:
+def chunk_to_row(chunk: ChunkRecord, vector: list[float]) -> InsertRow:
     """Flatten a ChunkRecord + embedding into a LanceDB row."""
     return {
         "id": chunk.id,
@@ -142,6 +147,10 @@ def embed_chunks_with_cache(
     miss_positions = [i for i, vector in enumerate(vectors) if vector is None]
     if miss_positions:
         miss_texts = [chunks[i].text for i in miss_positions]
+        print(  # noqa: T201  # CLI progress output
+            f"Embedding {len(miss_texts)} uncached chunks "
+            f"({len(chunks) - len(miss_texts)} cache hits)...",
+        )
         embedded = embed_documents(miss_texts, embedder=embedder)
         for position, vector in zip(miss_positions, embedded, strict=True):
             if len(vector) != EMBEDDING_DIMS:
@@ -151,7 +160,7 @@ def embed_chunks_with_cache(
             cache.set(keys[position], vector)
         cache.save()
     else:
-        pass
+        print(f"All {len(chunks)} chunks served from embedding cache (0 API calls)")  # noqa: T201  # CLI progress output
 
     return [vector for vector in vectors if vector is not None]
 
@@ -159,32 +168,28 @@ def embed_chunks_with_cache(
 def upsert_rows(
     db: lancedb.DBConnection,
     table_name: str,
-    rows: list[dict],
+    rows: list[InsertRow],
     batch_size: int,
 ) -> lancedb.table.Table:
     """Idempotent batched merge_insert on `id`; creates the table if absent."""
     if table_name in db.list_tables().tables:
         table = db.open_table(table_name)
     else:
-        table = db.create_table(table_name, schema=LectureChunk)
+        table = create_lectures_table(db, table_name)
 
     # LanceDB Cloud rejects merge_insert when >10k rows are un-indexed, so a
     # fresh/empty table is bulk-loaded with add(); merge_insert is only for
     # re-runs against an already-populated table.
     if table.count_rows() == 0:
         for start in range(0, len(rows), batch_size):
-            table.add(rows[start : start + batch_size])
+            add_rows(table, rows[start : start + batch_size])
+            print(f"Added {min(start + batch_size, len(rows))}/{len(rows)} rows")  # noqa: T201  # CLI progress output
         table.create_scalar_index("id", replace=True)
         return table
 
     for start in range(0, len(rows), batch_size):
-        batch = rows[start : start + batch_size]
-        (
-            table.merge_insert("id")
-            .when_matched_update_all()
-            .when_not_matched_insert_all()
-            .execute(batch)
-        )
+        merge_insert_rows(table, rows[start : start + batch_size])
+        print(f"Upserted {min(start + batch_size, len(rows))}/{len(rows)} rows")  # noqa: T201  # CLI progress output
     return table
 
 
@@ -211,6 +216,7 @@ def main(argv: list[str] | None = None) -> int:
     started = time.monotonic()
 
     if not args.transcripts_dir.exists():
+        print(f"Transcripts dir not found: {args.transcripts_dir}", file=sys.stderr)  # noqa: T201  # CLI error output
         return 1
 
     titles = load_titles_all(args.titles_path)
@@ -219,18 +225,25 @@ def main(argv: list[str] | None = None) -> int:
         chunk for video_chunks in per_video.values() for chunk in video_chunks
     ]
     if not all_chunks:
+        print("No chunks produced", file=sys.stderr)  # noqa: T201  # CLI error output
         return 1
 
     chunks, dropped = partition_chunks(all_chunks)
-    for _line in drop_report_lines(all_chunks, dropped):
-        pass
+    for line in drop_report_lines(all_chunks, dropped):
+        print(line)  # noqa: T201  # CLI report output
     if not chunks:
+        print("No chunks survived the quality filter", file=sys.stderr)  # noqa: T201  # CLI error output
         return 1
 
     total_words = sum(len(chunk.text.split()) for chunk in chunks)
-    int(total_words / WORDS_PER_TOKEN)
+    estimated_tokens = int(total_words / WORDS_PER_TOKEN)
+    print(  # noqa: T201  # CLI progress output
+        f"Chunked {len(per_video)} transcripts -> {len(chunks)} kept chunks "
+        f"(~{estimated_tokens:,} tokens estimated)",
+    )
 
     if args.dry_run:
+        print("Dry run: no embedding calls, no DB writes.")  # noqa: T201  # CLI progress output
         return 0
 
     cache = EmbeddingCache(args.cache_path)
@@ -251,12 +264,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     table = upsert_rows(db, args.table, rows, args.upsert_batch_size)
 
+    print("Creating FTS index on text...")  # noqa: T201  # CLI progress output
     table.create_index("text", config=FTS(with_position=True), replace=True)
 
-    table.count_rows()
+    row_count = table.count_rows()
+    print(maybe_create_vector_index(table, row_count))  # noqa: T201  # CLI progress output
 
-    time.monotonic() - started
-    embedder.tokens_used / 1_000_000 * COST_PER_MILLION_TOKENS_USD
+    elapsed = time.monotonic() - started
+    cost = embedder.tokens_used / 1_000_000 * COST_PER_MILLION_TOKENS_USD
+    print(  # noqa: T201  # CLI progress output
+        f"Done: {row_count} rows in {args.table}. "
+        f"Embedding API: {embedder.requests_made} requests, "
+        f"{embedder.tokens_used:,} tokens measured "
+        f"(~${cost:.4f} at ${COST_PER_MILLION_TOKENS_USD}/1M), "
+        f"{elapsed:.1f}s wall clock.",
+    )
     return 0
 
 

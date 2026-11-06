@@ -263,15 +263,55 @@ depends_on = [
   "lecture_search.fireworks",
   "lecture_search.quality",
   "lecture_search.search_api",
+  "scripts.retrieval_check",
 ]
 depends_on_external = ["reflex", "httpx"]
 visibility = []
+
+# Typed wrappers over LanceDB's partially-Unknown client API, shared by the
+# lancedb-touching scripts so the narrow per-line pyright ignores for those
+# third-party stubs live in exactly one module.
+[[modules]]
+path = "scripts.lancedb_typed"
+layer = "entrypoints"
+depends_on = []
+depends_on_external = ["lancedb"]
+visibility = [
+  "scripts.lancedb_probe",
+  "scripts.load_corpus",
+  "scripts.load_sample",
+  "scripts.verify_hybrid",
+  "scripts.retrieval_check",
+]
+
+[[interfaces]]
+from = ['scripts\.lancedb_typed']
+expose = [
+  "InsertRow",
+  "SearchRow",
+  "ScoredSearchRow",
+  "add_rows",
+  "create_table_from_rows",
+  "filtered_vector_search_rows",
+  "fts_search_rows",
+  "hybrid_search_rows",
+  "merge_insert_rows",
+  "vector_search_rows",
+]
+visibility = [
+  "scripts.lancedb_probe",
+  "scripts.load_corpus",
+  "scripts.load_sample",
+  "scripts.verify_hybrid",
+  "scripts.retrieval_check",
+]
+exclusive = true
 
 # Standalone probe scripts are independent from the web application.
 [[modules]]
 path = "scripts.lancedb_probe"
 layer = "entrypoints"
-depends_on = []
+depends_on = ["scripts.lancedb_typed"]
 depends_on_external = ["lancedb", "nomic"]
 visibility = []
 
@@ -394,6 +434,7 @@ depends_on = [
   "lecture_search.embed",
   "lecture_search.fireworks",
   "lecture_search.quality",
+  "scripts.lancedb_typed",
 ]
 depends_on_external = ["lancedb"]
 visibility = []
@@ -402,7 +443,7 @@ visibility = []
 [[modules]]
 path = "scripts.load_sample"
 layer = "entrypoints"
-depends_on = ["lecture_search", "lecture_search.embed"]
+depends_on = ["lecture_search", "lecture_search.embed", "scripts.lancedb_typed"]
 depends_on_external = ["lancedb"]
 visibility = []
 
@@ -410,7 +451,7 @@ visibility = []
 [[modules]]
 path = "scripts.verify_hybrid"
 layer = "entrypoints"
-depends_on = ["lecture_search.embed"]
+depends_on = ["lecture_search.embed", "scripts.lancedb_typed"]
 depends_on_external = ["lancedb"]
 visibility = []
 
@@ -420,7 +461,7 @@ visibility = []
 path = "scripts.parity_gate"
 layer = "entrypoints"
 depends_on = ["lecture_search"]
-depends_on_external = ["numpy", "sentence-transformers"]
+depends_on_external = ["httpx", "numpy", "sentence-transformers"]
 visibility = []
 
 # Read-only retrieval smoke check (vector-only vs hybrid top-10) against
@@ -428,6 +469,13 @@ visibility = []
 [[modules]]
 path = "scripts.retrieval_check"
 layer = "entrypoints"
-depends_on = ["lecture_search.embed"]
+depends_on = ["lecture_search.embed", "scripts.lancedb_typed"]
 depends_on_external = ["lancedb"]
-visibility = []
+# tests/ imports its pure helpers (expected_rank, QUERIES).
+visibility = ["tests"]
+
+[[interfaces]]
+from = ['scripts\.retrieval_check']
+expose = ["QUERIES", "expected_rank"]
+visibility = ["tests"]
+exclusive = true
