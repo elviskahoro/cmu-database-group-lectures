@@ -1,9 +1,10 @@
-# Retrieval smoke check over the real `lectures_sample` table (cdgl-x8u).
+# Retrieval check over the full `lectures` table (cdgl-ea1; sample-table
+# predecessor: cdgl-x8u).
 #
-# Runs the sample-appropriate subset of the 10 retrieval queries from the
-# bead notes (queries 1, 2, 3, 6, 8, 9, 10 map to loaded lectures; 4, 5, 7
-# are deferred to the full corpus). For each query: vector-only top-10 and
-# hybrid top-10 via MRRReranker (same reranker as
+# Runs all 15 retrieval queries: the original 10 from the bead notes
+# (queries 4, 5, 7 were deferred until the full corpus load) plus 5 new
+# realistic queries (11-15). For each query: vector-only top-10 and hybrid
+# top-10 via MRRReranker (same reranker as the Modal search API and
 # notebooks/search.py) at fts_weight in {0.2, 0.5, 0.8}. Records whether the
 # expected lecture (video_id) appears in the top 10 for every mode.
 #
@@ -28,7 +29,7 @@ from lecture_search.embed import embed_query  # noqa: E402
 
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
 LANCEDB_REGION = "us-east-1"
-TABLE_NAME = "lectures_sample"
+TABLE_NAME = "lectures"
 TOP_K = 10
 FTS_WEIGHTS = [0.2, 0.5, 0.8]
 REPORT_PATH = ROOT_DIR / "data" / "retrieval_check.json"
@@ -41,22 +42,48 @@ class RetrievalQuery:
     expected_video_id: str | None  # None = deferred to the full corpus
 
 
-# The 10 queries from the bead notes. expected_video_id is the lecture in
-# the sample table that should appear in the top 10; None means no matching
-# lecture is loaded yet (run on the full corpus instead).
+# Queries 1-10 are from the bead notes; 11-15 are new realistic queries
+# added for the full-corpus run (cdgl-ea1). expected_video_id is the lecture
+# a human would judge the right answer (verified against lecture titles);
+# all expected lectures are loaded in `lectures`.
+#
+# For the full-corpus run the expected lectures for queries 3, 8, 9, 10 were
+# re-pointed from the sample-table choices: the full corpus contains a more
+# canonical lecture for each (e.g. the RocksDB Databaseology lecture for
+# LSM compaction/write amplification — Mark Callaghan's home turf). See
+# docs/retrieval-check.md.
 QUERIES = [
     RetrievalQuery(1, "how does MVCC avoid read locks", "tUFha9-DuSk"),
     RetrievalQuery(2, "why use a write-ahead log", "CedEy54pe3g"),
-    RetrievalQuery(3, "LSM tree compaction write amplification", "2_sTdS4h-bY"),
-    RetrievalQuery(4, "B+ tree vs skip list for indexes", None),
-    RetrievalQuery(5, "how does Raft elect a leader", None),
+    RetrievalQuery(3, "LSM tree compaction write amplification", "jGCv4r8CJEI"),
+    RetrievalQuery(4, "B+ tree vs skip list for indexes", "pCoox0XbU8Y"),
+    RetrievalQuery(5, "how does Raft elect a leader", "JLlIAWjvHxM"),
     RetrievalQuery(
-        6, "query optimizer cost model cardinality estimation", "Kf9Nj3zI9WI"
+        6,
+        "query optimizer cost model cardinality estimation",
+        "Kf9Nj3zI9WI",
     ),
-    RetrievalQuery(7, "columnar storage and vectorized execution", None),
-    RetrievalQuery(8, "how dbt models become tables in the warehouse", "QnGBxn_XP5U"),
-    RetrievalQuery(9, "distributed SQL replication and consensus", "9NdAOHyBq44"),
-    RetrievalQuery(10, "snapshot isolation vs serializable", "tUFha9-DuSk"),
+    RetrievalQuery(7, "columnar storage and vectorized execution", "fGG9dApIhDU"),
+    RetrievalQuery(8, "how dbt models become tables in the warehouse", "gPhreHDIenE"),
+    RetrievalQuery(9, "distributed SQL replication and consensus", "yu2TZF7S1Mg"),
+    RetrievalQuery(10, "snapshot isolation vs serializable", "-7VjPVmw4vM"),
+    RetrievalQuery(
+        11,
+        "how does the ARIES recovery algorithm restore a database after a crash",
+        "4VGkRXVM5fk",
+    ),
+    RetrievalQuery(12, "how does DuckDB process analytical queries", "bZOvAKGkzpQ"),
+    RetrievalQuery(
+        13,
+        "how does Snowflake separate storage from compute",
+        "NhWp1bTG0Cw",
+    ),
+    RetrievalQuery(14, "vector similarity search with HNSW indexes", "YU66YlZW6dA"),
+    RetrievalQuery(
+        15,
+        "how does the buffer pool decide which pages to evict",
+        "Moz2AgC9hG4",
+    ),
 ]
 
 
@@ -68,7 +95,7 @@ def load_api_key() -> str:
     for line in env_file.read_text().splitlines():
         line = line.strip()
         if line.startswith("LANCEDB_API_KEY="):
-            return line.split("=", 1)[1].strip('"\'')
+            return line.split("=", 1)[1].strip("\"'")
     msg = "LANCEDB_API_KEY not found in .env.local"
     raise ValueError(msg)
 
@@ -103,7 +130,7 @@ def run_query(table: Any, query: RetrievalQuery) -> dict[str, Any]:
     assert len(query_vector) == 768
 
     vector_rows = summarize(
-        table.search(query_vector, query_type="vector").limit(TOP_K).to_list()
+        table.search(query_vector, query_type="vector").limit(TOP_K).to_list(),
     )
     modes: dict[str, Any] = {"vector_only": vector_rows}
 
@@ -114,7 +141,7 @@ def run_query(table: Any, query: RetrievalQuery) -> dict[str, Any]:
             .text(query.text)
             .rerank(MRRReranker(weight_vector=1.0 - fts_weight, weight_fts=fts_weight))
             .limit(TOP_K)
-            .to_list()
+            .to_list(),
         )
         modes[f"hybrid_fts_weight={fts_weight}"] = rows
 
@@ -143,14 +170,16 @@ def main() -> int:
     print(
         f"Running {len(runnable)} queries "
         f"({len(deferred)} deferred to full corpus: "
-        f"{[query.number for query in deferred]})"
+        f"{[query.number for query in deferred]})",
     )
 
     results: list[dict[str, Any]] = []
     failures: list[str] = []
     for query in runnable:
-        print(f"\n=== Query {query.number}: {query.text!r} "
-              f"(expect {query.expected_video_id}) ===")
+        print(
+            f"\n=== Query {query.number}: {query.text!r} "
+            f"(expect {query.expected_video_id}) ===",
+        )
         entry = run_query(table, query)
         results.append(entry)
         for mode, rank in entry["expected_rank_by_mode"].items():
@@ -174,8 +203,10 @@ def main() -> int:
     print(f"\nFull report written to {REPORT_PATH}")
 
     if failures:
-        print(f"FAIL: expected lecture missing from top {TOP_K} for: {failures}",
-              file=sys.stderr)
+        print(
+            f"FAIL: expected lecture missing from top {TOP_K} for: {failures}",
+            file=sys.stderr,
+        )
         return 1
     print(f"PASS: expected lecture in top {TOP_K} for every query and mode")
     return 0
@@ -200,8 +231,7 @@ def test_expected_rank_returns_none_on_miss() -> None:
     assert expected_rank(rows, "zzz") is None
 
 
-def test_sample_queries_cover_seven_loaded_lectures() -> None:
-    runnable = [query for query in QUERIES if query.expected_video_id is not None]
-    assert len(QUERIES) == 10
-    assert len(runnable) == 7
-    assert {query.number for query in runnable} == {1, 2, 3, 6, 8, 9, 10}
+def test_all_fifteen_queries_have_expected_lectures() -> None:
+    assert len(QUERIES) == 15
+    assert [query.number for query in QUERIES] == list(range(1, 16))
+    assert all(query.expected_video_id is not None for query in QUERIES)

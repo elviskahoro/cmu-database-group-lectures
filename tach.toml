@@ -78,6 +78,9 @@ exclude = [
   "numpy",
   "sentence-transformers",
   "sentence_transformers",
+  # torch is imported only by the marimo notebook (device detection), whose
+  # deps come from its PEP 723 header, not pyproject.
+  "torch",
   "modal",
   "fastapi",
   "huggingface_hub",
@@ -362,6 +365,7 @@ expose = [
   "check_body_size",
   "parse_search_request",
   "run_hybrid_search",
+  "scan_lecture_rows",
   "serialize_row",
   "summarize_lectures",
 ]
