@@ -1,8 +1,56 @@
-# Reflex Starter Template
+# CMU Database Group: search over lecture transcripts
 
 [![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/elviskahoro/cmu-database-group-lectures/blob/main/notebooks/search.py)
 
-Hybrid search over the CMU Database Group lecture corpus lives in [`notebooks/search.py`](notebooks/search.py) — open it in [molab](https://molab.marimo.io/github/elviskahoro/cmu-database-group-lectures/blob/main/notebooks/search.py) to run it as an app (see `docs/molab-deployment.md` and `docs/search-api.md`).
+Hybrid (vector + full-text) search over 595 CMU Database Group lectures
+(33,412 chunks). Results deep-link to the YouTube timestamp.
+
+## How it fits together
+
+1. **Transcribe**: Whisper large-v3 on Modal reads audio from R2 and writes
+   `*·transcription.json` to the `cmu-transcripts` Modal volume (the script
+   lives in the `epic-sermons` repo, `src/youtube/transcribe_r2.py`).
+2. **Chunk and embed**: `lecture_search/chunking.py` makes ~75 s windows with
+   ~15 s overlap; `lecture_search/quality.py` drops degenerate Whisper chunks;
+   Nomic v1.5 embeddings come from Fireworks (`search_document: ` prefix).
+3. **Load**: `scripts/load_corpus.py` writes to the LanceDB Cloud table `lectures`.
+4. **Serve**: the Modal app `cmu-lecture-search` (`lecture_search/search_api.py`)
+   holds the LanceDB key and runs hybrid search.
+5. **Use**: `notebooks/search.py` (marimo, deployed on molab) embeds the query
+   itself (`search_query: ` prefix) and sends the vector to the Modal app.
+
+## Runbook
+
+```bash
+uv sync
+set -a && . ./.env.local && set +a  # needs LANCEDB_API_KEY, FIREWORKS_API_KEY
+
+# Pull transcripts (Modal profile marcella)
+MODAL_PROFILE=marcella modal volume get --force cmu-transcripts /transcription data/corpus
+
+# Dry-run the chunking and quality filter, then load (idempotent; embeddings are cached)
+uv run python scripts/load_corpus.py --transcripts-dir data/corpus/transcription --dry-run
+uv run python scripts/load_corpus.py --transcripts-dir data/corpus/transcription --table lectures
+
+# Redeploy the search API
+MODAL_PROFILE=marcella modal deploy lecture_search/search_api.py
+
+# Check retrieval quality, then run the notebook locally
+uv run python -m scripts.retrieval_check
+uv run marimo run notebooks/search.py
+```
+
+- LanceDB Cloud has no read-only keys, so the key only ever lives in the Modal secret.
+- A fresh table is bulk-loaded with `add()`. `merge_insert` on Cloud fails once
+  more than 10k rows are un-indexed, so it is only used for re-runs.
+- Known gaps: `tEa5sAh-kVk` is not searchable (Whisper loop); `6H0yuYPHw0Q`,
+  `YeNF3pJwLKw` and `OIT9Y1IBZUU` only have their good parts indexed.
+- More detail: `docs/search-api.md`, `docs/molab-deployment.md`,
+  `docs/retrieval-check.md`, `docs/corpus-quality.md`, `docs/lancedb-findings.md`.
+
+---
+
+## Reflex starter template (inherited, unrelated to search)
 
 Production-ready [Reflex](https://reflex.dev) starter that deploys to [Railway](https://railway.app) via Docker. The frontend is pre-built into static assets at image build time and served by Caddy; the Reflex backend runs on a separate port and is reverse-proxied for `_event` and `_upload` routes.
 
