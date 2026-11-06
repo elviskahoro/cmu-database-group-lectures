@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.12.1",
+  "checkpoint_id": "01M6RHT6K2AH5S4ZGYYPFVGD9X",
+  "strategy": "manual-commit",
+  "branch": "fix/lint-lecture-search",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".trunk/trunk.yaml",
+    "lecture_search/__init__.py",
+    "lecture_search/chunking.py",
+    "lecture_search/embed.py",
+    "lecture_search/fireworks.py",
+    "lecture_search/search_api.py",
+    "tach.toml",
+    "tests/test_chunking.py",
+    "tests/test_embed.py",
+    "tests/test_fireworks.py",
+    "typings/fastapi/__init__.pyi",
+    "typings/fastapi/middleware/__init__.pyi",
+    "typings/fastapi/middleware/cors.pyi",
+    "typings/fastapi/responses.pyi",
+    "typings/modal/__init__.pyi"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 715511,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9303040,
+    "output_tokens": 76386,
+    "api_call_count": 114
+  },
+  "redaction": {
+    "replacements": 4,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 3,
+      "credentialed_uri": 0,
+      "entropy": 1,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
