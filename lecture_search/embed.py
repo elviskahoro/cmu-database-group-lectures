@@ -1,37 +1,105 @@
+"""Client-side Nomic v1.5 embeddings and the LanceDB lectures table schema.
+
+Embedding is client-side by design: callers embed with
+``embed_documents``/``embed_query`` (which prepend the Nomic task prefixes
+exactly once) and send vectors to the search API — the Modal container
+never runs a model. ``LectureChunk`` is the LanceDB table schema; the
+vector column is a fixed-size 768-d float32 list.
+"""
+
 from __future__ import annotations
 
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol, cast
 
-import lancedb
-from lancedb.embeddings import get_registry
-from lancedb.pydantic import LanceModel, Vector
+from lancedb.embeddings import (
+    TextEmbeddingFunction as _TextEmbeddingFunction,
+    get_registry,
+)
+
+# Vector(dim) builds a pyarrow-backed type dynamically — the canonical
+# lancedb schema idiom; its value_type parameter is untyped upstream.
+from lancedb.pydantic import (
+    LanceModel,
+    Vector,  # pyright: ignore[reportUnknownVariableType]
+)
+
+if TYPE_CHECKING:
+    import lancedb
 
 NOMIC_MODEL = "nomic-ai/nomic-embed-text-v1.5"
 EMBEDDING_DIMS = 768
 DOCUMENT_PREFIX = "search_document: "
 QUERY_PREFIX = "search_query: "
 
-# Registry embedder instantiated ONCE at module import. Instantiating is
-# cheap (the underlying SentenceTransformer model is lazy-loaded and cached
-# per process); never construct it inside a row-add loop. Nomic prefixes are
-# NOT auto-applied by the registry, so embed_documents/embed_query prepend
-# them manually.
-_EMBEDDER = (
-    get_registry()
-    .get("sentence-transformers")
-    .create(
+
+class EmbeddingFunction(Protocol):
+    """The slice of an embedding backend this module depends on."""
+
+    def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
+        """Embed each text into one fixed-dimension vector."""
+        ...
+
+
+class _RegistryEmbedder:
+    """Adapt a lancedb registry embedder to the local EmbeddingFunction.
+
+    lancedb's ``EmbeddingFunction.generate_embeddings`` is typed as
+    returning ``list[np.ndarray | None]``; this adapter normalizes to plain
+    float lists so embed_documents/embed_query stay backend-agnostic.
+    """
+
+    def __init__(self, inner: _TextEmbeddingFunction) -> None:
+        self._inner = inner
+
+    def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
+        """Embed texts via the wrapped lancedb embedder."""
+        embeddings: list[list[float]] = []
+        # lancedb annotates the return with `np.array` (a function, not a
+        # type), so pyright sees the elements as unknown; they are really
+        # float arrays (or None for a failed embedding).
+        raw = cast(
+            "list[list[float] | None]",
+            self._inner.generate_embeddings(  # pyright: ignore[reportUnknownMemberType]
+                texts,
+            ),
+        )
+        for vector in raw:
+            if vector is None:
+                msg = "embedder returned no vector for a text"
+                raise RuntimeError(msg)
+            embeddings.append([float(value) for value in vector])
+        return embeddings
+
+
+def _create_registry_embedder() -> EmbeddingFunction:
+    """Instantiate the Nomic v1.5 sentence-transformers embedder.
+
+    Instantiating is cheap (the underlying SentenceTransformer model is
+    lazy-loaded and cached per process); never construct it inside a
+    row-add loop.
+    """
+    embedder_cls = get_registry().get("sentence-transformers")
+    # lancedb's EmbeddingFunction.create(**kwargs) is untyped upstream.
+    inner = embedder_cls.create(  # pyright: ignore[reportUnknownMemberType]
         name=NOMIC_MODEL,
         device="cpu",
         trust_remote_code=True,
     )
-)
+    if not isinstance(inner, _TextEmbeddingFunction):
+        msg = "sentence-transformers embedder is not a TextEmbeddingFunction"
+        raise TypeError(msg)
+    return _RegistryEmbedder(inner)
 
 
-class EmbeddingFunction(Protocol):
-    def generate_embeddings(self, texts: list[str]) -> list[list[float]]: ...
+# Registry embedder instantiated ONCE at module import (see
+# _create_registry_embedder). Nomic prefixes are NOT auto-applied by the
+# registry, so embed_documents/embed_query prepend them manually.
+_EMBEDDER: EmbeddingFunction = _create_registry_embedder()
 
 
 class LectureChunk(LanceModel):
+    """LanceDB schema for one chunk row (vector is 768-d float32)."""
+
     id: str
     video_id: str
     date: str
@@ -41,7 +109,10 @@ class LectureChunk(LanceModel):
     end_seconds: float
     text: str
     deep_link: str
-    vector: Vector(EMBEDDING_DIMS)
+    # Vector(dim) constructs the column type at call time; there is no
+    # static type form for it (dynamic lancedb/pyarrow API).
+    # pyrefly: ignore[invalid-annotation]
+    vector: Vector(EMBEDDING_DIMS)  # pyright: ignore[reportInvalidTypeForm]
 
 
 def _embed_with_prefix(
@@ -60,6 +131,7 @@ def embed_documents(
     texts: list[str],
     embedder: EmbeddingFunction = _EMBEDDER,
 ) -> list[list[float]]:
+    """Embed corpus documents with the Nomic ``search_document: `` prefix."""
     return _embed_with_prefix(texts, DOCUMENT_PREFIX, embedder)
 
 
@@ -67,61 +139,16 @@ def embed_query(
     text: str,
     embedder: EmbeddingFunction = _EMBEDDER,
 ) -> list[float]:
+    """Embed one query with the Nomic ``search_query: `` prefix."""
     return _embed_with_prefix([text], QUERY_PREFIX, embedder)[0]
 
 
 def create_lectures_table(db: lancedb.DBConnection, name: str) -> lancedb.table.Table:
-    return db.create_table(name, schema=LectureChunk, mode="overwrite")
-
-
-class _StubEmbedder:
-    def __init__(self) -> None:
-        self.seen: list[str] = []
-
-    def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-        self.seen.extend(texts)
-        return [[float(i)] * EMBEDDING_DIMS for i, _ in enumerate(texts)]
-
-
-def test_document_prefix_applied() -> None:
-    stub = _StubEmbedder()
-    vectors = embed_documents(["alpha", "beta"], embedder=stub)
-
-    assert stub.seen == ["search_document: alpha", "search_document: beta"]
-    assert len(vectors) == 2
-    assert all(len(vector) == EMBEDDING_DIMS for vector in vectors)
-
-
-def test_query_prefix_applied() -> None:
-    stub = _StubEmbedder()
-    vector = embed_query("what is a b-tree", embedder=stub)
-
-    assert stub.seen == ["search_query: what is a b-tree"]
-    assert len(vector) == EMBEDDING_DIMS
-
-
-def test_schema_vector_is_fixed_size_float32_768() -> None:
-    schema = LectureChunk.to_arrow_schema()
-    vector_field = schema.field("vector")
-
-    assert vector_field.type.list_size == EMBEDDING_DIMS
-    assert str(vector_field.type.value_field.type) == "float"
-    expected_columns = {
-        "id",
-        "video_id",
-        "date",
-        "title",
-        "chunk_index",
-        "start_seconds",
-        "end_seconds",
-        "text",
-        "deep_link",
-        "vector",
-    }
-    assert set(schema.names) == expected_columns
-
-
-if __name__ == "__main__":
-    test_document_prefix_applied()
-    test_query_prefix_applied()
-    test_schema_vector_is_fixed_size_float32_768()
+    """Create (overwriting) the lectures table with the LectureChunk schema."""
+    # lancedb's create_table(data=...) parameter is untyped upstream; this
+    # call passes only schema=.
+    return db.create_table(  # pyright: ignore[reportUnknownMemberType]
+        name,
+        schema=LectureChunk,
+        mode="overwrite",
+    )

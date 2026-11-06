@@ -1,0 +1,3 @@
+# Type stub for fastapi.middleware.cors (deploy-only dep).
+
+class CORSMiddleware: ...

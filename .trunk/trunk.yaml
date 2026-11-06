@@ -103,14 +103,20 @@ lint:
     # sandboxes), because pyrefly's interpreter-resolver follows the symlink target,
     # landing outside the venv's site-packages. See #120.
     #
-    # This overrides the plugin's whole pyrefly invocation to explicitly pass the
-    # workspace venv paths, matching the pattern used for pyright above. Re-check
-    # this command against the plugin definition whenever trunk.yaml bumps plugin
-    # versions.
+    # This overrides the plugin's whole pyrefly invocation to explicitly pass
+    # the workspace venv paths, matching the pattern used for pyright above.
+    # Re-check this command against the plugin definition whenever trunk.yaml
+    # bumps plugin versions.
+    #
+    # The extra `--search-path ${workspace}/typings` (flags append) makes the
+    # repo-local stubs for deploy-only deps (modal, fastapi) resolvable: Trunk
+    # symlinks targets into its sandbox and passes them relative to it, so
+    # pyrefly's project root becomes the sandbox and its default typings/
+    # discovery never sees the workspace's typings/ directory.
     - name: pyrefly
       commands:
         - name: lint
-          run: pyrefly check --python-interpreter-path ${workspace}/.venv/bin/python --search-path ${workspace} --output-format=min-text --summary=none ${target}
+          run: pyrefly check --python-interpreter-path ${workspace}/.venv/bin/python --search-path ${workspace} --search-path ${workspace}/typings --output-format=min-text --summary=none ${target}
 
     # Vale is scoped exclusively to docs/** via a custom file type -- there is
     # no first-class "restrict this linter to a directory" field on `enabled`

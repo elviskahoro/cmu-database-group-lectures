@@ -48,27 +48,42 @@ import re
 import time
 from dataclasses import dataclass
 from datetime import date
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol, cast
 
 import lancedb
 from lancedb.rerankers import MRRReranker, Reranker
 
-# Deploy-only dependencies: baked into the Modal image below, intentionally
-# absent from the dev venv, so the pure request/response logic stays
-# importable (and testable) without them. The two guards are separate on
-# purpose: the local `modal deploy` process has modal but NOT fastapi (the
-# FastAPI names are only touched inside `web()`, which runs in-container).
-try:
-    import modal
-except ImportError:  # pragma: no cover - local dev has no modal installed
-    modal = None  # type: ignore[assignment]
+# Deploy-only dependencies: baked into the Modal image below, deliberately
+# absent from the dev venv (tach.toml [external]); the type checkers resolve
+# them from the repo-local stubs in typings/ instead (pyright needs a narrow
+# ignore because a stub-only package has no importable source). The runtime
+# guards stay separate on purpose: the local `modal deploy` process has
+# modal but NOT fastapi (the FastAPI names are only touched inside `web()`,
+# which runs in-container).
+if TYPE_CHECKING:
+    import modal  # pyright: ignore[reportMissingModuleSource]
+    from fastapi import (  # pyright: ignore[reportMissingModuleSource]
+        FastAPI,
+        Request,
+    )
+    from fastapi.middleware.cors import (  # pyright: ignore[reportMissingModuleSource]
+        CORSMiddleware,
+    )
+    from fastapi.responses import (  # pyright: ignore[reportMissingModuleSource]
+        JSONResponse,
+    )
+else:
+    try:
+        import modal
+    except ImportError:  # pragma: no cover - local dev has no modal installed
+        modal = None
 
-try:
-    from fastapi import FastAPI, Request
-    from fastapi.middleware.cors import CORSMiddleware
-    from fastapi.responses import JSONResponse
-except ImportError:  # pragma: no cover - only the Modal image has fastapi
-    FastAPI = Request = CORSMiddleware = JSONResponse = None  # type: ignore[assignment]
+    try:
+        from fastapi import FastAPI, Request
+        from fastapi.middleware.cors import CORSMiddleware
+        from fastapi.responses import JSONResponse
+    except ImportError:  # pragma: no cover - only the Modal image has fastapi
+        FastAPI = Request = CORSMiddleware = JSONResponse = None
 
 APP_NAME = "cmu-lecture-search"
 DEFAULT_TABLE = "lectures"
@@ -177,11 +192,15 @@ def check_body_size(body: bytes) -> None:
 
 
 def _parse_vector(value: object) -> tuple[float, ...]:
-    if not isinstance(value, list) or len(value) != VECTOR_DIMS:
+    if not isinstance(value, list):
+        msg = f"vector must be a list of exactly {VECTOR_DIMS} numbers"
+        raise RequestValidationError(msg)
+    items = cast("list[object]", value)
+    if len(items) != VECTOR_DIMS:
         msg = f"vector must be a list of exactly {VECTOR_DIMS} numbers"
         raise RequestValidationError(msg)
     components: list[float] = []
-    for component in value:
+    for component in items:
         if isinstance(component, bool) or not isinstance(component, (int, float)):
             msg = "vector components must be numbers"
             raise RequestValidationError(msg)
@@ -230,16 +249,20 @@ def _parse_fts_weight(value: object) -> float:
 def _parse_video_ids(value: object) -> tuple[str, ...]:
     if value is None:
         return ()
-    if not isinstance(value, list) or len(value) > MAX_VIDEO_IDS:
+    if not isinstance(value, list):
         msg = f"video_ids must be a list of at most {MAX_VIDEO_IDS} video IDs"
         raise RequestValidationError(msg)
-    if any(
-        not isinstance(video_id, str) or not VIDEO_ID_RE.fullmatch(video_id)
-        for video_id in value
-    ):
-        msg = "video_ids must be 11-character YouTube video IDs"
+    items = cast("list[object]", value)
+    if len(items) > MAX_VIDEO_IDS:
+        msg = f"video_ids must be a list of at most {MAX_VIDEO_IDS} video IDs"
         raise RequestValidationError(msg)
-    return tuple(value)
+    validated: list[str] = []
+    for video_id in items:
+        if not isinstance(video_id, str) or not VIDEO_ID_RE.fullmatch(video_id):
+            msg = "video_ids must be 11-character YouTube video IDs"
+            raise RequestValidationError(msg)
+        validated.append(video_id)
+    return tuple(validated)
 
 
 def parse_search_request(payload: object) -> SearchParams:
@@ -254,8 +277,9 @@ def parse_search_request(payload: object) -> SearchParams:
     if not isinstance(payload, dict):
         msg = "request body must be a JSON object"
         raise RequestValidationError(msg)
+    body = cast("dict[str, object]", payload)
 
-    query = payload.get("query")
+    query = body.get("query")
     if not isinstance(query, str) or not query.strip():
         msg = "query must be a non-empty string"
         raise RequestValidationError(msg)
@@ -263,20 +287,20 @@ def parse_search_request(payload: object) -> SearchParams:
         msg = f"query must be at most {MAX_QUERY_CHARS} characters"
         raise RequestValidationError(msg)
 
-    date_from = _parse_optional_date(payload.get("date_from"), "date_from")
-    date_to = _parse_optional_date(payload.get("date_to"), "date_to")
+    date_from = _parse_optional_date(body.get("date_from"), "date_from")
+    date_to = _parse_optional_date(body.get("date_to"), "date_to")
     if date_from is not None and date_to is not None and date_from > date_to:
         msg = "date_from must not be after date_to"
         raise RequestValidationError(msg)
 
     return SearchParams(
         query=query,
-        vector=_parse_vector(payload.get("vector")),
-        top_k=_parse_top_k(payload.get("top_k", DEFAULT_TOP_K)),
-        fts_weight=_parse_fts_weight(payload.get("fts_weight", DEFAULT_FTS_WEIGHT)),
+        vector=_parse_vector(body.get("vector")),
+        top_k=_parse_top_k(body.get("top_k", DEFAULT_TOP_K)),
+        fts_weight=_parse_fts_weight(body.get("fts_weight", DEFAULT_FTS_WEIGHT)),
         date_from=date_from,
         date_to=date_to,
-        video_ids=_parse_video_ids(payload.get("video_ids")),
+        video_ids=_parse_video_ids(body.get("video_ids")),
     )
 
 
@@ -306,11 +330,11 @@ def serialize_row(row: dict[str, object]) -> dict[str, object]:
         "video_id": str(row["video_id"]),
         "title": str(row["title"]),
         "date": str(row["date"]),
-        "start_seconds": float(row["start_seconds"]),
-        "end_seconds": float(row["end_seconds"]),
+        "start_seconds": float(cast("float", row["start_seconds"])),
+        "end_seconds": float(cast("float", row["end_seconds"])),
         "deep_link": str(row["deep_link"]),
         "text": str(row["text"]),
-        "score": float(score) if score is not None else None,
+        "score": float(cast("float", score)) if score is not None else None,
     }
 
 
@@ -416,8 +440,10 @@ if modal is not None:
     class SearchService:
         """CPU container: LanceDB connection, opened once (no model)."""
 
-        table: SearchTable
-        _lectures_cache: tuple[float, list[dict[str, str]]] | None
+        # Initialized by load() via @modal.enter() once per container; a
+        # Modal @cls service must not define __init__.
+        table: SearchTable  # pyright: ignore[reportUninitializedInstanceVariable]
+        _lectures_cache: tuple[float, list[dict[str, str]]] | None  # pyright: ignore[reportUninitializedInstanceVariable]
 
         @modal.enter()
         def load(self) -> None:

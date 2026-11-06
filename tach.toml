@@ -204,6 +204,7 @@ exclusive = true
 [[interfaces]]
 from = ['lecture_search']
 expose = [
+  "ChunkContext",
   "ChunkRecord",
   "Segment",
   "chunk_transcript",

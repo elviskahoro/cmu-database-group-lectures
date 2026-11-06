@@ -1,4 +1,7 @@
+"""Chunking, embedding, and search plumbing for the lecture corpus."""
+
 from lecture_search.chunking import (
+    ChunkContext,
     ChunkRecord,
     Segment,
     chunk_transcript,
@@ -8,6 +11,7 @@ from lecture_search.chunking import (
 )
 
 __all__ = [
+    "ChunkContext",
     "ChunkRecord",
     "Segment",
     "chunk_transcript",
