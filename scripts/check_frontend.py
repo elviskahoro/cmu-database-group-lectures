@@ -70,7 +70,7 @@ def check_lockfile() -> list[str]:
     """Check package.json and bun.lock agree."""
     with tempfile.TemporaryDirectory() as tmp:
         for name in ("package.json", "bun.lock"):
-            shutil.copy(LOCK_DIR / name, tmp)
+            _ = shutil.copy(LOCK_DIR / name, tmp)
         result = run("bun", "install", "--frozen-lockfile", cwd=Path(tmp))
     if result.returncode:
         return [f"bun install --frozen-lockfile failed:\n{result.stderr.strip()}"]

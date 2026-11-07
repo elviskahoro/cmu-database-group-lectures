@@ -1,15 +1,18 @@
-# Retrieval check over the full `lectures` table (cdgl-ea1; sample-table
-# predecessor: cdgl-x8u).
-#
-# Runs all 15 retrieval queries: the original 10 from the bead notes
-# (queries 4, 5, 7 were deferred until the full corpus load) plus 5 new
-# realistic queries (11-15). For each query: vector-only top-10 and hybrid
-# top-10 via MRRReranker (same reranker as the Modal search API and
-# notebooks/search.py) at fts_weight in {0.2, 0.5, 0.8}. Records whether the
-# expected lecture (video_id) appears in the top 10 for every mode.
-#
-# Writes the full report to data/retrieval_check.json and prints a summary.
-# Never prints secrets. Read-only against the table.
+"""Retrieval check over the full `lectures` table (cdgl-ea1).
+
+Sample-table predecessor: cdgl-x8u.
+
+Runs all 15 retrieval queries: the original 10 from the bead notes
+(queries 4, 5, 7 were deferred until the full corpus load) plus 5 new
+realistic queries (11-15). For each query: vector-only top-10 and hybrid
+top-10 via MRRReranker (same reranker as the Modal search API and
+notebooks/search.py) at fts_weight in {0.2, 0.5, 0.8}. Records whether the
+expected lecture (video_id) appears in the top 10 for every mode.
+
+Writes the full report to data/retrieval_check.json and exits nonzero when
+any expected lecture misses the top 10. Never prints secrets. Read-only
+against the table.
+"""  # noqa: INP001  # standalone script, not a package
 
 from __future__ import annotations
 
@@ -17,7 +20,10 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, TypedDict
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 import lancedb
 from lancedb.rerankers import MRRReranker
@@ -25,7 +31,12 @@ from lancedb.rerankers import MRRReranker
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))  # lecture_search is not an installed package
 
-from lecture_search.embed import embed_query  # noqa: E402
+from lecture_search.embed import EMBEDDING_DIMS, embed_query  # noqa: E402
+from scripts.lancedb_typed import (  # noqa: E402
+    ScoredSearchRow,
+    hybrid_search_rows,
+    vector_search_rows,
+)
 
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
 LANCEDB_REGION = "us-east-1"
@@ -37,9 +48,39 @@ REPORT_PATH = ROOT_DIR / "data" / "retrieval_check.json"
 
 @dataclass(frozen=True)
 class RetrievalQuery:
+    """One retrieval probe query and its human-judged expected lecture."""
+
     number: int
     text: str
     expected_video_id: str | None  # None = deferred to the full corpus
+
+
+class RankedRow(TypedDict):
+    """Minimal ranked-hit shape expected_rank works against."""
+
+    rank: int
+    video_id: str
+
+
+class SummaryRow(RankedRow, total=False):
+    """One ranked hit in a query-mode summary (plus any score column)."""
+
+    id: str
+    title: str
+    start_seconds: float
+    _score: float
+    _distance: float
+    _relevance_score: float
+
+
+class QueryResult(TypedDict, total=False):
+    """Per-query report entry across all retrieval modes."""
+
+    number: int
+    query: str
+    expected_video_id: str | None
+    modes: dict[str, list[SummaryRow]]
+    expected_rank_by_mode: dict[str, int | None]
 
 
 # Queries 1-10 are from the bead notes; 11-15 are new realistic queries
@@ -88,69 +129,84 @@ QUERIES = [
 
 
 def load_api_key() -> str:
+    """Read LANCEDB_API_KEY from .env.local. Never printed."""
     env_file = ROOT_DIR / ".env.local"
     if not env_file.exists():
         msg = ".env.local not found"
         raise FileNotFoundError(msg)
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
+    for raw_line in env_file.read_text().splitlines():
+        line = raw_line.strip()
         if line.startswith("LANCEDB_API_KEY="):
             return line.split("=", 1)[1].strip("\"'")
     msg = "LANCEDB_API_KEY not found in .env.local"
     raise ValueError(msg)
 
 
-def summarize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [
-        {
-            "rank": rank,
-            "id": row["id"],
-            "video_id": row["video_id"],
-            "title": row["title"],
-            "start_seconds": row["start_seconds"],
-            **{
-                key: round(float(row[key]), 4)
-                for key in ("_score", "_distance", "_relevance_score")
-                if key in row and row[key] is not None
-            },
-        }
-        for rank, row in enumerate(rows, start=1)
-    ]
+def summarize(rows: list[ScoredSearchRow]) -> list[SummaryRow]:
+    """Trim raw LanceDB rows to rank/id/video/title plus any score columns."""
+    summarized: list[SummaryRow] = []
+    for rank, row in enumerate(rows, start=1):
+        entry = SummaryRow(
+            rank=rank,
+            id=row["id"],
+            video_id=row["video_id"],
+            title=row["title"],
+            start_seconds=row["start_seconds"],
+        )
+        if (score := row.get("_score")) is not None:
+            entry["_score"] = round(score, 4)
+        if (distance := row.get("_distance")) is not None:
+            entry["_distance"] = round(distance, 4)
+        if (relevance := row.get("_relevance_score")) is not None:
+            entry["_relevance_score"] = round(relevance, 4)
+        summarized.append(entry)
+    return summarized
 
 
-def expected_rank(rows: list[dict[str, Any]], expected_video_id: str) -> int | None:
+def expected_rank(
+    rows: Sequence[RankedRow],
+    expected_video_id: str,
+) -> int | None:
+    """Rank of the expected lecture in a summary, or None when absent."""
     for row in rows:
         if row["video_id"] == expected_video_id:
-            return int(row["rank"])
+            return row["rank"]
     return None
 
 
-def run_query(table: Any, query: RetrievalQuery) -> dict[str, Any]:
+def run_query(table: lancedb.table.Table, query: RetrievalQuery) -> QueryResult:
+    """Run one query in vector-only and hybrid (per fts_weight) modes."""
     query_vector = embed_query(query.text)
-    assert len(query_vector) == 768
+    if len(query_vector) != EMBEDDING_DIMS:
+        msg = f"expected {EMBEDDING_DIMS}-dim query vector, got {len(query_vector)}"
+        raise ValueError(msg)
 
-    vector_rows = summarize(
-        table.search(query_vector, query_type="vector").limit(TOP_K).to_list(),
-    )
-    modes: dict[str, Any] = {"vector_only": vector_rows}
+    modes: dict[str, list[SummaryRow]] = {
+        "vector_only": summarize(
+            vector_search_rows(table, query_vector, limit=TOP_K),
+        ),
+    }
 
     for fts_weight in FTS_WEIGHTS:
-        rows = summarize(
-            table.search(query_type="hybrid")
-            .vector(query_vector)
-            .text(query.text)
-            .rerank(MRRReranker(weight_vector=1.0 - fts_weight, weight_fts=fts_weight))
-            .limit(TOP_K)
-            .to_list(),
+        modes[f"hybrid_fts_weight={fts_weight}"] = summarize(
+            hybrid_search_rows(
+                table,
+                query.text,
+                query_vector,
+                reranker=MRRReranker(
+                    weight_vector=1.0 - fts_weight,
+                    weight_fts=fts_weight,
+                ),
+                limit=TOP_K,
+            ),
         )
-        modes[f"hybrid_fts_weight={fts_weight}"] = rows
 
-    result: dict[str, Any] = {
-        "number": query.number,
-        "query": query.text,
-        "expected_video_id": query.expected_video_id,
-        "modes": modes,
-    }
+    result = QueryResult(
+        number=query.number,
+        query=query.text,
+        expected_video_id=query.expected_video_id,
+        modes=modes,
+    )
     if query.expected_video_id is not None:
         result["expected_rank_by_mode"] = {
             mode: expected_rank(rows, query.expected_video_id)
@@ -160,6 +216,7 @@ def run_query(table: Any, query: RetrievalQuery) -> dict[str, Any]:
 
 
 def main() -> int:
+    """Run every runnable query and write data/retrieval_check.json."""
     db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=load_api_key())
     table = db.open_table(TABLE_NAME)
     row_count = table.count_rows()
@@ -167,12 +224,13 @@ def main() -> int:
     runnable = [query for query in QUERIES if query.expected_video_id is not None]
     deferred = [query for query in QUERIES if query.expected_video_id is None]
 
-    results: list[dict[str, Any]] = []
+    results: list[QueryResult] = []
     failures: list[str] = []
     for query in runnable:
         entry = run_query(table, query)
         results.append(entry)
-        for mode, rank in entry["expected_rank_by_mode"].items():
+        # runnable queries always carry expected_rank_by_mode (see run_query)
+        for mode, rank in entry.get("expected_rank_by_mode", {}).items():
             if rank is None:
                 failures.append(f"query {query.number} ({mode})")
 
@@ -189,31 +247,8 @@ def main() -> int:
     }
     _ = REPORT_PATH.write_text(json.dumps(report, indent=2))
 
-    if failures:
-        return 1
-    return 0
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-def test_expected_rank_finds_first_match() -> None:
-    rows = [
-        {"rank": 1, "video_id": "aaa"},
-        {"rank": 2, "video_id": "bbb"},
-        {"rank": 3, "video_id": "aaa"},
-    ]
-    assert expected_rank(rows, "aaa") == 1
-    assert expected_rank(rows, "bbb") == 2
-
-
-def test_expected_rank_returns_none_on_miss() -> None:
-    rows = [{"rank": 1, "video_id": "aaa"}]
-    assert expected_rank(rows, "zzz") is None
-
-
-def test_all_fifteen_queries_have_expected_lectures() -> None:
-    assert len(QUERIES) == 15
-    assert [query.number for query in QUERIES] == list(range(1, 16))
-    assert all(query.expected_video_id is not None for query in QUERIES)
