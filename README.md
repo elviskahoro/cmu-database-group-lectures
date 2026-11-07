@@ -12,12 +12,12 @@ Hybrid (vector + full-text) search over 595 CMU Database Group lectures
    lives in the `epic-sermons` repo, `src/youtube/transcribe_r2.py`).
 2. **Chunk and embed**: `lecture_search/chunking.py` makes ~75 s windows with
    ~15 s overlap; `lecture_search/quality.py` drops degenerate Whisper chunks;
-   Nomic v1.5 embeddings come from Fireworks (`search_document: ` prefix).
+   Nomic v1.5 embeddings come from Fireworks (`search_document:` prefix, with trailing space).
 3. **Load**: `scripts/load_corpus.py` writes to the LanceDB Cloud table `lectures`.
 4. **Serve**: the Modal app `cmu-lecture-search` (`lecture_search/search_api.py`)
    holds the LanceDB key and runs hybrid search.
 5. **Use**: `notebooks/search.py` (marimo, deployed on molab) embeds the query
-   itself (`search_query: ` prefix) and sends the vector to the Modal app.
+   itself (`search_query:` prefix) and sends the vector to the Modal app.
 
 ## Runbook
 
@@ -378,7 +378,8 @@ lectures**.
    YouTube deep links.
 3. **Embed** locally on CPU with Nomic `nomic-ai/nomic-embed-text-v1.5`
    (768d). Prefixes are prepended client-side, exactly once:
-   `search_document: ` for chunks, `search_query: ` for queries
+   `search_document:` for chunks, `search_query:` for queries (both with a
+   trailing space)
    (`lecture_search/embed.py`; guarded by `tests/test_embed_prefix.py`).
 4. **Load** into LanceDB Cloud (`db://cmu-database-group-eqdwgi`,
    `us-east-1`) with an idempotent `merge_insert` upsert, plus an FTS index

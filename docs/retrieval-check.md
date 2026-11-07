@@ -7,7 +7,7 @@ uv run python -m scripts.retrieval_check
 ```
 
 The script is read-only against the table, embeds queries locally with Nomic
-v1.5 (`search_query: ` prefix, normalized — the same construction the
+v1.5 (`search_query:` prefix, normalized — the same construction the
 notebook and the Modal API use), and writes the full per-rank dump to
 `data/retrieval_check.json`. It exits nonzero if any expected lecture falls
 out of the top 10 in any mode. (Sample-table predecessor: cdgl-x8u — see
@@ -36,7 +36,7 @@ from the sample-table choice to the most canonical full-corpus answer
 (verified by title against the loaded corpus):
 
 | # | query | expected lecture | note |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | how does MVCC avoid read locks | `tUFha9-DuSk` (#20 MVCC, 2025) | |
 | 2 | why use a write-ahead log | `CedEy54pe3g` (#21 WAL, 2025) | |
 | 3 | LSM tree compaction write amplification | `jGCv4r8CJEI` (RocksDB, Databaseology) | re-pointed: was `2_sTdS4h-bY`; the RocksDB lecture (Mark Callaghan) is the canonical LSM-compaction/write-amplification talk |
@@ -59,7 +59,7 @@ from the sample-table choice to the most canonical full-corpus answer
 mode** (target was ≥ 9/10). Rank 1–2 in the large majority of modes.
 
 | # | vector-only | hybrid fts=0.2 | hybrid fts=0.5 | hybrid fts=0.8 |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | 1 | 2 | 2 | 4 | 5 |
 | 2 | 2 | 2 | 3 | 4 |
 | 3 | 3 | 3 | 2 | 2 |
@@ -80,7 +80,7 @@ Vector-only first-hit timestamps and cosine distances (`_distance`, lower is
 closer):
 
 | # | first-hit chunk start | distance |
-|---|---|---|
+| --- | --- | --- |
 | 1 | 7:04 | 0.508 |
 | 2 | 45:14 | 0.350 |
 | 3 | 51:05 | 0.552 |

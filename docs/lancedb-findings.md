@@ -12,8 +12,9 @@ never exercised real retrieval.
   ("Introduction to dbt", "YugabyteDB: A Brief Introduction"), loaded by
   `scripts/load_sample.py` (cdgl-r35)
 - **Embeddings**: Nomic v1.5 (`nomic-ai/nomic-embed-text-v1.5`), 768-dim,
-  embedded locally on CPU. Documents use the `search_document: ` prefix,
-  queries the `search_query: ` prefix (prefixes are prepended manually in
+  embedded locally on CPU. Documents use the `search_document:` prefix,
+  queries the `search_query:` prefix (both include a trailing space and are
+  prepended manually in
   `lecture_search/embed.py`; the registry embedder does not apply them)
 - **Client**: `lancedb` 0.40.0 (Python)
 
@@ -48,7 +49,7 @@ Top-5 chunk IDs per weight (`vector / fts`):
 **Query: "how does dbt transform data in the warehouse"**
 
 | ranking | 1 | 2 | 3 | 4 | 5 |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | FTS-only (BM25) | :2 | :4 | :3 | :5 | :1 |
 | 0.2 / 0.8 | :2 | :4 | :3 | :5 | :1 |
 | 0.5 / 0.5 | :2 | :4 | :5 | :3 | :1 |
@@ -58,7 +59,7 @@ Top-5 chunk IDs per weight (`vector / fts`):
 **Query: "distributed SQL database replication"**
 
 | ranking | 1 | 2 | 3 | 4 | 5 |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | FTS-only (BM25) | 9N:4 | 9N:5 | Qn:4 | 9N:1 | 9N:0 |
 | 0.2 / 0.8 | 9N:4 | 9N:5 | 9N:1 | Qn:4 | 9N:0 |
 | 0.5 / 0.5 | 9N:1 | 9N:4 | 9N:5 | 9N:0 | Qn:4 |
@@ -102,7 +103,7 @@ client via `lancedb.connect_async` and in the TypeScript client).
    `.env.local` (never committed), and prefer OAuth 2.0 where centrally
    managed credentials are required. Do not design around read-only keys —
    they are not a documented feature.
-4. Keep embedding queries locally with Nomic v1.5; the `search_query: `
+4. Keep embedding queries locally with Nomic v1.5; the `search_query:`
    prefix matters for retrieval quality.
 
 ## Reproduce
