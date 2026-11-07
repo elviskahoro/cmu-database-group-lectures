@@ -27,6 +27,8 @@ layers_explicit_depends_on = true
 # Do not let .gitignore silently remove application code from architecture checks.
 respect_gitignore = false
 exclude = [
+  "molab-example.py",
+  "notebooks/**",
   ".agents/**",
   ".claude/**",
   ".context/**",
