@@ -3,7 +3,7 @@
   "checkpoint_id": "01M6SQFN6N9Y7WCYTRJK283K60",
   "strategy": "manual-commit",
   "branch": "chore/trunk-lint",
-  "checkpoints_count": 1,
+  "checkpoints_count": 4,
   "files_touched": [
     "tach.toml"
   ],
@@ -14,24 +14,31 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 3520,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 462756,
-    "output_tokens": 724,
-    "api_call_count": 3
+    "input_tokens": 3554,
+    "cache_creation_tokens": 128797,
+    "cache_read_tokens": 2280836,
+    "output_tokens": 7450,
+    "api_call_count": 17
   },
   "redaction": {
-    "replacements": 41,
+    "replacements": 144,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
-      "credential_value": 41,
+      "credential_value": 128,
       "credentialed_uri": 0,
-      "entropy": 0,
+      "entropy": 16,
       "key_context": 0,
       "provider_token": 0,
       "shell_stdin": 0
