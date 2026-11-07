@@ -1,3 +1,14 @@
+"""Sample loader: 14 pilot chunks -> local Nomic embeddings -> LanceDB.
+
+Chunks the pilot transcripts in data/sample with lecture_search.chunking,
+embeds them locally with Nomic v1.5 (CPU, 'search_document: ' prepended by
+lecture_search.embed.embed_documents), and loads them into the LanceDB Cloud
+`lectures_sample` table — merge_insert upsert when the table exists, create
+otherwise. Always (re)builds the FTS index on `text`.
+
+Never prints secrets.
+"""  # noqa: INP001  # standalone script, not a package
+
 from __future__ import annotations
 
 import sys
@@ -10,6 +21,11 @@ sys.path.insert(0, str(ROOT_DIR))  # lecture_search is not an installed package
 
 from lecture_search import ChunkRecord, process_sample_transcripts  # noqa: E402
 from lecture_search.embed import create_lectures_table, embed_documents  # noqa: E402
+from scripts.lancedb_typed import (  # noqa: E402
+    InsertRow,
+    add_rows,
+    merge_insert_rows,
+)
 
 LANCEDB_URI = "db://cmu-database-group-eqdwgi"
 LANCEDB_REGION = "us-east-1"
@@ -19,20 +35,22 @@ EMBED_BATCH_SIZE = 16
 
 
 def load_api_key() -> str:
+    """Read LANCEDB_API_KEY from .env.local. Never printed."""
     env_file = ROOT_DIR / ".env.local"
     if not env_file.exists():
         msg = ".env.local not found"
         raise FileNotFoundError(msg)
 
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
+    for raw_line in env_file.read_text().splitlines():
+        line = raw_line.strip()
         if line.startswith("LANCEDB_API_KEY="):
-            return line.split("=", 1)[1].strip('"\'')
+            return line.split("=", 1)[1].strip("\"'")
     msg = "LANCEDB_API_KEY not found in .env.local"
     raise ValueError(msg)
 
 
-def chunk_to_row(chunk: ChunkRecord, vector: list[float]) -> dict:
+def chunk_to_row(chunk: ChunkRecord, vector: list[float]) -> InsertRow:
+    """Flatten a ChunkRecord + embedding into a LanceDB row."""
     return {
         "id": chunk.id,
         "video_id": chunk.video_id,
@@ -47,55 +65,44 @@ def chunk_to_row(chunk: ChunkRecord, vector: list[float]) -> dict:
     }
 
 
-def embed_chunks(chunks: list[ChunkRecord]) -> list[dict]:
-    rows: list[dict] = []
+def embed_chunks(chunks: list[ChunkRecord]) -> list[InsertRow]:
+    """Embed chunks in batches and pair each with its vector."""
+    rows: list[InsertRow] = []
     for batch_start in range(0, len(chunks), EMBED_BATCH_SIZE):
         batch = chunks[batch_start : batch_start + EMBED_BATCH_SIZE]
         vectors = embed_documents([chunk.text for chunk in batch])
-        rows.extend(chunk_to_row(chunk, vector) for chunk, vector in zip(batch, vectors))
-        print(f"Embedded {len(rows)}/{len(chunks)} chunks")
+        rows.extend(
+            chunk_to_row(chunk, vector)
+            for chunk, vector in zip(batch, vectors, strict=False)
+        )
     return rows
 
 
 def main() -> int:
+    """Chunk, embed, and upsert the sample transcripts."""
     if not SAMPLE_DIR.exists():
-        print(f"Sample transcripts not found at {SAMPLE_DIR}", file=sys.stderr)
         return 1
 
     api_key = load_api_key()
 
-    print("Chunking sample transcripts...")
     per_video = process_sample_transcripts(SAMPLE_DIR)
     chunks = [chunk for video_chunks in per_video.values() for chunk in video_chunks]
     if not chunks:
-        print("No chunks produced from sample transcripts", file=sys.stderr)
         return 1
-    print(f"Produced {len(chunks)} chunks from {len(per_video)} transcripts")
 
-    print("Embedding chunks locally with Nomic v1.5 (CPU)...")
     rows = embed_chunks(chunks)
 
-    print("Connecting to LanceDB Cloud...")
     db = lancedb.connect(LANCEDB_URI, region=LANCEDB_REGION, api_key=api_key)
 
     if TABLE_NAME in db.table_names():
-        print(f"Upserting into existing table {TABLE_NAME} (merge_insert on id)...")
         table = db.open_table(TABLE_NAME)
-        (
-            table.merge_insert("id")
-            .when_matched_update_all()
-            .when_not_matched_insert_all()
-            .execute(rows)
-        )
+        merge_insert_rows(table, rows)
     else:
-        print(f"Creating table {TABLE_NAME}...")
         table = create_lectures_table(db, TABLE_NAME)
-        table.add(rows)
+        add_rows(table, rows)
 
-    print("Creating FTS index on text...")
     table.create_fts_index("text", replace=True)
 
-    print(f"Done: {table.count_rows()} rows in {TABLE_NAME} (FTS indexed, no vector index at sample size)")
     return 0
 
 

@@ -92,9 +92,9 @@ Load test against the live Modal endpoint (`POST /search`, valid 768-dim
 vector, `top_k=5`, `fts_weight=0.5`, 5.6 KB body):
 
 | Round | Concurrent | Result | Latency (min / p50 / max) | Wall |
-|-------|-----------|--------|---------------------------|------|
-| a     | 8         | 8× HTTP 200, all 5 results | 1.55 s / 3.85 s / 4.01 s | 4.18 s |
-| b     | 24        | 24× HTTP 200, all 5 results | 0.33 s / 1.05 s / 1.61 s | 1.80 s |
+| --- | --- | --- | --- | --- |
+| a | 8 | 8× HTTP 200, all 5 results | 1.55 s / 3.85 s / 4.01 s | 4.18 s |
+| b | 24 | 24× HTTP 200, all 5 results | 0.33 s / 1.05 s / 1.61 s | 1.80 s |
 
 Round (a) paid one extra container's spin-up (~4 s tail); round (b) ran
 fully warm. No 5xx, no OOM, no throttling. Several browser tabs each issue
@@ -109,7 +109,7 @@ so memory pressure is bounded regardless of tab count.
 Endpoint left idle > 5.5 min (`scaledown_window=300s`), then measured:
 
 | Request | Total | TTFB |
-|---------|-------|------|
+| --- | --- | --- |
 | `GET /lectures` (cold container) | 4.57 s | 4.43 s |
 | `GET /lectures` (warm) | 0.41 s | 0.27 s |
 | `POST /search` (warm) | 0.42 s | 0.42 s |

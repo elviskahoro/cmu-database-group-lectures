@@ -1,5 +1,4 @@
-# This file controls the behavior of Trunk: https://docs.trunk.io/cli
-# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli # To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
 version: 0.1
 cli:
   version: 1.25.0
@@ -57,71 +56,96 @@ lint:
           enabled: true
         - name: lint
           enabled: true
-
-    # trunk runs linters from a sandboxed tmp dir with `env -i`, so pyright
-    # cannot find the project deps; point it at the workspace venv explicitly.
+    # The plugin's default command checks module boundaries. Tach's external
+    # dependency audit is separate, so include it in the same Trunk gate.
+    #
+    # No `external` command here on purpose. Trunk executes batch lint
+    # commands from a sandboxed tmp dir that contains only the diff's files
+    # plus direct configs, and `tach check-external` decides "used" by
+    # scanning the imports visible from its cwd -- the diff, not the tree.
+    # Every runtime dependency whose import sites sit outside the diff was
+    # reported "not used": #108's own PR run flagged all four (httpx, pydantic,
+    # pydantic_settings, typer), and any single-file Python PR trips it the
+    # same way, which would reject every queue entry once the merge queue
+    # gates on this pipeline. There is no way to point it at the real
+    # workspace from a lint command (Trunk does binary lookup, not a shell,
+    # so `cd ${workspace} && ...` dies with "Unable to find binary in PATH:
+    # cd"; tach has no --root flag), so the audit lives in .rwx/lint.yml's
+    # tach-external task, which runs against the full checkout and is
+    # required by the same queue.
+    - name: tach
+      commands:
+        - name: lint
+          run: tach check --dependencies --interfaces --exact
+    # Trunk runs linters from a sandboxed tmp dir with `env -i`, so pyright's
+    # usual environment discovery (PATH lookup) lands on Trunk's own node
+    # runtime, which has none of the project's dependencies. That made pyright
+    # silently check the whole SDK against Unknown types (reportMissingImports
+    # is "none" in the config, so nothing flagged). Point it at the project
+    # venv, the same way the pyrefly plugin does for pyrefly.
+    #
+    # This overrides the plugin's whole pyright invocation, so re-check this
+    # command against the plugin definition whenever trunk.yaml bumps plugin
+    # versions. If `.venv` is missing the check fails red with confusing
+    # Unknown-type findings (pyright warns about the bad --pythonpath but
+    # still runs), so `uv sync` before the first check — see AGENTS.md.
     - name: pyright
       commands:
         - name: lint
-          run: pyright --pythonpath ${workspace}/.venv/bin/python --project ${workspace}/pyrightconfig.json --outputjson ${target}
-      direct_configs:
-        - pyrightconfig.json
-        - configs/pyrightconfig.json
-      affects_cache:
-        - pyrightconfig.json
-        - configs/pyrightconfig.json
-        - pyproject.toml
-        - setup.cfg
+          run: pyright --pythonpath ${workspace}/.venv/bin/python --outputjson ${target}
 
-    # Tach also reports graph-wide failures without a file/line location.
-    # Use its exit status so cycles, stale dependencies, and config errors fail.
-    - name: tach
-      files: [python, tach-config]
-      environment:
-        # Trunk runs linters in a temp dir without the rest of the
-        # project tree; whole-graph linters like tach cannot resolve
-        # imports there. CI invocations of this linter run from the
-        # project root (no temp dir) via `trunk-io/trunk-action`, which
-        # is why CI does not hit the local-only failure mode below.
-        # Local `trunk check` reports `Unused Dependencies` for every
-        # edge in this directory -- this is a known limitation of
-        # trunk's batch-mode temp dir, see trunk-io/toolbox#83. Use
-        # `uv run tach check` directly locally if you need a green
-        # signal without invoking `trunk-io/trunk-action`.
-        - name: PATH
-          list: ["${linter}", "${env.PATH}"]
+    # Trunk runs linters from a sandboxed tmp dir, so pyrefly's usual environment
+    # discovery (interpreter resolution via PATH lookup) lands in Trunk's sandbox,
+    # not the project workspace. The pyrefly plugin (oss-linter-trunk-pyrefly v0.2.0)
+    # claims to pass --python-interpreter-path ${workspace}/.venv/bin/python and
+    # --search-path ${workspace} automatically, but this fails in environments where
+    # .venv/bin/python is a symlink to /usr/local/bin/python3 (typical in cloud
+    # sandboxes), because pyrefly's interpreter-resolver follows the symlink target,
+    # landing outside the venv's site-packages. See #120.
+    #
+    # This overrides the plugin's whole pyrefly invocation to explicitly pass
+    # the workspace venv paths, matching the pattern used for pyright above.
+    # Re-check this command against the plugin definition whenever trunk.yaml
+    # bumps plugin versions.
+    #
+    # The extra `--search-path ${workspace}/typings` (flags append) makes the
+    # repo-local stubs for deploy-only deps (modal, fastapi) resolvable: Trunk
+    # symlinks targets into its sandbox and passes them relative to it, so
+    # pyrefly's project root becomes the sandbox and its default typings/
+    # discovery never sees the workspace's typings/ directory.
+    - name: pyrefly
       commands:
         - name: lint
-          run: uv run --frozen --directory ${workspace} tach check
-          success_codes: [0, 1]
-          read_output_from: stderr
-          batch: true
-          cache_results: false
-        - name: external
-          run: uv run --frozen --directory ${workspace} tach check-external
-          output: regex
-          parse_regex: "\\[FAIL\\] (?P<path>[^:]+):(?P<line>\\d+): (?P<message>.*)"
-          success_codes: [0]
-          read_output_from: stderr
-          batch: true
-          cache_results: false
+          run: pyrefly check --python-interpreter-path ${workspace}/.venv/bin/python --search-path ${workspace} --search-path ${workspace}/typings --output-format=min-text --summary=none ${target}
 
-    # Vale is scoped exclusively to docs/**. Match the full relative path so
-    # markdown outside docs/ (e.g. README.md) is not included.
+    # Vale is scoped exclusively to docs/** via a custom file type -- there is
+    # no first-class "restrict this linter to a directory" field on `enabled`
+    # entries, and `regexes` (unlike `extensions`) match the full path from
+    # the repo root, so markdown outside docs/ (README.md, CHANGELOG.md) is
+    # never picked up. A rule-less .vale.ini exists at the repo root (see its
+    # comment for why no StylesPath is possible under trunk's sandbox); vale
+    # stays a no-op until real styles are adopted. gtm-sdk scopes its vale the
+    # same way.
     - name: vale
       files: [docs-markdown]
 
   files:
-    - name: tach-config
-      regexes:
-        - ^(tach\.toml|pyproject\.toml|uv\.lock)$
-
     - name: docs-markdown
       regexes:
         - ^docs/.+\.(md|mdx)$
 
+  # Mirrors gtm-sdk's enabled list (shared lint stack; renovate bumps versions
+  # independently per repo). Vale now has matching files (docs/**) and runs
+  # against the rule-less root .vale.ini.
   enabled:
-    - actionlint@1.17.0
+    # Pinned to the latest release before 1.17.0 added the cache-write-untrusted,
+    # cache-call-unrestricted, and cache-operation policies (default-on in 1.17.0;
+    # explicit `policy:` config is supported but the upgrade note warns the new
+    # policies can turn previously clean workflows into exits with status 1, even
+    # on repositories without a configuration file). Bump to 1.17.x once the
+    # surviving workflows (.github/workflows/{pullfrog,pypi}.yml) are revised and
+    # the policies pass on them.
+    - actionlint@1.16.1
     - add-trailing-comma@4.0.0
     - bandit@1.9.4
     - buildifier@8.2.1
@@ -131,22 +155,15 @@ lint:
     - osv-scanner@2.6.0
     - oxipng@10.1.1
     - pinact@4.0.0
-    # `pyrefly` and `pyright` are disabled at the trunk level because
-    # trunk's bundled Python distributions do not ship `reflex`, and
-    # pyrefly/pyright emit high-severity `missing-import` findings on
-    # every file that imports reflex. Run them locally via
-    # `uv run pyrefly web/` or `uv run pyright web/` (the project's
-    # venv resolves them); this template's CI gate deliberately does
-    # not block on type-only linters.
-    # - pyrefly@1.3.1
-    # - pyright@1.1.414
+    - pyrefly@1.3.1
+    - pyright@1.1.414
     - ruff@0.16.8
     - semgrep@1.177.0
     - shellcheck@0.11.0
     - shfmt@3.13.1
     - squawk@2.65.0
     - svgo@4.1.0
-    - tach@0.35.3
+    - tach@0.35.1
     - taplo@0.10.0
     - trivy@0.70.0
     - trufflehog@3.95.3
@@ -256,6 +273,11 @@ lint:
   ignore:
     - linters: [ALL]
       paths:
+        - .beads/**
+        # marimo notebooks are intentionally excluded from every linter
+        - notebooks/**
+        - molab-example.py
+        - .agents/skills/**
         - data/**
         - tmp/**
         - worktrees/**
@@ -263,18 +285,38 @@ lint:
         - "**/*.openapi.yaml"
         - "**/*.openapi.yml"
 
+    # bd-managed files: `bd setup` generates and overwrites these wholesale
+    # (ordered list numbering in SKILL.md, quoted strings in agent manifests).
+    # Fixing them by hand would be reverted on the next `bd setup`, so they are
+    # waived here rather than churned.
+    - linters: [markdownlint-cli2]
+      paths:
+        - .agents/skills/beads/**
+    - linters: [yamllint]
+      paths:
+        - .agents/skills/beads/**
+
+    # Vendor-managed Pullfrog workflow ("DO NOT EDIT EXCEPT WHERE INDICATED").
+    # Mirrors gtm-sdk's pinned copy; its inline trunk-ignores cover the
+    # workflow_dispatch prompt finding. Kept waived because a future Pullfrog
+    # re-install may still overwrite the file back to stock (unpinned) form,
+    # and semgrep/yamlfmt fixes would diverge it further from the vendor form.
+    - linters: [checkov, semgrep, yamlfmt]
+      paths:
+        - .github/workflows/pullfrog.yml
+
     - linters: [ruff]
       paths:
         - "*.ipynb"
 
-    # Documentation MDX mixes JSX components with fenced code blocks, which
-    # markdownlint misreads as inconsistent code-block styles (MD046).
-    - linters: [markdownlint, markdownlint-cli2]
+    # Tests intentionally use pytest assertions, private test seams, fixture
+    # doubles, and test-only dependencies. Keep production lint/type rules
+    # from rejecting those patterns while continuing to check the application
+    # package itself.
+    - linters: [ruff, pyright, pyrefly, bandit]
       paths:
-        - docs/**/*.mdx
+        - tests/**
 
-    # checkov and semgrep are IaC-focused here; skip them on source and
-    # binary files so they only weigh in on Dockerfiles, YAML, TOML, etc.
     - linters: [checkov, semgrep]
       paths:
         - "**/*.py"
@@ -300,19 +342,6 @@ lint:
     - linters: [trivy]
       paths:
         - .trunk/**
-
-    # reflex.lock/bun.lock is the frontend lockfile shipped by Reflex; vite is
-    # pinned by Reflex itself, so these advisories can only clear on a Reflex
-    # release that bumps it.
-    - linters: [osv-scanner]
-      paths:
-        - reflex.lock/bun.lock
-
-    # yamlfmt rewrites pinact's `sha # vX` comments to one space, which
-    # yamllint's comments rule rejects; the two cannot both pass here.
-    - linters: [yamllint]
-      paths:
-        - .github/workflows/pullfrog.yml
 
     - linters: [trufflehog]
       paths:
@@ -355,35 +384,20 @@ actions:
 
   disabled:
     # git-hook-triggered actions disabled so trunk releases core.hooksPath to
-    # Entire (checkpoints). trunk-check-pre-push is redundant with the required
-    # CI check; git-lfs is unused.
+    # the shared ~/.config/git/hooks dispatcher (Entire checkpoints, AI
+    # co-author stripping, branch policy), matching gtm-sdk. With them enabled,
+    # any `trunk check` run re-points core.hooksPath at Trunk's own cache.
+    # trunk-check-pre-push is also redundant with roborev review and the merge
+    # queue's required lint check (.rwx/lint.yml); git-lfs is unused
+    # in this repo.
     - trunk-fmt-pre-commit
     - git-lfs
     - trunk-announce
     - trunk-check-pre-push
 
 merge:
-  # Required statuses for the Trunk merge queue. Entries must be the exact
-  # status-check names GitHub sees, including RWX's "RWX: " prefix. The names
-  # below are backed by the custom per-trigger status-checks blocks in the
-  # .rwx/ pipelines: each posts the same name from both the pull_request and
-  # push triggers, so PR heads and trunk-merge/** batch refs report identical
-  # contexts (RWX's default per-run status renames itself after the trigger
-  # and so cannot be required). Re-verify after any pipeline or trigger
-  # rename by reading the contexts posted on a commit:
-  # api.github.com/repos/<owner>/<repo>/commits/<sha>/status.
-  #
-  # Per Trunk's docs, this list is one of three ways to define what the queue
-  # waits on while a queued PR is testing; the others are GitHub branch
-  # protection required-checks and a Trunk UI override. It does NOT control
-  # which PRs are admitted to the queue.
-  #
-  # The entries below correspond to RWX pipeline tasks in .rwx/:
-  # - trunk-check (trunk-check-pr on pull requests, trunk-check-push on
-  #   pushes) and tach-external from .rwx/trunk-check.yml
-  # - pytest from .rwx/tests.yml
-  # - reflex-export from .rwx/reflex-build.yml
-  # - frontend-deps from .rwx/frontend.yml
+  # Required statuses must be live GitHub status names posted on every PR.
+  # Re-verify with: gh pr checks <pr-number> --json name --jq '.[].name'
   required_statuses:
     - "RWX: trunk-check"
     - "RWX: tach-external"

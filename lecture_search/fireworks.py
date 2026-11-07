@@ -15,12 +15,12 @@ from __future__ import annotations
 
 import hashlib
 import json
-from http import HTTPStatus
 import os
 import tempfile
 import time
+from http import HTTPStatus
 from pathlib import Path
-from typing import Any
+from typing import NotRequired, TypedDict
 
 import httpx
 
@@ -87,7 +87,27 @@ class EmbeddingCache:
         )
         with os.fdopen(fd, "w") as tmp:
             json.dump(self._vectors, tmp)
-        Path(tmp_name).replace(self.path)
+        _ = Path(tmp_name).replace(self.path)
+
+
+class _EmbeddingItem(TypedDict):
+    """One entry of the Fireworks embeddings response ``data`` array."""
+
+    index: int
+    embedding: list[float]
+
+
+class _Usage(TypedDict, total=False):
+    """Token accounting block of a Fireworks embeddings response."""
+
+    total_tokens: int
+
+
+class _EmbeddingsResponse(TypedDict):
+    """Parsed Fireworks embeddings response payload."""
+
+    data: list[_EmbeddingItem]
+    usage: NotRequired[_Usage]
 
 
 class FireworksEmbedder:
@@ -127,7 +147,7 @@ class FireworksEmbedder:
             vectors.extend([float(v) for v in item["embedding"]] for item in by_index)
         return vectors
 
-    def _post_with_retry(self, batch: list[str]) -> dict[str, Any]:
+    def _post_with_retry(self, batch: list[str]) -> _EmbeddingsResponse:
         delay = INITIAL_BACKOFF_SECONDS
         for attempt in range(self.max_retries):
             try:
@@ -147,7 +167,7 @@ class FireworksEmbedder:
                 continue
 
             if response.status_code < HTTPStatus.BAD_REQUEST:
-                payload = response.json()
+                payload: _EmbeddingsResponse = response.json()
                 self.requests_made += 1
                 usage = payload.get("usage") or {}
                 self.tokens_used += int(usage.get("total_tokens", 0))
@@ -171,116 +191,3 @@ class FireworksEmbedder:
 
         msg = "unreachable"  # pragma: no cover - loop always returns or raises
         raise RuntimeError(msg)
-
-
-# --- Co-located tests ------------------------------------------------------
-
-
-def _mock_transport(
-    status_sequence: list[int],
-) -> tuple[httpx.MockTransport, list[list[str]]]:
-    """Transport returning the given statuses; final entry is a 200 payload."""
-    seen_inputs: list[list[str]] = []
-
-    def handler(request: httpx.Request) -> httpx.Response:
-        body = json.loads(request.content)
-        seen_inputs.append(body["input"])
-        status = status_sequence[min(len(seen_inputs) - 1, len(status_sequence) - 1)]
-        if status != 200:
-            return httpx.Response(status)
-        vectors = [
-            {"index": i, "embedding": [float(i)] * 3}
-            for i, _ in enumerate(body["input"])
-        ]
-        return httpx.Response(
-            200,
-            json={"data": vectors, "usage": {"total_tokens": 7 * len(body["input"])}},
-        )
-
-    return httpx.MockTransport(handler), seen_inputs
-
-
-def test_cache_key_tracks_text():
-    assert cache_key("vid:0", "alpha") == cache_key("vid:0", "alpha")
-    assert cache_key("vid:0", "alpha") != cache_key("vid:0", "beta")
-    assert cache_key("vid:0", "alpha") != cache_key("vid:1", "alpha")
-    assert cache_key("vid:0", "alpha").startswith("vid:0:")
-
-
-def test_embedding_cache_roundtrip(tmp_path: Path):
-    cache = EmbeddingCache(tmp_path / "cache.json")
-    assert cache.get("k") is None
-    cache.set("k", [1.0, 2.0])
-    cache.save()
-
-    reloaded = EmbeddingCache(tmp_path / "cache.json")
-    assert len(reloaded) == 1
-    assert reloaded.get("k") == [1.0, 2.0]
-
-
-def test_batches_and_token_accounting():
-    transport, seen = _mock_transport([200])
-    embedder = FireworksEmbedder(
-        "key",
-        batch_size=2,
-        client=httpx.Client(transport=transport),
-    )
-    vectors = embedder.generate_embeddings(["a", "b", "c", "d", "e"])
-
-    assert seen == [["a", "b"], ["c", "d"], ["e"]]
-    assert len(vectors) == 5
-    assert embedder.requests_made == 3
-    assert embedder.tokens_used == 7 * 5
-
-
-def test_retry_on_429_then_success(monkeypatch):
-    transport, seen = _mock_transport([429, 200])
-    monkeypatch.setattr(time, "sleep", lambda _: None)
-    embedder = FireworksEmbedder(
-        "key",
-        batch_size=64,
-        client=httpx.Client(transport=transport),
-    )
-    vectors = embedder.generate_embeddings(["x"])
-
-    assert len(seen) == 2  # one 429, one 200
-    assert len(vectors) == 1
-    assert embedder.requests_made == 1
-
-
-def test_retry_on_5xx_exhaustion_raises(monkeypatch):
-    transport, _ = _mock_transport([500])
-    monkeypatch.setattr(time, "sleep", lambda _: None)
-    embedder = FireworksEmbedder(
-        "key",
-        batch_size=64,
-        max_retries=2,
-        client=httpx.Client(transport=transport),
-    )
-    try:
-        embedder.generate_embeddings(["x"])
-    except RuntimeError as exc:
-        assert "HTTP 500" in str(exc)
-        assert "key" not in str(exc)  # never leak the API key
-    else:
-        raise AssertionError("expected RuntimeError")
-
-
-def test_non_retryable_400_raises_immediately():
-    transport, seen = _mock_transport([400])
-    embedder = FireworksEmbedder(
-        "key",
-        batch_size=64,
-        client=httpx.Client(transport=transport),
-    )
-    try:
-        embedder.generate_embeddings(["x"])
-    except RuntimeError as exc:
-        assert "HTTP 400" in str(exc)
-    else:
-        raise AssertionError("expected RuntimeError")
-    assert len(seen) == 1  # no retry on 4xx other than 429/408/409/425
-
-
-if __name__ == "__main__":
-    print("Run tests via pytest (tests/test_fireworks_client.py wraps these).")

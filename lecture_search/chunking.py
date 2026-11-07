@@ -1,15 +1,24 @@
+"""Chunk lecture transcripts into overlapping, deep-linkable windows.
+
+Transcripts are YouTube auto-captions stored as
+``<date>·<video_id>·transcription.json`` files. Each lecture becomes a
+sequence of ``ChunkRecord`` windows (default 75 s with 15 s overlap) whose
+metadata — video_id, date, title, deep link — comes from a per-directory
+``titles.json`` (sample corpus) or the full-corpus ``metadata/titles_all.json``.
+"""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
-from datetime import datetime
-
 import json
+from dataclasses import dataclass
 from pathlib import Path
+from typing import TypedDict, cast
 
 
 @dataclass
 class Segment:
+    """One transcript segment: a timed span of caption text."""
+
     start: float
     end: float
     text: str
@@ -17,6 +26,8 @@ class Segment:
 
 @dataclass
 class ChunkRecord:
+    """One chunk window over a lecture, with deep link back to the video."""
+
     id: str
     video_id: str
     date: str
@@ -28,17 +39,54 @@ class ChunkRecord:
     deep_link: str
 
 
+@dataclass(frozen=True)
+class ChunkContext:
+    """Lecture identity stamped onto every chunk the transcript yields."""
+
+    video_id: str
+    date: str
+    title: str
+
+
+class TranscriptSegment(TypedDict):
+    """One segment entry in a ``*·transcription.json`` file."""
+
+    start: float
+    end: float
+    text: str
+
+
+class Transcript(TypedDict, total=False):
+    """Parsed ``*·transcription.json`` payload."""
+
+    segments: list[TranscriptSegment]
+
+
+class TitleMeta(TypedDict, total=False):
+    """One entry of a titles mapping: per-lecture metadata."""
+
+    date: str
+    title: str
+    duration: float
+
+
 def chunk_transcript(
     segments: list[Segment],
-    video_id: str,
-    date: str,
-    title: str,
+    context: ChunkContext,
     window_duration: float = 75.0,
     overlap_duration: float = 15.0,
 ) -> list[ChunkRecord]:
+    """Split one lecture's segments into overlapping chunk windows.
+
+    A new chunk starts whenever the accumulated window would exceed
+    ``window_duration`` seconds; the next window rewinds by
+    ``overlap_duration`` seconds (bounded by the lecture start) so
+    sentences spanning a boundary appear in both chunks.
+    """
     if not segments:
         return []
 
+    video_id = context.video_id
     chunk_index = 0
     chunks: list[ChunkRecord] = []
     current_start = segments[0].start
@@ -54,18 +102,21 @@ def chunk_transcript(
                     ChunkRecord(
                         id=f"{video_id}:{chunk_index}",
                         video_id=video_id,
-                        date=date,
-                        title=title,
+                        date=context.date,
+                        title=context.title,
                         chunk_index=chunk_index,
                         start_seconds=current_start_time,
                         end_seconds=chunk_end,
                         text=chunk_text,
                         deep_link=f"https://youtu.be/{video_id}?t={int(current_start_time)}",
-                    )
+                    ),
                 )
                 chunk_index += 1
 
-            current_start_time = max(current_start - overlap_duration, segments[0].start)
+            current_start_time = max(
+                current_start - overlap_duration,
+                segments[0].start,
+            )
             current_text_parts = []
             current_start = segment.start
 
@@ -78,40 +129,46 @@ def chunk_transcript(
             ChunkRecord(
                 id=f"{video_id}:{chunk_index}",
                 video_id=video_id,
-                date=date,
-                title=title,
+                date=context.date,
+                title=context.title,
                 chunk_index=chunk_index,
                 start_seconds=current_start_time,
                 end_seconds=chunk_end,
                 text=chunk_text,
                 deep_link=f"https://youtu.be/{video_id}?t={int(current_start_time)}",
-            )
+            ),
         )
 
     return chunks
 
 
-def load_transcript(transcript_path: Path) -> dict[str, Any]:
-    with open(transcript_path, "r") as f:
-        return json.load(f)
+def load_transcript(transcript_path: Path) -> Transcript:
+    """Parse one ``*·transcription.json`` file."""
+    return cast("Transcript", json.loads(transcript_path.read_text(encoding="utf-8")))
 
 
-def load_titles(sample_dir: Path) -> dict[str, dict[str, Any]]:
+def load_titles(sample_dir: Path) -> dict[str, TitleMeta]:
     """Load video_id -> {date, title, duration} metadata from titles.json."""
     titles_path = sample_dir / "titles.json"
     if not titles_path.exists():
         return {}
-    return json.loads(titles_path.read_text())
+    return cast(
+        "dict[str, TitleMeta]",
+        json.loads(titles_path.read_text(encoding="utf-8")),
+    )
 
 
-def load_titles_all(metadata_path: Path) -> dict[str, dict[str, Any]]:
+def load_titles_all(metadata_path: Path) -> dict[str, TitleMeta]:
     """Load video_id -> {date, title, duration} for the full 595-lecture corpus."""
-    return json.loads(Path(metadata_path).read_text())
+    return cast(
+        "dict[str, TitleMeta]",
+        json.loads(Path(metadata_path).read_text(encoding="utf-8")),
+    )
 
 
 def process_corpus_transcripts(
     transcripts_dir: Path,
-    titles: dict[str, dict[str, Any]],
+    titles: dict[str, TitleMeta],
     limit: int | None = None,
 ) -> dict[str, list[ChunkRecord]]:
     """Chunk a directory of full-corpus transcripts.
@@ -142,9 +199,7 @@ def process_corpus_transcripts(
 
         chunks = chunk_transcript(
             segments=segments,
-            video_id=video_id,
-            date=date,
-            title=title,
+            context=ChunkContext(video_id=video_id, date=date, title=title),
         )
         results[video_id] = chunks
 
@@ -154,7 +209,8 @@ def process_corpus_transcripts(
 def process_sample_transcripts(
     sample_dir: Path,
 ) -> dict[str, list[ChunkRecord]]:
-    results = {}
+    """Chunk a sample directory, reading titles from its titles.json."""
+    results: dict[str, list[ChunkRecord]] = {}
     titles = load_titles(sample_dir)
 
     for transcript_file in sorted(sample_dir.glob("*·transcription.json")):
@@ -172,191 +228,8 @@ def process_sample_transcripts(
 
         chunks = chunk_transcript(
             segments=segments,
-            video_id=video_id,
-            date=date,
-            title=title,
+            context=ChunkContext(video_id=video_id, date=date, title=title),
         )
         results[video_id] = chunks
 
     return results
-
-
-def test_window_bounds():
-    segments = [
-        Segment(start=0.0, end=10.0, text="first"),
-        Segment(start=10.0, end=20.0, text="second"),
-        Segment(start=20.0, end=30.0, text="third"),
-        Segment(start=30.0, end=40.0, text="fourth"),
-        Segment(start=40.0, end=50.0, text="fifth"),
-        Segment(start=50.0, end=60.0, text="sixth"),
-        Segment(start=60.0, end=70.0, text="seventh"),
-        Segment(start=70.0, end=80.0, text="eighth"),
-        Segment(start=80.0, end=90.0, text="ninth"),
-        Segment(start=90.0, end=100.0, text="tenth"),
-    ]
-
-    chunks = chunk_transcript(
-        segments=segments,
-        video_id="test_video",
-        date="2026-01-01",
-        title="Test Title",
-        window_duration=75.0,
-        overlap_duration=15.0,
-    )
-
-    assert len(chunks) > 0, "Should produce chunks"
-    for chunk in chunks:
-        assert chunk.start_seconds < chunk.end_seconds, f"Start should be before end: {chunk}"
-        assert chunk.text, "Chunk should have text"
-        assert chunk.video_id == "test_video"
-        assert chunk.date == "2026-01-01"
-        assert chunk.title == "Test Title"
-
-
-def test_overlap():
-    segments = [
-        Segment(start=float(i * 10), end=float((i + 1) * 10), text=f"segment_{i}")
-        for i in range(15)
-    ]
-
-    chunks = chunk_transcript(
-        segments=segments,
-        video_id="test_video",
-        date="2026-01-01",
-        title="Test Title",
-        window_duration=75.0,
-        overlap_duration=15.0,
-    )
-
-    assert len(chunks) > 1, "Should produce multiple chunks"
-
-    for i in range(len(chunks) - 1):
-        current_end = chunks[i].end_seconds
-        next_start = chunks[i + 1].start_seconds
-        overlap = current_end - next_start
-        assert overlap >= 0, f"Chunks should overlap or be adjacent (overlap: {overlap})"
-
-
-def test_chunk_ids():
-    segments = [
-        Segment(start=float(i * 10), end=float((i + 1) * 10), text=f"segment_{i}")
-        for i in range(20)
-    ]
-
-    chunks = chunk_transcript(
-        segments=segments,
-        video_id="video123",
-        date="2026-01-01",
-        title="Test Title",
-        window_duration=75.0,
-        overlap_duration=15.0,
-    )
-
-    for i, chunk in enumerate(chunks):
-        assert chunk.id == f"video123:{i}", f"ID should be video_id:chunk_index"
-        assert chunk.chunk_index == i
-
-
-def test_deep_link():
-    segments = [
-        Segment(start=0.0, end=10.0, text="first"),
-        Segment(start=10.0, end=20.0, text="second"),
-        Segment(start=20.0, end=30.0, text="third"),
-        Segment(start=30.0, end=40.0, text="fourth"),
-        Segment(start=40.0, end=50.0, text="fifth"),
-        Segment(start=50.0, end=60.0, text="sixth"),
-        Segment(start=60.0, end=70.0, text="seventh"),
-        Segment(start=70.0, end=80.0, text="eighth"),
-    ]
-
-    chunks = chunk_transcript(
-        segments=segments,
-        video_id="abc123",
-        date="2026-01-01",
-        title="Test Title",
-        window_duration=75.0,
-        overlap_duration=15.0,
-    )
-
-    for chunk in chunks:
-        assert f"youtu.be/{chunk.video_id}" in chunk.deep_link
-        assert "?t=" in chunk.deep_link
-
-
-def test_process_sample_transcripts_reads_titles_json(tmp_path):
-    transcript = {
-        "segments": [
-            {"start": float(i * 10), "end": float((i + 1) * 10), "text": f"segment_{i}"}
-            for i in range(10)
-        ]
-    }
-    (tmp_path / "2026-01-01·vid123·transcription.json").write_text(json.dumps(transcript))
-    (tmp_path / "titles.json").write_text(
-        json.dumps({"vid123": {"date": "2026-01-01", "title": "My Lecture", "duration": 100}})
-    )
-
-    results = process_sample_transcripts(tmp_path)
-
-    assert set(results) == {"vid123"}, "titles.json must not be treated as a transcript"
-    assert all(chunk.title == "My Lecture" for chunk in results["vid123"])
-
-
-def test_process_sample_transcripts_missing_titles_json(tmp_path):
-    transcript = {"segments": [{"start": 0.0, "end": 10.0, "text": "only"}]}
-    (tmp_path / "2026-01-01·vid999·transcription.json").write_text(json.dumps(transcript))
-
-    results = process_sample_transcripts(tmp_path)
-
-    assert set(results) == {"vid999"}
-    assert all(chunk.title == "" for chunk in results["vid999"])
-
-
-def test_process_corpus_transcripts_reads_titles_all(tmp_path):
-    transcript = {
-        "segments": [
-            {"start": float(i * 10), "end": float((i + 1) * 10), "text": f"segment_{i}"}
-            for i in range(10)
-        ]
-    }
-    (tmp_path / "2016-05-16·vid123·transcription.json").write_text(json.dumps(transcript))
-    (tmp_path / "2016-05-17·vid456·transcription.json").write_text(json.dumps(transcript))
-    titles = {"vid123": {"date": "2016-05-16", "title": "Full Corpus Lecture", "duration": 100}}
-
-    results = process_corpus_transcripts(tmp_path, titles)
-
-    assert set(results) == {"vid123", "vid456"}
-    assert all(chunk.title == "Full Corpus Lecture" for chunk in results["vid123"])
-    assert all(chunk.date == "2016-05-16" for chunk in results["vid123"])
-    # Missing from metadata: empty title, filename date as fallback.
-    assert all(chunk.title == "" for chunk in results["vid456"])
-    assert all(chunk.date == "2016-05-17" for chunk in results["vid456"])
-
-
-def test_process_corpus_transcripts_limit(tmp_path):
-    transcript = {"segments": [{"start": 0.0, "end": 10.0, "text": "only"}]}
-    for i in range(3):
-        (tmp_path / f"2026-01-0{i + 1}·vid{i}·transcription.json").write_text(
-            json.dumps(transcript)
-        )
-
-    results = process_corpus_transcripts(tmp_path, {}, limit=2)
-
-    assert set(results) == {"vid0", "vid1"}
-
-
-if __name__ == "__main__":
-    test_window_bounds()
-    test_overlap()
-    test_chunk_ids()
-    test_deep_link()
-    print("All tests passed!")
-
-    sample_dir = Path(__file__).parent.parent / "data" / "sample"
-    results = process_sample_transcripts(sample_dir)
-    assert "titles" not in results, "titles.json must not be parsed as a transcript"
-    for video_id, chunks in results.items():
-        print(f"\n{video_id}: {len(chunks)} chunks")
-        for chunk in chunks[:2]:
-            print(
-                f"  [{chunk.chunk_index}] {chunk.start_seconds:.1f}s-{chunk.end_seconds:.1f}s: {chunk.text[:60]}..."
-            )

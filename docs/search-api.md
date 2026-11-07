@@ -11,7 +11,7 @@ public notebook therefore never touches LanceDB; this endpoint holds the key
 as a Modal secret and answers search requests.
 
 **Embedding is client-side:** the caller (the molab notebook) embeds the
-query itself — Nomic v1.5, `search_query: ` prefix, on a molab GPU if
+query itself — Nomic v1.5, `search_query:` prefix, on a molab GPU if
 available else CPU — and sends the vector in the request. The Modal image
 carries only `lancedb` + `fastapi` (no sentence-transformers / transformers
 / einops / torch, no baked model weights), so the image is small, cold
@@ -146,8 +146,7 @@ last request; `max_containers=5` caps worst-case concurrency. At 1 vCPU /
 1 GiB with no model to load, a traffic pattern of a few searches per minute
 costs cents per day — see https://modal.com/pricing for current rates.
 
-## Measured latency (2026-11-05, full corpus `lectures`, 33,412 chunks /
-594 lectures, no vector index)
+## Measured latency (2026-11-05, full corpus `lectures`, 33,412 chunks / 594 lectures, no vector index)
 
 - Cold `GET /lectures` (container boot + LanceDB connect + first paged
   33k-row scan): **~5.5 s**; warm (cached): **~0.66 s**

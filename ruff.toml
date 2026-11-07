@@ -1,5 +1,6 @@
 # Strictest practical ruff: every rule, with only conflicting/contradictory ones off.
 target-version = "py311"
+extend-exclude = ["notebooks", "molab-example.py", ".agents"]
 
 [format]
 quote-style = "double"

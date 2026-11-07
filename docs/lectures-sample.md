@@ -11,7 +11,7 @@ table `lectures_sample`.
 Defined as `LectureChunk` in `lecture_search/embed.py`:
 
 | column | type |
-|---|---|
+| --- | --- |
 | `id` | utf8 (`video_id:chunk_index`) |
 | `video_id` | utf8 |
 | `date` | utf8 |
@@ -27,7 +27,8 @@ Defined as `LectureChunk` in `lecture_search/embed.py`:
 
 - **Prefixes are manual.** The LanceDB sentence-transformers registry
   embedder does not apply Nomic's task prefixes, so `embed_documents` prepends
-  `search_document: ` and `embed_query` prepends `search_query: `. Any query
+  `search_document:` and `embed_query` prepends `search_query:` (both prefixes
+  include a trailing space). Any query
   path (notebook, web) must call `embed_query` — never embed a raw query
   string.
 - **One embedder per process.** The registry embedder is instantiated once at
